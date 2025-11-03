@@ -34,24 +34,20 @@ body {
   background: rgb(var(--background-start-rgb));
 }
 
-/* Hide scrollbar but keep functionality */
+/* Layout scroll: cegah double scroll */
 html {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-}
-
-html::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-body::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
-}
+/* Catatan: gunakan utilitas .no-scrollbar hanya pada container tertentu (mis. slider) */
 
 /* Text Selection */
 ::selection {
@@ -71,17 +67,7 @@ body::-webkit-scrollbar {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Hide all scrollbars in sections */
-section::-webkit-scrollbar { display: none; }
-section { scrollbar-width: none; -ms-overflow-style: none; }
-
-/* Hide scrollbars in all containers */
-div::-webkit-scrollbar { display: none; }
-div { scrollbar-width: none; -ms-overflow-style: none; }
-
-/* Hide scrollbars in overflow containers */
-*[class*="overflow"]::-webkit-scrollbar { display: none; }
-*[class*="overflow"] { scrollbar-width: none; -ms-overflow-style: none; }
+/* (hapus aturan global penyembunyi scrollbar agar tidak memicu double scroll) */
 
 /* Responsive media */
 img, video { max-width: 100%; height: auto; }
