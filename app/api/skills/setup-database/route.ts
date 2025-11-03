@@ -2,8 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { CookieOptions } from '@supabase/ssr'
-import fs from 'fs'
-import path from 'path'
 
 export async function POST() {
   const cookieStore = await cookies()
@@ -27,28 +25,20 @@ export async function POST() {
   )
 
   try {
-    // Read the SQL setup file
-    const sqlPath = path.join(process.cwd(), 'app', 'api', 'skills', 'setup-database.sql')
-    const sqlContent = fs.readFileSync(sqlPath, 'utf8')
+    // Check if required tables exist; client cannot run arbitrary SQL.
+    const { error: existsError } = await supabase
+      .from('skill_categories')
+      .select('id')
+      .limit(1)
 
-    // Split the SQL content into individual statements
-    const statements = sqlContent
-      .split(';')
-      .map(stmt => stmt.trim())
-      .filter(stmt => stmt.length > 0)
-
-    // Execute the SQL statements directly
-    const { error } = await supabase.from('skill_categories').select('*')
-    if (error) {
-      // Tables don't exist, create them
-      const { error: setupError } = await supabase
-        .from('rpc')
-        .select('*')
-        .execute(sqlContent)
-      if (setupError) throw setupError
+    if (existsError) {
+      return NextResponse.json(
+        { error: 'Skills tables not found. Please run the SQL setup via Supabase SQL editor or a server-side migration.' },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ message: 'Database setup completed successfully' })
+    return NextResponse.json({ message: 'Database already set up' })
   } catch (error) {
     console.error('Error setting up database:', error)
     return NextResponse.json({ error: 'Failed to set up database' }, { status: 500 })
