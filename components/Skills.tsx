@@ -81,12 +81,13 @@ const Skills: NextPage = () => {
         }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        className="relative rounded-[28px] p-8 overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)]"
         style={{
           transform: `perspective(1000px) rotateX(${(0.5 - pos.y) * 10}deg) rotateY(${(pos.x - 0.5) * 12}deg)`,
           transition: 'transform 200ms ease',
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.1)'
         }}
-        className="relative rounded-[28px] p-8 overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)]"
-        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}
       >
         <div
           className="pointer-events-none absolute -inset-px rounded-[28px] opacity-0 transition-opacity duration-300"
