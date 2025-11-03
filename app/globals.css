@@ -71,6 +71,18 @@ body::-webkit-scrollbar {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Hide all scrollbars in sections */
+section::-webkit-scrollbar { display: none; }
+section { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* Hide scrollbars in all containers */
+div::-webkit-scrollbar { display: none; }
+div { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* Hide scrollbars in overflow containers */
+*[class*="overflow"]::-webkit-scrollbar { display: none; }
+*[class*="overflow"] { scrollbar-width: none; -ms-overflow-style: none; }
+
 /* Responsive media */
 img, video { max-width: 100%; height: auto; }
 
