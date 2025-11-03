@@ -1,0 +1,58 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+
+export default function BackgroundFX() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current!
+    const ctx = canvas.getContext('2d', { alpha: true })!
+    let raf = 0
+
+    const DPR = Math.min(2, window.devicePixelRatio || 1)
+    let w = 0, h = 0
+    const resize = () => {
+      w = canvas.clientWidth
+      h = canvas.clientHeight
+      canvas.width = Math.floor(w * DPR)
+      canvas.height = Math.floor(h * DPR)
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
+    }
+    resize()
+    const onResize = () => resize()
+    window.addEventListener('resize', onResize)
+
+    // Animated monochrome grain
+    const render = () => {
+      ctx.clearRect(0, 0, w, h)
+      const count = Math.floor((w * h) / 7000)
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * w
+        const y = Math.random() * h
+        const a = 0.03 + Math.random() * 0.04
+        ctx.fillStyle = `rgba(255,255,255,${a})`
+        ctx.fillRect(x, y, 1, 1)
+      }
+      raf = requestAnimationFrame(render)
+    }
+    raf = requestAnimationFrame(render)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
+
+  return (
+    <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden" style={{ background: 'linear-gradient(180deg, rgb(12,12,12), rgb(18,18,18))' }}>
+      <canvas ref={canvasRef} className="w-full h-full opacity-[.12]" />
+      <div className="pointer-events-none absolute inset-0" style={{
+        backgroundImage:
+          'radial-gradient(80rem 40rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)'
+      }} />
+    </div>
+  )
+}
+
+
