@@ -33,27 +33,22 @@ export default function Navbar() {
     const getOffset = () => {
       const bar = document.querySelector('[data-navbar-root]') as HTMLElement | null
       const h = bar?.getBoundingClientRect().height ?? 80
-      return Math.max(70, h + 16)
+      return Math.max(70, h + 24)
     }
 
     let offset = getOffset()
 
     const computeActive = () => {
-      // Cari section terakhir yang top-nya berada di atas atau sejajar dengan navbar (<= offset)
-      let current = '#home'
-      const tops: Array<{ id: string; top: number }> = []
+      // Pilih section yang TOP-nya paling dekat dengan garis offset navbar (terdekat secara absolut)
+      let best: { id: string; dist: number } | null = null
       for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
         const top = el.getBoundingClientRect().top
-        tops.push({ id, top })
-        if (top <= offset + 1) current = `#${id}`
+        const dist = Math.abs(top - offset)
+        if (!best || dist < best.dist) best = { id, dist }
       }
-      // Jika belum ada yang <= offset (di atas), pilih yang paling dekat di bawah offset
-      if (current === '#home' && tops.every(t => t.top > offset + 1)) {
-        const next = tops.reduce((min, t) => (t.top < min.top ? t : min), tops[0])
-        current = `#${next.id}`
-      }
+      let current = best ? `#${best.id}` : '#home'
       // Saat di dekat footer/bottom, pastikan last section aktif
       const nearBottom = window.innerHeight + (window.scrollY || document.documentElement.scrollTop) >= document.documentElement.scrollHeight - 4
       if (nearBottom) current = '#contact'
