@@ -110,10 +110,23 @@ export default function Navbar() {
                   ref={navRef}
                   className={`relative flex items-center gap-4 md:gap-6 ${
                     elevated
-                      ? 'px-4 py-1.5 rounded-full border border-white/10 bg-[#10131a]/80 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)]'
+                      ? 'px-4 py-1.5 rounded-full border border-white/15 bg-[#0B0F17]/70 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-md'
                       : 'px-0'
                   }`}
                 >
+                  {elevated && (
+                    <motion.div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-full"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      style={{
+                        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.22), 0 8px 30px rgba(0,0,0,0.35)'
+                      }}
+                    />
+                  )}
                   {links.map((l) => (
                     <a
                       key={l.href}
