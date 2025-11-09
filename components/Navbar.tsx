@@ -38,18 +38,16 @@ export default function Navbar() {
   const computeActive = useCallback(() => {
     const ids = ['home', 'about', 'projects', 'education', 'contact']
     const offset = getOffset()
-
-    const entries = ids.map((id) => {
-      const el = document.getElementById(id)
-      const top = el ? el.getBoundingClientRect().top : Infinity
-      return { id, top }
-    })
+    const scrollY = window.scrollY || document.documentElement.scrollTop
+    const scrollPos = scrollY + offset
 
     let current: string | null = null
     let smallestPositive: { id: string; delta: number } | null = null
-    for (const { id, top } of entries) {
-      if (top === Infinity) continue
-      const delta = top - offset
+    for (const id of ids) {
+      const el = document.getElementById(id)
+      if (!el) continue
+      const absoluteTop = el.getBoundingClientRect().top + scrollY
+      const delta = absoluteTop - scrollPos
       if (delta <= 0) current = `#${id}`
       else if (!smallestPositive || delta < smallestPositive.delta) smallestPositive = { id, delta }
     }
