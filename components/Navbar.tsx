@@ -130,7 +130,7 @@ export default function Navbar() {
           >
             {/* Brand left */}
             <div className={`flex items-center gap-2 ${elevated ? '' : 'pl-0'}`}>
-              <a href="#home" onClick={(e) => scrollToHash(e, '#home')} className={`font-extrabold ${compact ? 'text-lg' : 'text-xl'}`} style={{ color: '#5C6CFF' }}>Portfolio</a>
+              <a href="#home" className={`font-extrabold ${compact ? 'text-lg' : 'text-xl'}`} style={{ color: '#5C6CFF' }}>Portfolio</a>
             </div>
 
             {/* Links center */}
@@ -155,7 +155,6 @@ export default function Navbar() {
                   <a
                     key={l.href}
                     href={l.href}
-                    onClick={(e) => scrollToHash(e, l.href)}
                     onMouseEnter={() => setHoverKey(l.href)}
                     onMouseLeave={() => setHoverKey(null)}
                     className={`relative z-[1] text-[0.97rem] transition ${active === l.href ? 'text-white' : 'text-white/80 hover:text-white'}`}
@@ -207,7 +206,7 @@ export default function Navbar() {
               <a
                 key={l.href}
                 href={l.href}
-                onClick={(e) => scrollToHash(e, l.href)}
+                onClick={() => setIsOpen(false)}
                 className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:text-white transition"
               >
                 {l.label}
