@@ -55,17 +55,12 @@ export default function Navbar() {
     return current ?? '#home'
   }, [getOffset])
 
-  // RAF debounced scroll handler
-  const rafRef = useRef<number>(0)
+  // Scroll handler tanpa RAF debounce (lebih responsif dan kompatibel)
   const handleScroll = useCallback(() => {
-    if (rafRef.current) return
-    rafRef.current = requestAnimationFrame(() => {
-      const y = window.scrollY || document.documentElement.scrollTop
-      setElevated(y > 4)
-      setCompact(y > 80)
-      setActive(computeActive())
-      rafRef.current = 0
-    })
+    const y = window.scrollY || document.documentElement.scrollTop
+    setElevated(y > 4)
+    setCompact(y > 80)
+    setActive(computeActive())
   }, [computeActive])
 
   useEffect(() => {
@@ -81,7 +76,7 @@ export default function Navbar() {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', handleScroll)
       window.removeEventListener('hashchange', onHash)
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      // no RAF to cancel
     }
   }, [handleScroll])
 
