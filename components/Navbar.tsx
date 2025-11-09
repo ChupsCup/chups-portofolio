@@ -29,26 +29,41 @@ export default function Navbar() {
   const colorFor = (key: string) => COLOR_MAP[key] || '#5C6CFF'
 
   useEffect(() => {
+    const ids = ['home', 'about', 'projects', 'education', 'contact']
+    const getOffset = () => {
+      // approx height of navbar including padding
+      return Math.max(80, (document.querySelector('nav')?.getBoundingClientRect().height || 80) + 40)
+    }
+
+    let offset = getOffset()
+
     const onScroll = () => {
       const y = window.scrollY || document.documentElement.scrollTop
       setElevated(y > 4)
       setCompact(y > 80)
 
-      // scrollspy: update active link based on section anchors
       let current = '#home'
-      const offset = 140 // consider navbar height
-      for (const id of ['home', 'about', 'projects', 'education', 'contact']) {
+      for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
-        const rect = el.getBoundingClientRect()
-        if (rect.top - offset <= 0) current = `#${id}`
+        const top = el.getBoundingClientRect().top
+        if (top <= offset) current = `#${id}`
       }
       setActive(current)
-      // no manual indicator; shared layout underline will move automatically
     }
+
+    const onResize = () => {
+      offset = getOffset()
+      onScroll()
+    }
+
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+    }
   }, [])
 
   return (
@@ -82,17 +97,19 @@ export default function Navbar() {
             <div className="hidden md:flex justify-center">
               <nav
                 ref={navRef}
-                className={`relative flex items-center gap-4 md:gap-6 ${
+                className={`relative overflow-visible flex items-center gap-4 md:gap-6 ${
                   elevated
-                    ? 'px-4 py-1.5 rounded-full border border-white/10 bg-[#10131a]/80 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)]'
+                    ? 'px-5 py-2 rounded-full bg-[#0B0F17]/80 backdrop-blur-md shadow-[0_10px_40px_-16px_rgba(0,0,0,0.7)]'
                     : 'px-0'
                 }`}
               >
                 {elevated && (
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-white/30 border border-white/20 backdrop-blur-md"
-                    style={{ boxShadow: '0 8px 30px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.18)' }}
+                    className="pointer-events-none absolute inset-0 rounded-full z-0"
+                    style={{
+                      boxShadow: '0 0 0 2px rgba(255,255,255,0.9), 0 8px 30px rgba(0,0,0,0.45)'
+                    }}
                   />
                 )}
                 {links.map((l) => (
