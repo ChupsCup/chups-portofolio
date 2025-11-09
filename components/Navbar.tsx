@@ -72,12 +72,10 @@ export default function Navbar() {
       setActive(computeActive())
     }
 
-    // set from hash immediately if present
-    const hash = typeof window !== 'undefined' ? window.location.hash : ''
-    if (hash && ids.includes(hash.slice(1))) {
-      setActive(hash)
-    } else {
-      onScroll()
+    // Hitung posisi aktif segera dan pada frame berikutnya (setelah browser lompat ke hash)
+    onScroll()
+    if (typeof window !== 'undefined') {
+      requestAnimationFrame(() => onScroll())
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
