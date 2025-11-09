@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, LayoutGroup } from 'framer-motion'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -61,14 +61,14 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         {/* Matte bar */}
         <motion.div
-          className={`relative`}
+          className={"relative"}
           animate={{
-            boxShadow: '0 0 0 rgba(0,0,0,0)',
-            backgroundColor: 'rgba(0,0,0,0)',
-            borderColor: 'rgba(0,0,0,0)'
+            boxShadow: elevated ? '0 10px 40px rgba(0,0,0,0.25)' : '0 0 0 rgba(0,0,0,0)',
+            backgroundColor: elevated ? 'rgba(16,19,26,0.6)' : 'rgba(0,0,0,0)',
+            borderColor: elevated ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0)'
           }}
           transition={{ type: 'spring', stiffness: 220, damping: 24 }}
-          style={{ borderWidth: 0, borderStyle: 'none' }}
+          style={{ borderWidth: elevated ? 1 : 0, borderStyle: 'solid' }}
         >
           {/* background sederhana tanpa vignette/pola untuk hindari banding */}
 
@@ -80,36 +80,38 @@ export default function Navbar() {
 
             {/* Links center */}
             <div className="hidden md:flex justify-center">
-              <nav
-                ref={navRef}
-                className={`relative flex items-center gap-4 md:gap-6 ${
-                  elevated
-                    ? 'px-4 py-1.5 rounded-full border border-white/10 bg-[#10131a]/80 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)]'
-                    : 'px-0'
-                }`}
-              >
-                {links.map((l) => (
-                  <a
-                    key={l.href}
-                    href={l.href}
-                    onMouseEnter={() => setHoverKey(l.href)}
-                    onMouseLeave={() => setHoverKey(null)}
-                    className={`relative text-[0.97rem] transition ${active === l.href ? 'text-white' : 'text-white/80 hover:text-white'}`}
-                  >
-                    <span className="nav-text relative inline-block pb-[2px]">
-                      {l.label}
-                      {(hoverKey === l.href || (hoverKey == null && active === l.href)) && (
-                        <motion.span
-                          layoutId="nav-underline"
-                          className="pointer-events-none absolute left-0 -bottom-0.5 h-[2px] w-full rounded z-[1]"
-                          style={{ background: colorFor(hoverKey ?? active) }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        />
-                      )}
-                    </span>
-                  </a>
-                ))}
-              </nav>
+              <LayoutGroup id="navbar">
+                <nav
+                  ref={navRef}
+                  className={`relative flex items-center gap-4 md:gap-6 ${
+                    elevated
+                      ? 'px-4 py-1.5 rounded-full border border-white/10 bg-[#10131a]/80 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)]'
+                      : 'px-0'
+                  }`}
+                >
+                  {links.map((l) => (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      onMouseEnter={() => setHoverKey(l.href)}
+                      onMouseLeave={() => setHoverKey(null)}
+                      className={`relative text-[0.97rem] transition ${active === l.href ? 'text-white' : 'text-white/80 hover:text-white'}`}
+                    >
+                      <span className="nav-text relative inline-block pb-[2px]">
+                        {l.label}
+                        {(hoverKey === l.href || (hoverKey == null && active === l.href)) && (
+                          <motion.span
+                            layoutId="nav-underline"
+                            className="pointer-events-none absolute left-0 -bottom-0.5 h-[2px] w-full rounded z-[1]"
+                            style={{ background: colorFor(hoverKey ?? active) }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                          />
+                        )}
+                      </span>
+                    </a>
+                  ))}
+                </nav>
+              </LayoutGroup>
             </div>
 
             {/* Right spacer (keeps center alignment) */}
