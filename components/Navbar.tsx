@@ -29,26 +29,51 @@ export default function Navbar() {
   const colorFor = (key: string) => COLOR_MAP[key] || '#5C6CFF'
 
   useEffect(() => {
-    const onScroll = () => {
+    const ids = ['home', 'about', 'projects', 'education', 'contact']
+
+    const onScrollHeader = () => {
       const y = window.scrollY || document.documentElement.scrollTop
       setElevated(y > 4)
       setCompact(y > 80)
-
-      // scrollspy: update active link based on section anchors
-      let current = '#home'
-      const offset = 140 // consider navbar height
-      for (const id of ['home', 'about', 'projects', 'education', 'contact']) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const rect = el.getBoundingClientRect()
-        if (rect.top - offset <= 0) current = `#${id}`
-      }
-      setActive(current)
-      // no manual indicator; shared layout underline will move automatically
     }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    onScrollHeader()
+    window.addEventListener('scroll', onScrollHeader, { passive: true })
+
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el)
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // pick the entry most visible around viewport center
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => (b.intersectionRatio - a.intersectionRatio))
+        if (visible.length > 0) {
+          const id = visible[0].target.id
+          setActive(`#${id}`)
+        } else {
+          // fallback: find the section whose top is just above viewport
+          let current = '#home'
+          for (const el of sections) {
+            if (el.getBoundingClientRect().top <= 120) current = `#${el.id}`
+          }
+          setActive(current)
+        }
+      },
+      {
+        root: null,
+        rootMargin: '-45% 0px -45% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
+    )
+
+    sections.forEach((el) => observer.observe(el))
+
+    return () => {
+      window.removeEventListener('scroll', onScrollHeader)
+      observer.disconnect()
+    }
   }, [])
 
   return (
