@@ -54,9 +54,6 @@ export default function Navbar() {
       else if (!smallestPositive || delta < smallestPositive.delta) smallestPositive = { id, delta }
     }
     if (!current && smallestPositive) current = `#${smallestPositive.id}`
-
-    const nearBottom = window.innerHeight + (window.scrollY || document.documentElement.scrollTop) >= document.documentElement.scrollHeight - 10
-    if (nearBottom) current = '#contact'
     return current ?? '#home'
   }, [getOffset])
 
