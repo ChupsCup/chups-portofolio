@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  width: 1280,
+  width: 'device-width',
   initialScale: 1,
 }
 
@@ -26,9 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=1280, initial-scale=1" />
-      </head>
+      <head />
       <body className={inter.className}>
         <InitialScrollGuard />
         <Cursor />
