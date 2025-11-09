@@ -39,13 +39,24 @@ export default function Navbar() {
     let offset = getOffset()
 
     const computeActive = () => {
+      // Cari section terakhir yang top-nya berada di atas atau sejajar dengan navbar (<= offset)
       let current = '#home'
-      const scrollPos = (window.scrollY || document.documentElement.scrollTop) + offset
+      const tops: Array<{ id: string; top: number }> = []
       for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
-        if (el.offsetTop <= scrollPos) current = `#${id}`
+        const top = el.getBoundingClientRect().top
+        tops.push({ id, top })
+        if (top <= offset + 1) current = `#${id}`
       }
+      // Jika belum ada yang <= offset (di atas), pilih yang paling dekat di bawah offset
+      if (current === '#home' && tops.every(t => t.top > offset + 1)) {
+        const next = tops.reduce((min, t) => (t.top < min.top ? t : min), tops[0])
+        current = `#${next.id}`
+      }
+      // Saat di dekat footer/bottom, pastikan last section aktif
+      const nearBottom = window.innerHeight + (window.scrollY || document.documentElement.scrollTop) >= document.documentElement.scrollHeight - 4
+      if (nearBottom) current = '#contact'
       return current
     }
 
