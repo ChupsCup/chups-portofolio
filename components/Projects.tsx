@@ -27,8 +27,12 @@ export default function Projects() {
       setProjects(data || [])
     } catch (error) {
       console.error('Error fetching projects:', error)
-      // Fallback to demo data if database is not set up
-      setProjects(demoProjects)
+      // Use demo data only during development to avoid prod divergence
+      if (process.env.NODE_ENV !== 'production') {
+        setProjects(demoProjects)
+      } else {
+        setProjects([])
+      }
     } finally {
       setLoading(false)
     }

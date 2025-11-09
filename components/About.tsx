@@ -84,13 +84,6 @@ export default function About() {
           return
         }
       } catch {}
-      try {
-        // 2) Fallback to DB if exists
-        const { data, error } = await supabase.from('about_info').select('*').order('created_at', { ascending: false }).limit(1)
-        if (!error && data && data.length > 0) {
-          setAbout(data[0] as unknown as AboutInfo)
-        }
-      } catch {}
     }
 
     fetchProfilePhoto()
