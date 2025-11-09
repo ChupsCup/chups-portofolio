@@ -31,43 +31,57 @@ export default function Navbar() {
   useEffect(() => {
     const ids = ['home', 'about', 'projects', 'education', 'contact']
     const getOffset = () => {
-      // approx height of navbar including padding
-      return Math.max(80, (document.querySelector('nav')?.getBoundingClientRect().height || 80) + 40)
+      const bar = document.querySelector('[data-navbar-root]') as HTMLElement | null
+      const h = bar?.getBoundingClientRect().height ?? 80
+      return Math.max(70, h + 16)
     }
 
     let offset = getOffset()
+
+    const computeActive = () => {
+      let current = '#home'
+      const scrollPos = (window.scrollY || document.documentElement.scrollTop) + offset
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        if (el.offsetTop <= scrollPos) current = `#${id}`
+      }
+      return current
+    }
 
     const onScroll = () => {
       const y = window.scrollY || document.documentElement.scrollTop
       setElevated(y > 4)
       setCompact(y > 80)
-
-      let current = '#home'
-      for (const id of ids) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const top = el.getBoundingClientRect().top
-        if (top <= offset) current = `#${id}`
-      }
-      setActive(current)
+      setActive(computeActive())
     }
 
     const onResize = () => {
       offset = getOffset()
+      setActive(computeActive())
+    }
+
+    // set from hash immediately if present
+    const hash = typeof window !== 'undefined' ? window.location.hash : ''
+    if (hash && ids.includes(hash.slice(1))) {
+      setActive(hash)
+    } else {
       onScroll()
     }
 
-    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
+    window.addEventListener('hashchange', onScroll)
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('hashchange', onScroll)
     }
   }, [])
 
   return (
     <motion.nav
+      data-navbar-root
       className="fixed inset-x-0 top-0 z-[60]"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
