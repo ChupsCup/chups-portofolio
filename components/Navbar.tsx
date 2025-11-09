@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 
 export default function Navbar() {
@@ -24,69 +24,83 @@ export default function Navbar() {
     '#about': '#F5A9E6',     // pink
     '#projects': '#E6E66B',  // yellow
     '#education': '#96E6A1', // mint
-    '#contact': '#5C6CFF',   // cobalt
+    '#contact': '#FF6B6B',   // updated distinct color
   }
   const colorFor = (key: string) => COLOR_MAP[key] || '#5C6CFF'
 
-  useEffect(() => {
+  // Hitung offset dari tinggi navbar sebenarnya
+  const getOffset = useCallback(() => {
+    const h = navRef.current?.getBoundingClientRect().height ?? (compact ? 48 : 64)
+    return Math.max(70, h + 24)
+  }, [compact])
+
+  // Deteksi section aktif (batch read)
+  const computeActive = useCallback(() => {
     const ids = ['home', 'about', 'projects', 'education', 'contact']
-    const getOffset = () => {
-      const bar = document.querySelector('[data-navbar-root]') as HTMLElement | null
-      const h = bar?.getBoundingClientRect().height ?? 80
-      return Math.max(70, h + 24)
+    const offset = getOffset()
+
+    const entries = ids.map((id) => {
+      const el = document.getElementById(id)
+      const top = el ? el.getBoundingClientRect().top : Infinity
+      return { id, top }
+    })
+
+    let current: string | null = null
+    let smallestPositive: { id: string; delta: number } | null = null
+    for (const { id, top } of entries) {
+      if (top === Infinity) continue
+      const delta = top - offset
+      if (delta <= 0) current = `#${id}`
+      else if (!smallestPositive || delta < smallestPositive.delta) smallestPositive = { id, delta }
     }
+    if (!current && smallestPositive) current = `#${smallestPositive.id}`
 
-    let offset = getOffset()
+    const nearBottom = window.innerHeight + (window.scrollY || document.documentElement.scrollTop) >= document.documentElement.scrollHeight - 10
+    if (nearBottom) current = '#contact'
+    return current ?? '#home'
+  }, [getOffset])
 
-    const computeActive = () => {
-      // 1) pilih section terakhir yang sudah melewati garis navbar (top<=offset)
-      let current: string | null = null
-      let smallestPositive: { id: string; delta: number } | null = null
-      for (const id of ids) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const top = el.getBoundingClientRect().top
-        const delta = top - offset
-        if (delta <= 0) current = `#${id}`
-        else {
-          if (!smallestPositive || delta < smallestPositive.delta) smallestPositive = { id, delta }
-        }
-      }
-      if (!current && smallestPositive) current = `#${smallestPositive.id}`
-      if (!current) current = '#home'
-      // Saat di dekat footer/bottom, pastikan last section aktif
-      const nearBottom = window.innerHeight + (window.scrollY || document.documentElement.scrollTop) >= document.documentElement.scrollHeight - 4
-      if (nearBottom) current = '#contact'
-      return current
-    }
-
-    const onScroll = () => {
+  // RAF debounced scroll handler
+  const rafRef = useRef<number>(0)
+  const handleScroll = useCallback(() => {
+    if (rafRef.current) return
+    rafRef.current = requestAnimationFrame(() => {
       const y = window.scrollY || document.documentElement.scrollTop
       setElevated(y > 4)
       setCompact(y > 80)
       setActive(computeActive())
-    }
+      rafRef.current = 0
+    })
+  }, [computeActive])
 
-    const onResize = () => {
-      offset = getOffset()
-      setActive(computeActive())
-    }
+  useEffect(() => {
+    // hitung saat mount dan frame berikutnya
+    handleScroll()
+    requestAnimationFrame(() => handleScroll())
 
-    // Hitung posisi aktif segera dan pada frame berikutnya (setelah browser lompat ke hash)
-    onScroll()
-    if (typeof window !== 'undefined') {
-      requestAnimationFrame(() => onScroll())
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onResize)
-    window.addEventListener('hashchange', onScroll)
+    const onHash = () => setTimeout(handleScroll, 50)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
+    window.addEventListener('hashchange', onHash)
     return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onResize)
-      window.removeEventListener('hashchange', onScroll)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+      window.removeEventListener('hashchange', onHash)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [])
+  }, [handleScroll])
+
+  // Smooth scroll untuk anchor
+  const scrollToHash = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    e.preventDefault()
+    const el = document.querySelector(hash) as HTMLElement | null
+    if (el) {
+      const y = el.getBoundingClientRect().top + (window.scrollY || document.documentElement.scrollTop) - getOffset() + 1
+      window.scrollTo({ top: y, behavior: 'smooth' })
+      window.history.pushState(null, '', hash)
+    }
+    setIsOpen(false)
+  }
 
   return (
     <motion.nav
@@ -110,7 +124,10 @@ export default function Navbar() {
         >
           {/* background sederhana tanpa vignette/pola untuk hindari banding */}
 
-          <div className={`grid grid-cols-3 items-center ${compact ? 'h-12' : 'h-16'} ${elevated ? 'px-3 sm:px-4' : 'px-0'}`}> 
+          <div
+            ref={navRef}
+            className={`grid grid-cols-3 items-center ${compact ? 'h-12' : 'h-16'} ${elevated ? 'px-3 sm:px-4' : 'px-0'}`}
+          >
             {/* Brand left */}
             <div className={`flex items-center gap-2 ${elevated ? '' : 'pl-0'}`}>
               <a href="#home" className={`font-extrabold ${compact ? 'text-lg' : 'text-xl'}`} style={{ color: '#5C6CFF' }}>Portfolio</a>
@@ -119,7 +136,6 @@ export default function Navbar() {
             {/* Links center */}
             <div className="hidden md:flex justify-center">
               <nav
-                ref={navRef}
                 className={`relative overflow-visible flex items-center gap-4 md:gap-6 ${
                   elevated
                     ? 'px-5 py-2 rounded-full bg-[#0B0F17]/80 backdrop-blur-md shadow-[0_10px_40px_-16px_rgba(0,0,0,0.7)]'
@@ -139,6 +155,7 @@ export default function Navbar() {
                   <a
                     key={l.href}
                     href={l.href}
+                    onClick={(e) => scrollToHash(e, l.href)}
                     onMouseEnter={() => setHoverKey(l.href)}
                     onMouseLeave={() => setHoverKey(null)}
                     className={`relative z-[1] text-[0.97rem] transition ${active === l.href ? 'text-white' : 'text-white/80 hover:text-white'}`}
