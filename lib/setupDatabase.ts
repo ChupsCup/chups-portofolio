@@ -38,7 +38,14 @@ export async function setupProfilePhotosTable() {
           `
 
           // Execute SQL via RPC if available, otherwise just log
-          const { error: sqlError } = await supabase.rpc('exec_sql', { sql: createTableSQL }).catch(() => ({ error: null }))
+          let sqlError: unknown = null
+          try {
+            const { error } = await supabase.rpc('exec_sql', { sql: createTableSQL })
+            sqlError = error
+          } catch (e) {
+            // If RPC function not available or throws, ignore and continue
+            sqlError = null
+          }
 
           if (sqlError) {
             console.log('Could not auto-create table via RPC. Please create manually.')
