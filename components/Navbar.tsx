@@ -106,7 +106,7 @@ export default function Navbar() {
     <motion.nav
       data-navbar-root
       className="fixed inset-x-0 top-0 z-[60]"
-      initial={{ y: -80 }}
+      initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring' as const, stiffness: 300, damping: 26 }}
     >
@@ -130,7 +130,7 @@ export default function Navbar() {
           >
             {/* Brand left */}
             <div className={`flex items-center gap-2 ${elevated ? '' : 'pl-0'}`}>
-              <a href="#home" className={`font-extrabold ${compact ? 'text-lg' : 'text-xl'}`} style={{ color: '#5C6CFF' }}>Portfolio</a>
+              <a href="#home" onClick={(e) => scrollToHash(e, '#home')} className={`font-extrabold ${compact ? 'text-lg' : 'text-xl'}`} style={{ color: '#5C6CFF' }}>Portfolio</a>
             </div>
 
             {/* Links center */}
@@ -203,9 +203,14 @@ export default function Navbar() {
       {isOpen && (
         <motion.div className="md:hidden" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-[rgba(10,10,10,0.95)] border-t border-white/5">
-            {['Home', 'About', 'Projects', 'Education', 'Contact'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:text-white transition" onClick={() => setIsOpen(false)}>
-                {item}
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={(e) => scrollToHash(e, l.href)}
+                className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:text-white transition"
+              >
+                {l.label}
               </a>
             ))}
           </div>
