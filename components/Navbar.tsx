@@ -39,16 +39,21 @@ export default function Navbar() {
     let offset = getOffset()
 
     const computeActive = () => {
-      // Pilih section yang TOP-nya paling dekat dengan garis offset navbar (terdekat secara absolut)
-      let best: { id: string; dist: number } | null = null
+      // 1) pilih section terakhir yang sudah melewati garis navbar (top<=offset)
+      let current: string | null = null
+      let smallestPositive: { id: string; delta: number } | null = null
       for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
         const top = el.getBoundingClientRect().top
-        const dist = Math.abs(top - offset)
-        if (!best || dist < best.dist) best = { id, dist }
+        const delta = top - offset
+        if (delta <= 0) current = `#${id}`
+        else {
+          if (!smallestPositive || delta < smallestPositive.delta) smallestPositive = { id, delta }
+        }
       }
-      let current = best ? `#${best.id}` : '#home'
+      if (!current && smallestPositive) current = `#${smallestPositive.id}`
+      if (!current) current = '#home'
       // Saat di dekat footer/bottom, pastikan last section aktif
       const nearBottom = window.innerHeight + (window.scrollY || document.documentElement.scrollTop) >= document.documentElement.scrollHeight - 4
       if (nearBottom) current = '#contact'
