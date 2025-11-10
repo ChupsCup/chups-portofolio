@@ -6,13 +6,26 @@ import { supabase, Experience } from '@/lib/supabase'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { pickAccentByKey } from '@/lib/accents'
+import { setupExperiencesTable } from '@/lib/setupDatabase'
+
+const HAS_SUPABASE = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 export default function ExperienceSection() {
   const [experiences, setExperiences] = useState<Experience[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchExperiences()
+    if (!HAS_SUPABASE) {
+      setExperiences([])
+      setLoading(false)
+      return
+    }
+    const timeoutId = setTimeout(() => {
+      setLoading(false)
+    }, 10000)
+    fetchExperiences().finally(() => clearTimeout(timeoutId))
   }, [])
 
   async function fetchExperiences() {
@@ -34,8 +47,24 @@ export default function ExperienceSection() {
           errorMsg.includes('schema cache')
         ) {
           console.log('experiences table not found - this is normal if not set up yet')
-          setExperiences([])
-          setLoading(false)
+          try {
+            const ok = await setupExperiencesTable()
+            if (ok) {
+              // small delay for schema cache to refresh then retry
+              await new Promise((r) => setTimeout(r, 1000))
+              const { data: retry } = await supabase
+                .from('experiences')
+                .select('*')
+                .order('start_date', { ascending: false })
+              setExperiences(retry || [])
+            } else {
+              setExperiences([])
+            }
+          } catch {
+            setExperiences([])
+          } finally {
+            setLoading(false)
+          }
           return
         }
         throw error
@@ -91,7 +120,7 @@ export default function ExperienceSection() {
 
   return (
     <ParallaxSection>
-      <section className="py-20 px-4 md:px-8 lg:px-16">
+      <section id="experience" className="py-20 px-4 md:px-8 lg:px-16">
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <motion.div
