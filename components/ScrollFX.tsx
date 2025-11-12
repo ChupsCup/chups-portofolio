@@ -4,15 +4,20 @@ import { useEffect } from 'react'
 
 export default function ScrollFX() {
   useEffect(() => {
-    const onScroll = () => {
-      const doc = document.documentElement
-      const max = doc.scrollHeight - window.innerHeight
-      const progress = max > 0 ? window.scrollY / max : 0
-      doc.style.setProperty('--scroll', progress.toString())
+    try {
+      if (typeof window === 'undefined' || typeof document === 'undefined') return
+      const onScroll = () => {
+        const doc = document.documentElement
+        const max = Math.max(0, doc.scrollHeight - window.innerHeight)
+        const progress = max > 0 ? (window.scrollY || window.pageYOffset || 0) / max : 0
+        doc.style.setProperty('--scroll', progress.toString())
+      }
+      onScroll()
+      window.addEventListener('scroll', onScroll, { passive: true })
+      return () => window.removeEventListener('scroll', onScroll)
+    } catch {
+      return
     }
-    onScroll()
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (

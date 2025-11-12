@@ -6,6 +6,7 @@ import Cursor from '@/components/Cursor'
 import ScrollFX from '@/components/ScrollFX'
 import BackgroundFX from '@/components/BackgroundFX'
 import InitialScrollGuard from '@/components/InitialScrollGuard'
+import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,11 +29,13 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body className={inter.className}>
-        <InitialScrollGuard />
-        <Cursor />
-        <BackgroundFX />
-        <ScrollFX />
-        {children}
+        <ClientErrorBoundary>
+          <InitialScrollGuard />
+          <Cursor />
+          <BackgroundFX />
+          <ScrollFX />
+          {children}
+        </ClientErrorBoundary>
       </body>
     </html>
   )
