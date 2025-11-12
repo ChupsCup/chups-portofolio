@@ -141,7 +141,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
           </motion.p>
         </motion.div>
 
-        <div className="relative overflow-x-hidden select-none" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
+        <div className="relative overflow-x-hidden select-none no-scrollbar" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-white/70">Slide untuk melihat sertifikat</span>
             <div className="flex gap-2">
@@ -150,7 +150,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
             </div>
           </div>
 
-          <ul ref={stripRef} className={`flex overflow-hidden gap-4 snap-x snap-mandatory pb-2 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 touch-pan-y`}>
+          <ul ref={stripRef} className={`flex overflow-hidden gap-4 snap-x snap-mandatory pb-2 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 touch-pan-y overscroll-x-contain`}>
             {(() => {
               const cert = data[(slide % data.length + data.length) % data.length]
               return (
