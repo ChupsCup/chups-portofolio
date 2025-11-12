@@ -9,12 +9,22 @@ export default function InitialScrollGuard() {
     ran.current = true
 
     const hash = window.location.hash
-    const isReload = performance.getEntriesByType('navigation')
-      .some((e) => (e as PerformanceNavigationTiming).type === 'reload')
+    // Safari/iOS hardening: guard performance APIs
+    const isReload = (() => {
+      try {
+        const getNav = (performance as any)?.getEntriesByType?.('navigation') as any[] | undefined
+        if (getNav && getNav.length > 0) {
+          const t = (getNav[0] as any)?.type
+          return t === 'reload'
+        }
+      } catch {}
+      return false
+    })()
 
     if (isReload && hash === '#education') {
       history.replaceState(null, '', window.location.pathname)
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+      // Use valid values only: 'auto' | 'smooth'
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
     }
   }, [])
   return null
