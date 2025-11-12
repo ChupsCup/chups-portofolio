@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Cursor from '@/components/Cursor'
 import ScrollFX from '@/components/ScrollFX'
 import BackgroundFX from '@/components/BackgroundFX'
+import InitialScrollGuard from '@/components/InitialScrollGuard'
 
 function detectMobile(): boolean {
   if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
@@ -33,6 +34,7 @@ export default function GlobalEffects() {
 
   return (
     <>
+      <InitialScrollGuard />
       <Cursor />
       <BackgroundFX />
       <ScrollFX />

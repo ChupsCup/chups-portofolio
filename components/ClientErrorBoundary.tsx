@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-type Props = { children: React.ReactNode }
+type Props = { children: React.ReactNode; fallback?: React.ReactNode }
 
 export default class ClientErrorBoundary extends React.Component<Props, { hasError: boolean }> {
   constructor(props: Props) {
@@ -21,11 +21,7 @@ export default class ClientErrorBoundary extends React.Component<Props, { hasErr
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div style={{ padding: '16px', color: 'white' }}>
-          <p>Terjadi kesalahan ringan di halaman. Coba muat ulang jika perlu.</p>
-        </div>
-      )
+      return this.props.fallback ?? null
     }
     return this.props.children
   }
