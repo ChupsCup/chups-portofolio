@@ -2,11 +2,9 @@ import type { Metadata } from 'next'
 import type { Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Cursor from '@/components/Cursor'
-import ScrollFX from '@/components/ScrollFX'
-import BackgroundFX from '@/components/BackgroundFX'
 import InitialScrollGuard from '@/components/InitialScrollGuard'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
+import GlobalEffects from '@/components/GlobalEffects'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,9 +29,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ClientErrorBoundary>
           <InitialScrollGuard />
-          <Cursor />
-          <BackgroundFX />
-          <ScrollFX />
+          <GlobalEffects />
           {children}
         </ClientErrorBoundary>
       </body>
