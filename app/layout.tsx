@@ -26,11 +26,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      <body className={inter.className}>
+      <body className={inter.className + ' overflow-x-hidden'}>
         <ClientErrorBoundary>
           <InitialScrollGuard />
           <GlobalEffects />
-          {children}
+          <div className="overflow-x-hidden">
+            {children}
+          </div>
         </ClientErrorBoundary>
       </body>
     </html>

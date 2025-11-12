@@ -138,7 +138,8 @@ const Skills: NextPage = () => {
   if (loading) {
     return (
       <section id="skills" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto p-4 md:p-8">
+
           <div className="animate-pulse">
             <div className="h-8 w-48 rounded mx-auto mb-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
             <div className="grid md:grid-cols-3 gap-8">
@@ -155,7 +156,8 @@ const Skills: NextPage = () => {
   return (
     <section id="skills" className="relative py-28">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto p-4 md:p-8">
+
         <motion.div
           className="text-center mb-16"
           variants={containerVariants}

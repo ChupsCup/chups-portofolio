@@ -106,8 +106,8 @@ export default function ExperienceSection() {
 
   if (loading) {
     return (
-      <section className="py-20 px-4 md:px-8 lg:px-16">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-white/70">Loading experiences...</p>
         </div>
       </section>
@@ -120,8 +120,8 @@ export default function ExperienceSection() {
 
   return (
     <ParallaxSection>
-      <section id="experience" className="py-20 px-4 md:px-8 lg:px-16">
-        <div className="max-w-4xl mx-auto">
+      <section id="experience" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Title */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}

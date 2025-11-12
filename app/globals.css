@@ -67,12 +67,23 @@ body {
 /* Layout scroll: cegah double scroll */
 html {
     height: 100%;
-    overflow: hidden;
+    overflow-y: hidden;
 }
 
 body {
     height: 100%;
-    overflow: auto;
+    overflow-y: auto;
+}
+
+/* Prevent horizontal scrolling on mobile */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Extra safety: clip horizontal overflow on common layout containers */
+main, header, footer, section, nav, .container, .mx-auto {
+    overflow-x: clip;
 }
 
 /* Catatan: gunakan utilitas .no-scrollbar hanya pada container tertentu (mis. slider) */

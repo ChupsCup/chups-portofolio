@@ -98,7 +98,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0" style={{
         background: 'radial-gradient(60rem 30rem at 50% 10%, rgba(92,108,255,0.08), transparent 60%)'
       }} />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full relative">
+      <div className="max-w-6xl mx-auto p-4 md:p-8 py-20 w-full relative">
         <div className="flex justify-center">
           {/* Center - Text Only */}
           <motion.div

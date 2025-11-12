@@ -71,8 +71,8 @@ export default function Projects() {
 
   if (loading) {
     return (
-  <section id="projects" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="projects" className="py-20">
+        <div className="max-w-6xl mx-auto p-4 md:p-8">
           <div className="text-center text-brown-mid dark:text-cream-200">Loading projects...</div>
         </div>
       </section>
@@ -81,7 +81,7 @@ export default function Projects() {
 
   return (
   <section id="projects" className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto p-4 md:p-8">
         <motion.div
           className="text-center mb-16"
           variants={containerVariants}
