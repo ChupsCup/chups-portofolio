@@ -6,41 +6,48 @@ export default function BackgroundFX() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current!
-    const ctx = canvas.getContext('2d', { alpha: true })!
-    let raf = 0
+    try {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d', { alpha: true })
+      if (!ctx) return
+      let raf = 0
 
-    const DPR = Math.min(2, window.devicePixelRatio || 1)
-    let w = 0, h = 0
-    const resize = () => {
-      w = canvas.clientWidth
-      h = canvas.clientHeight
-      canvas.width = Math.floor(w * DPR)
-      canvas.height = Math.floor(h * DPR)
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
-    }
-    resize()
-    const onResize = () => resize()
-    window.addEventListener('resize', onResize)
+      const DPR = Math.min(2, (typeof window !== 'undefined' ? window.devicePixelRatio : 1) || 1)
+      let w = 0, h = 0
+      const resize = () => {
+        w = canvas.clientWidth
+        h = canvas.clientHeight
+        canvas.width = Math.floor(w * DPR)
+        canvas.height = Math.floor(h * DPR)
+        ;(ctx as CanvasRenderingContext2D).setTransform(DPR, 0, 0, DPR, 0, 0)
+      }
+      resize()
+      const onResize = () => resize()
+      window.addEventListener('resize', onResize)
 
-    // Animated monochrome grain
-    const render = () => {
-      ctx.clearRect(0, 0, w, h)
-      const count = Math.floor((w * h) / 7000)
-      for (let i = 0; i < count; i++) {
-        const x = Math.random() * w
-        const y = Math.random() * h
-        const a = 0.03 + Math.random() * 0.04
-        ctx.fillStyle = `rgba(255,255,255,${a})`
-        ctx.fillRect(x, y, 1, 1)
+      // Animated monochrome grain
+      const render = () => {
+        ctx.clearRect(0, 0, w, h)
+        const count = Math.floor((w * h) / 7000)
+        for (let i = 0; i < count; i++) {
+          const x = Math.random() * w
+          const y = Math.random() * h
+          const a = 0.03 + Math.random() * 0.04
+          ctx.fillStyle = `rgba(255,255,255,${a})`
+          ctx.fillRect(x, y, 1, 1)
+        }
+        raf = requestAnimationFrame(render)
       }
       raf = requestAnimationFrame(render)
-    }
-    raf = requestAnimationFrame(render)
 
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', onResize)
+      return () => {
+        cancelAnimationFrame(raf)
+        window.removeEventListener('resize', onResize)
+      }
+    } catch {
+      // Fail silently if canvas API is not available
+      return
     }
   }, [])
 

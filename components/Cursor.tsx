@@ -7,49 +7,59 @@ export default function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const ring = ringRef.current
-    const dot = dotRef.current
-    if (!ring || !dot) return
+    try {
+      if (typeof window === 'undefined' || typeof document === 'undefined') return
+      // Skip on touch-only devices (avoid errors and unnecessary work)
+      if ('ontouchstart' in window || (navigator as any)?.maxTouchPoints > 0) return
 
-    let x = window.innerWidth / 2
-    let y = window.innerHeight / 2
-    let rx = x
-    let ry = y
+      const ring = ringRef.current
+      const dot = dotRef.current
+      if (!ring || !dot) return
 
-    const onMove = (e: MouseEvent) => {
-      x = e.clientX
-      y = e.clientY
-      dot.style.transform = `translate(${x - 4}px, ${y - 4}px)`
-    }
+      let x = window.innerWidth / 2
+      let y = window.innerHeight / 2
+      let rx = x
+      let ry = y
 
-    const lerp = (a: number, b: number, n: number) => a + (b - a) * n
-    let raf = 0
-    const frame = () => {
-      rx = lerp(rx, x, 0.15)
-      ry = lerp(ry, y, 0.15)
-      ring.style.left = `${rx}px`
-      ring.style.top = `${ry}px`
-      raf = requestAnimationFrame(frame)
-    }
+      const onMove = (e: MouseEvent) => {
+        x = e.clientX
+        y = e.clientY
+        dot.style.transform = `translate(${x - 4}px, ${y - 4}px)`
+      }
 
-    const enlarge = () => (ring.style.transform = 'translate(-50%,-50%) scale(1.4)')
-    const shrink = () => (ring.style.transform = 'translate(-50%,-50%) scale(1)')
+      const lerp = (a: number, b: number, n: number) => a + (b - a) * n
+      let raf = 0
+      const frame = () => {
+        rx = lerp(rx, x, 0.15)
+        ry = lerp(ry, y, 0.15)
+        ring.style.left = `${rx}px`
+        ring.style.top = `${ry}px`
+        raf = requestAnimationFrame(frame)
+      }
 
-    window.addEventListener('mousemove', onMove)
-    document.querySelectorAll('a, button, .magnetic').forEach((el) => {
-      el.addEventListener('mouseenter', enlarge)
-      el.addEventListener('mouseleave', shrink)
-    })
+      const enlarge = () => (ring.style.transform = 'translate(-50%,-50%) scale(1.4)')
+      const shrink = () => (ring.style.transform = 'translate(-50%,-50%) scale(1)')
 
-    frame()
-
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('mousemove', onMove)
-      document.querySelectorAll('a, button, .magnetic').forEach((el) => {
-        el.removeEventListener('mouseenter', enlarge)
-        el.removeEventListener('mouseleave', shrink)
+      window.addEventListener('mousemove', onMove)
+      const hoverables = document.querySelectorAll('a, button, .magnetic')
+      hoverables.forEach((el) => {
+        el.addEventListener('mouseenter', enlarge)
+        el.addEventListener('mouseleave', shrink)
       })
+
+      frame()
+
+      return () => {
+        cancelAnimationFrame(raf)
+        window.removeEventListener('mousemove', onMove)
+        hoverables.forEach((el) => {
+          el.removeEventListener('mouseenter', enlarge)
+          el.removeEventListener('mouseleave', shrink)
+        })
+      }
+    } catch {
+      // fail safely on unsupported environments
+      return
     }
   }, [])
 
