@@ -74,6 +74,15 @@ export default function AdminPage() {
     technologies: ''
   })
 
+  function selectTab(key: 'dashboard' | 'projects' | 'experience' | 'about' | 'education' | 'skills' | 'profile') {
+    if (key === 'about') {
+      setActiveTab('about')
+      fetchAbout()
+    } else {
+      setActiveTab(key)
+    }
+  }
+
   // Auth check via localStorage token & optional auto setup
   useEffect(() => {
     const ok = typeof window !== 'undefined' && localStorage.getItem('admin_auth') === 'true'
@@ -83,11 +92,6 @@ export default function AdminPage() {
       if (params.get('logout') === '1') {
         localStorage.removeItem('admin_auth')
       }
-
-  function selectTab(key: 'dashboard' | 'projects' | 'experience' | 'about' | 'education' | 'skills' | 'profile') {
-    if (key === 'about') { setActiveTab('about'); fetchAbout(); }
-    else { setActiveTab(key); }
-  }
     }
     if (ok) {
       setIsAuthenticated(true)
