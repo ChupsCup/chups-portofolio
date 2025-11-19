@@ -83,6 +83,11 @@ export default function AdminPage() {
       if (params.get('logout') === '1') {
         localStorage.removeItem('admin_auth')
       }
+
+  function selectTab(key: 'dashboard' | 'projects' | 'experience' | 'about' | 'education' | 'skills' | 'profile') {
+    if (key === 'about') { setActiveTab('about'); fetchAbout(); }
+    else { setActiveTab(key); }
+  }
     }
     if (ok) {
       setIsAuthenticated(true)
@@ -918,12 +923,15 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
             ].map((item) => (
               <button
                 key={item.key}
-                onClick={() => { if(item.key==='about'){ setActiveTab('about'); fetchAbout(); } else { setActiveTab(item.key as any) } }}
+                onClick={() => selectTab(item.key as any)}
+                onTouchStart={() => selectTab(item.key as any)}
                 className={`relative z-20 w-full px-3 py-2 md:px-4 md:py-3 rounded-full border transition flex items-center justify-center gap-2 text-sm md:text-[0.95rem] pointer-events-auto ${
                   activeTab === (item.key as any)
                     ? 'bg-accent text-white border-accent'
                     : 'border-white/10 text-cream-300/85 hover:bg-white/5'
                 }`}
+                role="button"
+                tabIndex={0}
               >
                 <span>{item.icon}</span><span>{item.label}</span>
               </button>

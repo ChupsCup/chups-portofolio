@@ -18,19 +18,24 @@ function detectMobile(): boolean {
 
 export default function GlobalEffects() {
   const [isMobile, setIsMobile] = useState(false)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     try {
+      const timer = window.setTimeout(() => setReady(true), 500)
       setIsMobile(detectMobile())
       const onResize = () => setIsMobile(detectMobile())
       window.addEventListener('resize', onResize)
-      return () => window.removeEventListener('resize', onResize)
+      return () => {
+        window.clearTimeout(timer)
+        window.removeEventListener('resize', onResize)
+      }
     } catch {
       setIsMobile(false)
     }
   }, [])
 
-  if (isMobile) return null
+  if (!ready || isMobile) return null
 
   return (
     <>

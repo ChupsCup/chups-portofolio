@@ -7,6 +7,12 @@ export default function BackgroundFX() {
 
   useEffect(() => {
     try {
+      // Hormati prefers-reduced-motion: kalau user minta animasi minim, jangan jalanin efek ini
+      if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+        const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+        if (mql.matches) return
+      }
+
       const canvas = canvasRef.current
       if (!canvas) return
       const ctx = canvas.getContext('2d', { alpha: true })
@@ -26,10 +32,11 @@ export default function BackgroundFX() {
       const onResize = () => resize()
       window.addEventListener('resize', onResize)
 
-      // Animated monochrome grain
+      // Animated monochrome grain (diringankan supaya tidak berat)
       const render = () => {
         ctx.clearRect(0, 0, w, h)
-        const count = Math.floor((w * h) / 7000)
+        // Lebih sedikit titik → draw lebih ringan, tapi tetap ada tekstur
+        const count = Math.min(220, Math.floor((w * h) / 30000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
           const y = Math.random() * h

@@ -49,7 +49,7 @@ function MagneticButton({ href, variant = 'filled', children }: { href: string; 
 export default function Hero() {
   const [particles, setParticles] = useState<{ x: number; y: number; size: number; duration: number; delay: number }[]>([])
   useEffect(() => {
-    const list = Array.from({ length: 40 }).map(() => ({
+    const list = Array.from({ length: 22 }).map(() => ({
       x: Math.random() * 100,
       y: Math.random() * 100,
       size: 2 + Math.random() * 4,
