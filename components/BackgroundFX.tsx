@@ -32,11 +32,11 @@ export default function BackgroundFX() {
       const onResize = () => resize()
       window.addEventListener('resize', onResize)
 
-      // Animated monochrome grain (diringankan supaya tidak berat)
+      // Animated monochrome grain (masih ringan, tapi cukup padat agar tidak terlihat terpotong)
       const render = () => {
         ctx.clearRect(0, 0, w, h)
-        // Lebih sedikit titik → draw lebih ringan, tapi tetap ada tekstur
-        const count = Math.min(220, Math.floor((w * h) / 30000))
+        // Density sedikit dinaikkan dari versi sebelumnya untuk menghindari artefak "blok" di area tertentu
+        const count = Math.min(320, Math.floor((w * h) / 24000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
           const y = Math.random() * h
