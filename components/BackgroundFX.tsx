@@ -62,8 +62,9 @@ export default function BackgroundFX() {
         backgroundImage:
           'radial-gradient(120rem 60rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)'
       }} />
+      {/* Soft left feather to remove visible cutoff on wide desktop */}
       <div className="pointer-events-none absolute inset-0" style={{
-        background: 'linear-gradient(90deg, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,0.16) 100%)'
+        backgroundImage: 'radial-gradient(50rem 100vh at -20% 50%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.12) 35%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0) 75%)'
       }} />
     </div>
   )
