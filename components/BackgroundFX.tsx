@@ -32,17 +32,18 @@ export default function BackgroundFX() {
       const onResize = () => resize()
       window.addEventListener('resize', onResize)
 
-      // Animated monochrome grain (masih ringan, tapi cukup padat agar tidak terlihat terpotong)
+      // Animated monochrome grain dengan kualitas lebih baik
       const render = () => {
         ctx.clearRect(0, 0, w, h)
-        // Density sedikit dinaikkan dari versi sebelumnya untuk menghindari artefak "blok" di area tertentu
-        const count = Math.min(320, Math.floor((w * h) / 24000))
+        // Meningkatkan kualitas dengan lebih banyak partikel yang lebih kecil
+        const count = Math.min(400, Math.floor((w * h) / 20000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
           const y = Math.random() * h
-          const a = 0.03 + Math.random() * 0.04
+          const a = 0.02 + Math.random() * 0.03 // Opacity yang lebih halus
+          const size = 0.8 + Math.random() * 0.8 // Ukuran partikel bervariasi
           ctx.fillStyle = `rgba(255,255,255,${a})`
-          ctx.fillRect(x, y, 1, 1)
+          ctx.fillRect(x, y, size, size)
         }
         raf = requestAnimationFrame(render)
       }
@@ -59,11 +60,14 @@ export default function BackgroundFX() {
   }, [])
 
   return (
-    <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden" style={{ background: 'linear-gradient(180deg, rgb(12,12,12), rgb(18,18,18))' }}>
-      <canvas ref={canvasRef} className="w-full h-full opacity-[.12]" />
+    <div aria-hidden className="fixed inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgb(12,12,12), rgb(18,18,18))' }}>
+      <canvas ref={canvasRef} className="w-full h-full opacity-[.15]" />
       <div className="pointer-events-none absolute inset-0" style={{
         backgroundImage:
-          'radial-gradient(80rem 40rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)'
+          'radial-gradient(120vw 80vh at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
       }} />
     </div>
   )
