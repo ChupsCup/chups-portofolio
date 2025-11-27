@@ -172,11 +172,7 @@ export default function About() {
   ]
 
   return (
-  <section id="about" className="relative py-20">
-      {/* Section background blend to avoid visible cutoff */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{
-        background: 'radial-gradient(110vw 90vh at 50% 0%, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.01) 40%, rgba(0,0,0,0.55) 100%)'
-      }} />
+  <section id="about" className="py-20">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
         <motion.div
           className="text-center mb-16"
