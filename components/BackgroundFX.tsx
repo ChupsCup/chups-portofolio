@@ -84,17 +84,15 @@ export default function BackgroundFX() {
   }, [])
 
   return (
-    <div className="fixed inset-0 -z-10 w-screen h-screen pointer-events-none">
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black" />
+    <div className="fixed inset-0 -z-10 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgb(12,12,12), rgb(18,18,18))' }}>
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 w-full h-full opacity-10"
-        style={{ mixBlendMode: 'overlay' }}
       />
       <div 
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%)',
+          background: 'radial-gradient(120vw 90vh at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.65) 100%)'
         }}
       />
     </div>
