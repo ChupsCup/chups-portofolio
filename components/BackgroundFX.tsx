@@ -60,7 +60,10 @@ export default function BackgroundFX() {
       <canvas ref={canvasRef} className="w-full h-full opacity-[.12]" />
       <div className="pointer-events-none absolute inset-0" style={{
         backgroundImage:
-          'radial-gradient(80rem 40rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)'
+          'radial-gradient(120rem 60rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)'
+      }} />
+      <div className="pointer-events-none absolute inset-0" style={{
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,0.16) 100%)'
       }} />
     </div>
   )
