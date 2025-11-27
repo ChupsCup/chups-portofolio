@@ -23,24 +23,23 @@ export default function BackgroundFX() {
       // Initialize canvas size and particles
       const init = () => {
         const DPR = Math.min(2, window.devicePixelRatio || 1)
-        const rect = canvas.getBoundingClientRect()
-        const w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-        const h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+        const w = window.innerWidth
+        const h = document.documentElement.scrollHeight // Gunakan tinggi dokumen penuh
         
-        // Set canvas size to full viewport with DPR
+        // Set canvas size to full document with DPR
         canvas.width = Math.floor(w * DPR)
         canvas.height = Math.floor(h * DPR)
-        canvas.style.width = '100vw'
-        canvas.style.height = '100vh'
+        canvas.style.width = `${w}px`
+        canvas.style.height = `${h}px`
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
         
-        // Create particles
-        const particleCount = Math.floor((w * h) / 15000) // Less particles for better performance
+        // Create particles - lebih sedikit partikel untuk performa lebih baik
+        const particleCount = Math.min(300, Math.floor((w * h) / 20000))
         particles = Array(particleCount).fill(0).map(() => ({
           x: Math.random() * w,
           y: Math.random() * h,
-          size: 1 + Math.random() * 0.5,
-          alpha: 0.01 + Math.random() * 0.02
+          size: 0.8 + Math.random() * 0.8, // Ukuran lebih kecil
+          alpha: 0.008 + Math.random() * 0.015 // Lebih transparan
         }))
         
         return { w, h }
@@ -85,16 +84,17 @@ export default function BackgroundFX() {
   }, [])
 
   return (
-    <div className="fixed inset-0 -z-10 w-screen h-screen overflow-hidden">
+    <div className="fixed inset-0 -z-10 w-screen h-screen pointer-events-none">
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black" />
       <canvas 
         ref={canvasRef} 
-        className="absolute top-0 left-0 w-full h-full opacity-10" 
+        className="absolute inset-0 w-full h-full opacity-10"
+        style={{ mixBlendMode: 'overlay' }}
       />
       <div 
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.5) 100%)',
-          pointerEvents: 'none'
+          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%)',
         }}
       />
     </div>
