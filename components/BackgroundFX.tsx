@@ -64,7 +64,11 @@ export default function BackgroundFX() {
       }} />
       {/* Soft left feather to remove visible cutoff on wide desktop */}
       <div className="pointer-events-none absolute inset-0" style={{
-        backgroundImage: 'radial-gradient(50rem 100vh at -20% 50%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.12) 35%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0) 75%)'
+        backgroundImage: 'radial-gradient(70rem 120vh at -40% 50%, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.14) 38%, rgba(0,0,0,0.06) 60%, rgba(0,0,0,0) 80%)'
+      }} />
+      {/* Extra micro fade only on the extreme left pixels (desktop) */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-[14vw] hidden md:block" style={{
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 35%, rgba(0,0,0,0) 100%)'
       }} />
     </div>
   )
