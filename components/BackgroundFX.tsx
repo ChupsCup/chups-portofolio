@@ -32,18 +32,20 @@ export default function BackgroundFX() {
       const onResize = () => resize()
       window.addEventListener('resize', onResize)
 
-      // Animated monochrome grain dengan kualitas lebih baik
+      // Efek grain yang lebih halus dan natural
       const render = () => {
         ctx.clearRect(0, 0, w, h)
-        // Meningkatkan kualitas dengan lebih banyak partikel yang lebih kecil
-        const count = Math.min(400, Math.floor((w * h) / 20000))
+        // Jumlah partikel disesuaikan dengan ukuran layar, tapi tidak terlalu banyak
+        const count = Math.min(300, Math.floor((w * h) / 30000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
           const y = Math.random() * h
-          const a = 0.02 + Math.random() * 0.03 // Opacity yang lebih halus
-          const size = 0.8 + Math.random() * 0.8 // Ukuran partikel bervariasi
+          // Opacity yang sangat halus
+          const a = 0.01 + Math.random() * 0.02
+          // Ukuran partikel lebih kecil dan konsisten
+          const size = 1.2
           ctx.fillStyle = `rgba(255,255,255,${a})`
-          ctx.fillRect(x, y, size, size)
+          ctx.fillRect(Math.floor(x), Math.floor(y), size, size)
         }
         raf = requestAnimationFrame(render)
       }
@@ -61,10 +63,10 @@ export default function BackgroundFX() {
 
   return (
     <div aria-hidden className="fixed inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgb(12,12,12), rgb(18,18,18))' }}>
-      <canvas ref={canvasRef} className="w-full h-full opacity-[.15]" />
+      <canvas ref={canvasRef} className="w-full h-full opacity-[.08]" />
       <div className="pointer-events-none absolute inset-0" style={{
         backgroundImage:
-          'radial-gradient(120vw 80vh at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)',
+          'radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.5) 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
