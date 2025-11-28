@@ -202,19 +202,24 @@ export default function About() {
             transition={{ type: 'spring', stiffness: 160, damping: 18 }}
           >
             <motion.div
-              className="absolute w-80 h-80 md:w-[25rem] md:h-[25rem] rounded-full pointer-events-none"
+              className="absolute w-[22rem] h-[22rem] md:w-[27rem] md:h-[27rem] rounded-full pointer-events-none"
               style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(92,108,255,0.16), rgba(0,0,0,0) 75%)',
+                background: 'radial-gradient(circle at 50% 50%, rgba(92,108,255,0.28), rgba(0,0,0,0) 78%)',
                 mixBlendMode: 'screen',
+                filter: 'blur(0.5px)'
               }}
-              animate={{ scale: [1, 1.06, 1], opacity: [0.18, 0.28, 0.18] }}
-              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ scale: [1, 1.05, 1], opacity: [0.22, 0.32, 0.22] }}
+              transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
               className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
-              style={{ border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 0 24px rgba(0,0,0,0.35)' }}
+              style={{ border: '1px solid rgba(255,255,255,0.14)', boxShadow: '0 0 28px rgba(92,108,255,0.12), 0 0 24px rgba(0,0,0,0.35)' }}
               animate={{ rotate: 360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              transition={{ duration: 36, repeat: Infinity, ease: 'linear' }}
+            />
+            <div
+              className="absolute w-[19rem] h-[19rem] md:w-[24rem] md:h-[24rem] rounded-full pointer-events-none"
+              style={{ border: '1px dashed rgba(255,255,255,0.08)' }}
             />
             {/* Main Circular Photo Container - STATIC NO ANIMATION */}
             <div
@@ -236,6 +241,18 @@ export default function About() {
               )}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
             </div>
+            {/* Rotating conic light sweep (subtle, visible) */}
+            <motion.div
+              className="absolute -inset-[10px] rounded-full pointer-events-none"
+              style={{
+                background:
+                  'conic-gradient(from 0deg, rgba(92,108,255,0.35), rgba(92,108,255,0) 22%, transparent 60%, rgba(92,108,255,0.25) 70%, rgba(92,108,255,0) 100%)',
+                mixBlendMode: 'screen',
+                filter: 'blur(0.6px)'
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
+            />
             <div
               className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
               style={{
