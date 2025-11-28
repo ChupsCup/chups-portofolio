@@ -204,11 +204,17 @@ export default function About() {
             <motion.div
               className="absolute w-80 h-80 md:w-[25rem] md:h-[25rem] rounded-full pointer-events-none"
               style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(92,108,255,0.08), rgba(0,0,0,0) 70%)',
-                zIndex: -1,
+                background: 'radial-gradient(circle at 50% 50%, rgba(92,108,255,0.16), rgba(0,0,0,0) 75%)',
+                mixBlendMode: 'screen',
               }}
-              animate={{ scale: [1, 1.04, 1], opacity: [0.12, 0.2, 0.12] }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ scale: [1, 1.06, 1], opacity: [0.18, 0.28, 0.18] }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
+              style={{ border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 0 24px rgba(0,0,0,0.35)' }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
             />
             {/* Main Circular Photo Container - STATIC NO ANIMATION */}
             <div
@@ -228,6 +234,7 @@ export default function About() {
               {loading && (
                 <div className="w-full h-full bg-gray-700 animate-pulse" />
               )}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
             </div>
             <div
               className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
