@@ -54,13 +54,20 @@ export default function BackgroundFX() {
   return (
     <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden" style={{ background: 'linear-gradient(180deg, rgb(12,12,12), rgb(18,18,18))' }}>
       <canvas ref={canvasRef} className="w-full h-full opacity-[.12]" />
-      <div className="pointer-events-none absolute inset-0" style={{
-        backgroundImage:
-          'radial-gradient(100rem 50rem at 48% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.6) 100%)'
-      }} />
-      <div className="pointer-events-none absolute inset-0" style={{
-        background: 'linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 92%, rgba(0,0,0,0.06) 100%)'
-      }} />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: [
+            'radial-gradient(100rem 50rem at 48% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.6) 100%)',
+            'linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 92%, rgba(0,0,0,0.06) 100%)'
+          ].join(', '),
+          backgroundRepeat: 'no-repeat, no-repeat',
+          backgroundPosition: 'center top, left top',
+          backgroundSize: '100% 100%, 100% 100%',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+        }}
+      />
     </div>
   )
 }
