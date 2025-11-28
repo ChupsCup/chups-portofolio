@@ -45,8 +45,9 @@ export default function BackgroundFX() {
         const about = document.getElementById('about')
         if (about) {
           const r = about.getBoundingClientRect()
-          // Clear in CSS pixels (current transform uses DPR)
-          ctx.clearRect(r.left, r.top, r.width, r.height)
+          // Perbesar area clear agar benar-benar bersih dari grain di sekitar foto
+          const pad = 240 // px padding di semua sisi
+          ctx.clearRect(r.left - pad, r.top - pad, r.width + pad * 2, r.height + pad * 2)
         }
         raf = requestAnimationFrame(render)
       }
