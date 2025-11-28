@@ -53,6 +53,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const [slide, setSlide] = useState(0)
   const [paused, setPaused] = useState(false)
   const autoPlayMs = 4800
+  const enableAutoplay = false
   const stripRef = useRef<HTMLUListElement>(null)
   const progress = (items && items.length ? (slide + 1) / items.length : (slide + 1) / certificates.length) * 100
 
@@ -69,7 +70,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   }
 
   useEffect(() => {
-    if (!data.length || paused) return
+    if (!data.length || paused || !enableAutoplay) return
     const id = setInterval(() => {
       const strip = stripRef.current
       if (!strip) return
@@ -161,60 +162,34 @@ export default function Education({ certificates = defaultCertificates }: { cert
             </div>
           </div>
 
-          <ul ref={stripRef} className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-2 no-scrollbar">
-            {data.map((cert, idx) => (
-              <li key={cert.id} className="snap-start shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem]">
-                {(() => {
-                  const len = data.length
-                  const raw = Math.abs(idx - slide)
-                  const d = Math.min(raw, len - raw)
-                  const scale = d === 0 ? 1.04 : d === 1 ? 0.9 : 0.84
-                  const blur = d === 0 ? '0px' : d === 1 ? '1.2px' : '2px'
-                  const opacity = d === 0 ? 1 : d === 1 ? 0.78 : 0.55
-                  const z = d === 0 ? 3 : d === 1 ? 2 : 1
-                  return (
-                    <button
-                      onClick={() => setActive(idx)}
-                      className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
-                      style={{
-                        background: 'linear-gradient(140deg, rgba(92,108,255,0.35), rgba(255,255,255,0.06) 45%, rgba(92,108,255,0.2))',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        transform: `scale(${scale})`,
-                        filter: `blur(${blur})`,
-                        opacity,
-                        zIndex: z,
-                        boxShadow: d === 0 ? 'inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 30px rgba(0,0,0,0.35)' : undefined,
-                      }}
-                    >
-                      <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden" style={{ background: '#0A0A0A' }}>
-                        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
-                        {cert.imageUrl ? (
-                          <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
-                            <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
-                            <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
-                          </div>
-                        )}
-                        <div className="pointer-events-none absolute inset-0" style={{
-                          background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.06), transparent 60%)'
-                        }} />
-                        <div className="absolute inset-x-0 bottom-0 p-3">
-                          <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/55 backdrop-blur-sm px-3 py-2 ring-1 ring-white/10">
-                            <span className="text-[11px] text-white/85 whitespace-nowrap">{cert.issuer} • {cert.date}</span>
-                            <span className="text-white font-semibold text-sm line-clamp-1">{cert.title}</span>
-                          </div>
-                        </div>
-                        {d === 0 && (
-                          <div className="absolute inset-x-3 bottom-2 h-[3px] rounded-full" style={{ background: '#5C6CFF', boxShadow: '0 0 12px rgba(92,108,255,0.65)' }} />
-                        )}
-                      </div>
-                    </button>
-                  )
-                })()}
-              </li>
-            ))}
-          </ul>
+          <div className="flex justify-center">
+            {data[slide] && (
+              <button
+                onClick={() => setActive(slide)}
+                className="w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem] aspect-[16/9] rounded-3xl overflow-hidden relative transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 0 26px rgba(0,0,0,0.45)',
+                  transform: 'scale(1.08)'
+                }}
+              >
+                <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-1px)] overflow-hidden" style={{ background: '#080808' }}>
+                  <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
+                  {data[slide].imageUrl ? (
+                    <img src={data[slide].imageUrl} alt={data[slide].title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
+                      <span className="text-xs text-white/80">{data[slide].issuer} • {data[slide].date}</span>
+                      <span className="text-base font-semibold text-white line-clamp-2">{data[slide].title}</span>
+                    </div>
+                  )}
+                  <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.035), transparent 60%)' }} />
+                  <div className="absolute inset-x-4 bottom-2 h-[3px] rounded-full" style={{ background: '#5C6CFF', boxShadow: '0 0 12px rgba(92,108,255,0.6)' }} />
+                </div>
+              </button>
+            )}
+          </div>
 
           <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1">
             <button
@@ -247,25 +222,10 @@ export default function Education({ certificates = defaultCertificates }: { cert
             ))}
           </div>
 
-          {/* Progress timeline */}
-          <div className="mt-3">
-            <div className="h-[6px] w-full rounded-full" style={{ background: 'rgba(255,255,255,0.14)' }}>
-              <div className="h-full rounded-full" style={{ width: `${progress}%`, background: '#5C6CFF', boxShadow: '0 0 10px rgba(92,108,255,0.5)' }} />
-            </div>
-          </div>
+          {/* Timeline rail with nodes */}
+          {/* Simplified dots only (keep the existing dots above) */}
 
-          {/* Active caption */}
-          {data[slide] && (
-            <div className="mt-4 text-center">
-              <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,237,240,0.95)', backdropFilter: 'blur(6px)' }}>
-                <span className="opacity-90">{data[slide].issuer}</span>
-                <span className="opacity-50">•</span>
-                <span className="opacity-90">{data[slide].date}</span>
-                <span className="opacity-50">•</span>
-                <span className="font-semibold">{data[slide].title}</span>
-              </div>
-            </div>
-          )}
+          {/* No caption: keep it minimal */}
         </div>
 
         {active !== null && data[active] && (
