@@ -28,7 +28,11 @@ export default function BackgroundFX() {
 
       // Animated monochrome grain
       const render = () => {
-        ctx.clearRect(0, 0, w, h)
+        // Clear the full canvas in device pixels to avoid any unpainted strip
+        ctx.save()
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.restore()
         const count = Math.min(450, Math.floor((w * h) / 14000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
