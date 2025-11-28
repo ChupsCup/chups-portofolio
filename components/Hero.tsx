@@ -38,7 +38,7 @@ function MagneticButton({ href, variant = 'filled', children }: { href: string; 
         className={`absolute inset-0 ${variant === 'filled' ? 'bg-accent-dark dark:bg-accent-dark' : 'bg-accent/10'} pointer-events-none"`}
         initial={{ x: '-100%' }}
         whileHover={{ x: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        transition={{ type: 'spring', stiffness: 220, damping: 26 }}
         style={{ zIndex: 0 }}
       />
       <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'radial-gradient(120px 40px at var(--x,50%) var(--y,50%), rgba(255,255,255,0.35), transparent)' }} />

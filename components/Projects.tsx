@@ -56,16 +56,16 @@ export default function Projects() {
       scale: 1,
       transition: {
         type: 'spring' as const,
-        stiffness: 100,
-        damping: 15,
+        stiffness: 80,
+        damping: 18,
       },
     },
   }
 
   const projectHoverVariants = {
     hover: {
-      y: -12,
-      transition: { type: 'spring' as const, stiffness: 300, damping: 20 },
+      y: -10,
+      transition: { type: 'spring' as const, stiffness: 220, damping: 22 },
     },
   }
 
@@ -131,7 +131,7 @@ export default function Projects() {
                       alt={project.title}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.08 }}
-                      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
+                      transition={{ type: 'spring' as const, stiffness: 220, damping: 22 }}
                     />
                   ) : (
                     <svg className="w-20 h-20 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
