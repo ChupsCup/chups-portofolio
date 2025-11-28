@@ -29,9 +29,11 @@ export default function Cursor() {
 
       const lerp = (a: number, b: number, n: number) => a + (b - a) * n
       let raf = 0
+      let running = true
       const frame = () => {
-        rx = lerp(rx, x, 0.15)
-        ry = lerp(ry, y, 0.15)
+        if (!running) return
+        rx = lerp(rx, x, 0.12)
+        ry = lerp(ry, y, 0.12)
         ring.style.left = `${rx}px`
         ring.style.top = `${ry}px`
         raf = requestAnimationFrame(frame)
@@ -47,7 +49,16 @@ export default function Cursor() {
         el.addEventListener('mouseleave', shrink)
       })
 
+      const onVisibility = () => {
+        running = !document.hidden
+        if (running) {
+          cancelAnimationFrame(raf)
+          raf = requestAnimationFrame(frame)
+        }
+      }
+
       frame()
+      document.addEventListener('visibilitychange', onVisibility)
 
       return () => {
         cancelAnimationFrame(raf)
@@ -56,6 +67,7 @@ export default function Cursor() {
           el.removeEventListener('mouseenter', enlarge)
           el.removeEventListener('mouseleave', shrink)
         })
+        document.removeEventListener('visibilitychange', onVisibility)
       }
     } catch {
       // fail safely on unsupported environments
