@@ -41,6 +41,13 @@ export default function BackgroundFX() {
           ctx.fillStyle = `rgba(255,255,255,${a})`
           ctx.fillRect(x, y, 1, 1)
         }
+        // Remove grain over the About section area only
+        const about = document.getElementById('about')
+        if (about) {
+          const r = about.getBoundingClientRect()
+          // Clear in CSS pixels (current transform uses DPR)
+          ctx.clearRect(r.left, r.top, r.width, r.height)
+        }
         raf = requestAnimationFrame(render)
       }
       raf = requestAnimationFrame(render)
