@@ -233,7 +233,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
             className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
             onClick={() => setActive(null)}
           >
-            <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="relative w-[95vw] max-w-[1400px] h-[90vh]" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <div className="text-sm text-white/80">{data[active].issuer} • {data[active].date}</div>
@@ -254,7 +254,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
                   <button className="px-4 py-2 rounded bg-white/10 text-white" onClick={() => setActive(null)}>Close</button>
                 </div>
               </div>
-              <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-black">
+              <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
                 {data[active].imageUrl ? (
                   <img src={data[active].imageUrl} alt={data[active].title} className="w-full h-full object-contain" />
                 ) : (
