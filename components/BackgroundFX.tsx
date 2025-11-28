@@ -7,11 +7,6 @@ export default function BackgroundFX() {
 
   useEffect(() => {
     try {
-      if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-        const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
-        if (mql.matches) return
-      }
-
       const canvas = canvasRef.current
       if (!canvas) return
       const ctx = canvas.getContext('2d', { alpha: true })
@@ -31,10 +26,10 @@ export default function BackgroundFX() {
       const onResize = () => resize()
       window.addEventListener('resize', onResize)
 
-      // Animated monochrome grain (ringan, natural, transparan)
+      // Animated monochrome grain
       const render = () => {
         ctx.clearRect(0, 0, w, h)
-        const count = Math.min(320, Math.floor((w * h) / 24000))
+        const count = Math.min(450, Math.floor((w * h) / 14000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
           const y = Math.random() * h
@@ -51,6 +46,7 @@ export default function BackgroundFX() {
         window.removeEventListener('resize', onResize)
       }
     } catch {
+      // Fail silently if canvas API is not available
       return
     }
   }, [])
@@ -60,15 +56,10 @@ export default function BackgroundFX() {
       <canvas ref={canvasRef} className="w-full h-full opacity-[.12]" />
       <div className="pointer-events-none absolute inset-0" style={{
         backgroundImage:
-          'radial-gradient(120rem 60rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%)'
+          'radial-gradient(100rem 50rem at 48% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.6) 100%)'
       }} />
-      {/* Soft left feather to remove visible cutoff on wide desktop */}
       <div className="pointer-events-none absolute inset-0" style={{
-        backgroundImage: 'radial-gradient(70rem 120vh at -40% 50%, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.14) 38%, rgba(0,0,0,0.06) 60%, rgba(0,0,0,0) 80%)'
-      }} />
-      {/* Extra micro fade only on the extreme left pixels (desktop) */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-[14vw] hidden md:block" style={{
-        background: 'linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 35%, rgba(0,0,0,0) 100%)'
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 92%, rgba(0,0,0,0.06) 100%)'
       }} />
     </div>
   )
