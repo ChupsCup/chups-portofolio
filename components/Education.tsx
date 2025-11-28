@@ -134,9 +134,9 @@ export default function Education({ certificates = defaultCertificates }: { cert
         <div className="relative" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-white/70">Slide untuk melihat sertifikat</span>
-            <div className="flex gap-2">
-              <button aria-label="prev" className="px-3 py-1 rounded" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(235,237,240,0.95)' }} onClick={() => goTo(slide-1)}>{'<'}</button>
-              <button aria-label="next" className="px-3 py-1 rounded" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(235,237,240,0.95)' }} onClick={() => goTo(slide+1)}>{'>'}</button>
+            <div className="flex gap-2 opacity-80">
+              <button aria-label="prev" className="px-3 py-1 rounded border border-white/10" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,237,240,0.95)' }} onClick={() => goTo(slide-1)}>{'<'}</button>
+              <button aria-label="next" className="px-3 py-1 rounded border border-white/10" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,237,240,0.95)' }} onClick={() => goTo(slide+1)}>{'>'}</button>
             </div>
           </div>
 
@@ -145,20 +145,26 @@ export default function Education({ certificates = defaultCertificates }: { cert
               <li key={cert.id} className="snap-start shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem]">
                 <button
                   onClick={() => setActive(idx)}
-                  className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-shadow"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                  className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                  style={{
+                    background: 'linear-gradient(140deg, rgba(92,108,255,0.35), rgba(255,255,255,0.06) 45%, rgba(92,108,255,0.2))',
+                    border: '1px solid rgba(255,255,255,0.08)'
+                  }}
                 >
-                  <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden">
+                  <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden" style={{ background: '#0A0A0A' }}>
                     {cert.imageUrl ? (
                       <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.35)' }}>
+                      <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
                         <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
                         <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
                       </div>
                     )}
+                    <div className="pointer-events-none absolute inset-0" style={{
+                      background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.06), transparent 60%)'
+                    }} />
                     <div className="absolute inset-x-0 bottom-0 p-3">
-                      <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/60 backdrop-blur-md px-3 py-2 ring-1 ring-white/10">
+                      <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/55 backdrop-blur-sm px-3 py-2 ring-1 ring-white/10">
                         <span className="text-[11px] text-white/85 whitespace-nowrap">{cert.issuer} • {cert.date}</span>
                         <span className="text-white font-semibold text-sm line-clamp-1">{cert.title}</span>
                       </div>
@@ -168,6 +174,25 @@ export default function Education({ certificates = defaultCertificates }: { cert
               </li>
             ))}
           </ul>
+
+          <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1">
+            <button
+              aria-label="prev"
+              className="pointer-events-auto h-10 w-10 rounded-full grid place-items-center border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
+              style={{ background: 'rgba(15,15,15,0.8)', color: 'rgba(235,237,240,0.95)' }}
+              onClick={() => goTo(slide-1)}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button
+              aria-label="next"
+              className="pointer-events-auto h-10 w-10 rounded-full grid place-items-center border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
+              style={{ background: 'rgba(15,15,15,0.8)', color: 'rgba(235,237,240,0.95)' }}
+              onClick={() => goTo(slide+1)}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
 
           <div className="mt-4 flex items-center justify-center gap-2">
             {data.map((_, i)=> (
