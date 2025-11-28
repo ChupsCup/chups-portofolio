@@ -201,26 +201,26 @@ export default function About() {
             whileHover={{ scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 160, damping: 18 }}
           >
-            <motion.div
-              className="absolute w-[22rem] h-[22rem] md:w-[27rem] md:h-[27rem] rounded-full pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(92,108,255,0.28), rgba(0,0,0,0) 78%)',
-                mixBlendMode: 'screen',
-                filter: 'blur(0.5px)'
-              }}
-              animate={{ scale: [1, 1.05, 1], opacity: [0.22, 0.32, 0.22] }}
-              transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <motion.div
-              className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
-              style={{ border: '1px solid rgba(255,255,255,0.14)', boxShadow: '0 0 28px rgba(92,108,255,0.12), 0 0 24px rgba(0,0,0,0.35)' }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 36, repeat: Infinity, ease: 'linear' }}
-            />
+            {/* Bold monochrome ring (static) */}
             <div
-              className="absolute w-[19rem] h-[19rem] md:w-[24rem] md:h-[24rem] rounded-full pointer-events-none"
-              style={{ border: '1px dashed rgba(255,255,255,0.08)' }}
+              className="absolute w-[21rem] h-[21rem] md:w-[26rem] md:h-[26rem] rounded-full pointer-events-none"
+              style={{
+                border: '3px solid rgba(255,255,255,0.14)',
+                boxShadow: '0 0 22px rgba(0,0,0,0.45), inset 0 0 12px rgba(255,255,255,0.05)'
+              }}
             />
+            {/* Four tick markers rotating slowly (simple, gahar) */}
+            <motion.div
+              className="absolute w-[21rem] h-[21rem] md:w-[26rem] md:h-[26rem] rounded-full pointer-events-none"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+              style={{}}
+            >
+              <span className="absolute left-1/2 -translate-x-1/2 -top-3 w-8 h-[2px] bg-white/35 rounded" />
+              <span className="absolute top-1/2 -translate-y-1/2 -right-3 w-[2px] h-8 bg-white/30 rounded" />
+              <span className="absolute left-1/2 -translate-x-1/2 -bottom-3 w-8 h-[2px] bg-white/30 rounded" />
+              <span className="absolute top-1/2 -translate-y-1/2 -left-3 w-[2px] h-8 bg-white/35 rounded" />
+            </motion.div>
             {/* Main Circular Photo Container - STATIC NO ANIMATION */}
             <div
               className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden"
@@ -239,26 +239,11 @@ export default function About() {
               {loading && (
                 <div className="w-full h-full bg-gray-700 animate-pulse" />
               )}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/22" />
             </div>
-            {/* Rotating conic light sweep (subtle, visible) */}
-            <motion.div
-              className="absolute -inset-[10px] rounded-full pointer-events-none"
-              style={{
-                background:
-                  'conic-gradient(from 0deg, rgba(92,108,255,0.35), rgba(92,108,255,0) 22%, transparent 60%, rgba(92,108,255,0.25) 70%, rgba(92,108,255,0) 100%)',
-                mixBlendMode: 'screen',
-                filter: 'blur(0.6px)'
-              }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
-            />
             <div
               className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
-              style={{
-                border: '2px solid rgba(255,255,255,0.08)',
-                boxShadow: 'inset 0 0 20px rgba(255,255,255,0.05), 0 0 20px rgba(0,0,0,0.3)'
-              }}
+              style={{ border: '1px solid rgba(255,255,255,0.06)' }}
             />
           </motion.div>
 
