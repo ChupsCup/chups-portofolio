@@ -52,7 +52,6 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const [active, setActive] = useState<number | null>(null)
   const [slide, setSlide] = useState(0)
   const [paused, setPaused] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const autoPlayMs = 3500
   const stripRef = useRef<HTMLUListElement>(null)
 
@@ -69,7 +68,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   }
 
   useEffect(() => {
-    if (!data.length || paused || isMobile) return
+    if (!data.length || paused) return
     const id = setInterval(() => {
       const strip = stripRef.current
       if (!strip) return
@@ -80,7 +79,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
     }, autoPlayMs)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, paused, slide, isMobile])
+  }, [items, paused, slide])
 
   useEffect(() => {
     let mounted = true
@@ -109,15 +108,6 @@ export default function Education({ certificates = defaultCertificates }: { cert
     return () => { mounted = false }
   }, [])
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
-    const mql = window.matchMedia('(max-width: 767px)')
-    const set = () => setIsMobile(mql.matches)
-    set()
-    mql.addEventListener?.('change', set)
-    return () => mql.removeEventListener?.('change', set)
-  }, [])
-
   const data = items && items.length ? items : certificates
 
   return (
@@ -141,7 +131,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
           </motion.p>
         </motion.div>
 
-        <div className="relative overflow-x-hidden select-none no-scrollbar" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
+        <div className="relative" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-white/70">Slide untuk melihat sertifikat</span>
             <div className="flex gap-2">
@@ -150,36 +140,33 @@ export default function Education({ certificates = defaultCertificates }: { cert
             </div>
           </div>
 
-          <ul ref={stripRef} className={`flex overflow-hidden gap-4 snap-x snap-mandatory pb-2 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 touch-pan-y overscroll-x-contain`}>
-            {(() => {
-              const cert = data[(slide % data.length + data.length) % data.length]
-              return (
-                <li key={cert.id} className="snap-start shrink-0 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] md:w-[calc(100vw-4rem)] lg:w-[42rem] mx-auto">
-                  <button
-                    onClick={() => setActive((prev) => (prev === null ? (slide % data.length) : null))}
-                    className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-shadow"
-                    style={{ background: 'rgba(255,255,255,0.08)' }}
-                  >
-                    <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden">
-                      {cert.imageUrl ? (
-                        <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover pointer-events-none select-none" />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.35)' }}>
-                          <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
-                          <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
-                        </div>
-                      )}
-                      <div className="absolute inset-x-0 bottom-0 p-3">
-                        <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/60 backdrop-blur-md px-3 py-2 ring-1 ring-white/10">
-                          <span className="text-[11px] text-white/85 whitespace-nowrap">{cert.issuer} • {cert.date}</span>
-                          <span className="text-white font-semibold text-sm line-clamp-1">{cert.title}</span>
-                        </div>
+          <ul ref={stripRef} className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-2 no-scrollbar">
+            {data.map((cert, idx) => (
+              <li key={cert.id} className="snap-start shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem]">
+                <button
+                  onClick={() => setActive(idx)}
+                  className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-shadow"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                >
+                  <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden">
+                    {cert.imageUrl ? (
+                      <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.35)' }}>
+                        <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
+                        <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 p-3">
+                      <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/60 backdrop-blur-md px-3 py-2 ring-1 ring-white/10">
+                        <span className="text-[11px] text-white/85 whitespace-nowrap">{cert.issuer} • {cert.date}</span>
+                        <span className="text-white font-semibold text-sm line-clamp-1">{cert.title}</span>
                       </div>
                     </div>
-                  </button>
-                </li>
-              )
-            })()}
+                  </div>
+                </button>
+              </li>
+            ))}
           </ul>
 
           <div className="mt-4 flex items-center justify-center gap-2">

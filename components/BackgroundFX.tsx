@@ -33,21 +33,27 @@ export default function BackgroundFX() {
         ctx.setTransform(1, 0, 0, 1, 0, 0)
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.restore()
+        // Compute About rect (if present) to skip drawing inside it
+        let ax = -99999, ay = -99999, aw = 0, ah = 0
+        const about = document.getElementById('about')
+        if (about) {
+          const r = about.getBoundingClientRect()
+          const pad = 280
+          ax = r.left - pad
+          ay = r.top - pad
+          aw = r.width + pad * 2
+          ah = r.height + pad * 2
+        }
+
         const count = Math.min(450, Math.floor((w * h) / 14000))
         for (let i = 0; i < count; i++) {
           const x = Math.random() * w
           const y = Math.random() * h
+          // Skip grain inside about rect
+          if (x >= ax && x <= ax + aw && y >= ay && y <= ay + ah) continue
           const a = 0.03 + Math.random() * 0.04
           ctx.fillStyle = `rgba(255,255,255,${a})`
           ctx.fillRect(x, y, 1, 1)
-        }
-        // Remove grain over the About section area only
-        const about = document.getElementById('about')
-        if (about) {
-          const r = about.getBoundingClientRect()
-          // Perbesar area clear agar benar-benar bersih dari grain di sekitar foto
-          const pad = 240 // px padding di semua sisi
-          ctx.clearRect(r.left - pad, r.top - pad, r.width + pad * 2, r.height + pad * 2)
         }
         raf = requestAnimationFrame(render)
       }

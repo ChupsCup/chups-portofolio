@@ -81,11 +81,6 @@ html, body {
     overflow-x: hidden;
 }
 
-/* Extra safety: clip horizontal overflow on common layout containers */
-main, header, footer, section, nav, .container, .mx-auto {
-    overflow-x: clip;
-}
-
 /* Catatan: gunakan utilitas .no-scrollbar hanya pada container tertentu (mis. slider) */
 
 /* Text Selection */

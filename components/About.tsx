@@ -89,6 +89,16 @@ export default function About() {
     fetchProfilePhoto()
     fetchAbout()
   }, [])
+  
+  useEffect(() => {
+    try {
+      const anchors = document.querySelectorAll('a[href*="supabase.co/storage"][href*="/portfolio/cv/"]')
+      anchors.forEach((a) => {
+        const el = a as HTMLAnchorElement
+        el.href = '/api/cv'
+      })
+    } catch {}
+  }, [])
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

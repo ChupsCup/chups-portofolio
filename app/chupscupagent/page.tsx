@@ -74,15 +74,6 @@ export default function AdminPage() {
     technologies: ''
   })
 
-  function selectTab(key: 'dashboard' | 'projects' | 'experience' | 'about' | 'education' | 'skills' | 'profile') {
-    if (key === 'about') {
-      setActiveTab('about')
-      fetchAbout()
-    } else {
-      setActiveTab(key)
-    }
-  }
-
   // Auth check via localStorage token & optional auto setup
   useEffect(() => {
     const ok = typeof window !== 'undefined' && localStorage.getItem('admin_auth') === 'true'
@@ -891,10 +882,10 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
   }
 
   return (
-    <div className="relative min-h-screen text-cream-100 isolate">
+    <div className="relative min-h-screen text-cream-100">
       {/* Solid dark background (no glass/orbs) */}
-      <div className="fixed inset-0 -z-10 bg-[#0b1020] pointer-events-none" />
-      <div className="relative z-10 max-w-6xl mx-auto p-4 md:p-8 pointer-events-auto">
+      <div className="fixed inset-0 -z-10 bg-[#0b1020]" />
+      <div className="max-w-6xl mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6 md:mb-8">
           <h1 className="text-2xl md:text-4xl font-bold">{activeTab === 'dashboard' ? '📊 Admin Dashboard' : '🔐 Admin Panel'}</h1>
           <div className="flex flex-wrap gap-2">
@@ -914,8 +905,8 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
         )}
 
         {/* Quick Nav (mobile) */}
-        <div className="mb-6 md:mb-8 md:hidden relative z-20 pointer-events-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3 pointer-events-auto">
+        <div className="mb-6 md:mb-8 md:hidden">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
             {[
               { key: 'dashboard', label: 'Dashboard', icon: '🏠' },
               { key: 'projects', label: 'Projects', icon: '📁' },
@@ -927,15 +918,12 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
             ].map((item) => (
               <button
                 key={item.key}
-                onClick={() => selectTab(item.key as any)}
-                onTouchStart={() => selectTab(item.key as any)}
-                className={`relative z-20 w-full px-3 py-2 md:px-4 md:py-3 rounded-full border transition flex items-center justify-center gap-2 text-sm md:text-[0.95rem] pointer-events-auto ${
+                onClick={() => { if(item.key==='about'){ setActiveTab('about'); fetchAbout(); } else { setActiveTab(item.key as any) } }}
+                className={`w-full px-3 py-2 md:px-4 md:py-3 rounded-full border transition flex items-center justify-center gap-2 text-sm md:text-[0.95rem] ${
                   activeTab === (item.key as any)
                     ? 'bg-accent text-white border-accent'
                     : 'border-white/10 text-cream-300/85 hover:bg-white/5'
                 }`}
-                role="button"
-                tabIndex={0}
               >
                 <span>{item.icon}</span><span>{item.label}</span>
               </button>
