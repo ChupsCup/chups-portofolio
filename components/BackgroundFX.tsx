@@ -57,13 +57,10 @@ export default function BackgroundFX() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage: [
-            'radial-gradient(100rem 50rem at 48% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.6) 100%)',
-            'linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 92%, rgba(0,0,0,0.06) 100%)'
-          ].join(', '),
-          backgroundRepeat: 'no-repeat, no-repeat',
-          backgroundPosition: 'center top, left top',
-          backgroundSize: '100% 100%, 100% 100%',
+          backgroundImage: 'radial-gradient(120rem 60rem at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.6) 100%)',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center top',
+          backgroundSize: '100% 100%',
           transform: 'translateZ(0)',
           willChange: 'transform',
         }}
