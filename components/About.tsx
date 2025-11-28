@@ -199,47 +199,6 @@ export default function About() {
             className="relative flex justify-center items-center"
             variants={itemVariants}
           >
-            {/* SHADOW EFFECT - GAHAR */}
-            <motion.div
-              className="absolute w-80 h-80 md:w-[28rem] md:h-[28rem] rounded-full bg-black/30 blur-3xl"
-              animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.3, 0.6, 0.3]
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ bottom: '-30px', zIndex: -1 }}
-            />
-
-            {/* Outer Rotating Ring - GAHAR & FAST */}
-            <motion.div
-              className="absolute w-80 h-80 md:w-[28rem] md:h-[28rem] rounded-full border-4 border-transparent bg-gradient-to-r from-white/10 to-white/5 bg-clip-border shadow-2xl"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-              style={{
-                boxShadow: '0 0 40px rgba(0,0,0,0.4), inset 0 0 40px rgba(255,255,255,0.05)'
-              }}
-            />
-
-            {/* Inner Sharp Ring - GAHAR */}
-            <motion.div
-              className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full border-3 border-white/10"
-              animate={{
-                scale: [1, 1.2, 1],
-                boxShadow: ['0 0 20px rgba(0,0,0,0.4)', '0 0 40px rgba(0,0,0,0.6)', '0 0 20px rgba(0,0,0,0.4)']
-              }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-            />
-
-            {/* Dark Inner Glow - GAHAR */}
-            <motion.div
-              className="absolute w-80 h-80 md:w-[28rem] md:h-[28rem] rounded-full bg-gradient-to-br from-white/10 to-black/40 blur-2xl"
-              animate={{
-                scale: [1, 1.25, 1],
-                opacity: [0.4, 0.7, 0.4]
-              }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-            />
-
             {/* Main Circular Photo Container - STATIC NO ANIMATION */}
             <div
               className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden"
@@ -258,31 +217,7 @@ export default function About() {
               {loading && (
                 <div className="w-full h-full bg-gray-700 animate-pulse" />
               )}
-              {/* Dark Overlay - GAHAR */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
             </div>
-
-            {/* Floating Sharp Accent Orbs - GAHAR */}
-            <motion.div
-              className="absolute w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-white/10 to-black/30 blur-2xl"
-              animate={{
-                x: [0, 80, 0],
-                y: [0, -80, 0],
-                scale: [1, 1.4, 1]
-              }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ top: '-25%', right: '-15%' }}
-            />
-            <motion.div
-              className="absolute w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-tl from-black/40 to-white/10 blur-2xl"
-              animate={{
-                x: [0, -70, 0],
-                y: [0, 70, 0],
-                scale: [1, 1.35, 1]
-              }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
-              style={{ bottom: '-20%', left: '-10%' }}
-            />
           </motion.div>
 
           {/* Text Section - Right */}
