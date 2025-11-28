@@ -254,9 +254,16 @@ export default function Education({ certificates = defaultCertificates }: { cert
                   <button className="px-4 py-2 rounded bg-white/10 text-white" onClick={() => setActive(null)}>Close</button>
                 </div>
               </div>
-              <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
+              <div className="relative w-full h-full rounded-xl overflow-auto bg-black">
                 {data[active].imageUrl ? (
-                  <img src={data[active].imageUrl} alt={data[active].title} className="w-full h-full object-contain" />
+                  <div className="min-w-full min-h-full flex items-center justify-center p-2">
+                    <img
+                      src={data[active].imageUrl}
+                      alt={data[active].title}
+                      className="block"
+                      style={{ maxWidth: 'none', maxHeight: 'none' }}
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-white/80">
                     <div className="text-2xl font-bold mb-2">{data[active].title}</div>
