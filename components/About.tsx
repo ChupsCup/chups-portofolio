@@ -312,8 +312,8 @@ export default function About() {
 
               {/* CTA Buttons */}
               <motion.div variants={itemVariants} className="pt-6 flex flex-wrap gap-3">
-                <ButtonPill href={about?.cv_url || '/cv.pdf'} label="Download CV" variant="cobalt" />
-                <ButtonPill href="#contact" label="Hire Me Now" variant="mint" />
+                <ButtonPill href="/api/cv" label="Download CV" variant="cobalt" />
+                <ButtonPill href="#contact" label="Get In Touch" variant="mint" />
               </motion.div>
             </motion.div>
           </ParallaxSection>
