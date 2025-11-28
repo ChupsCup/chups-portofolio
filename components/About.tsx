@@ -198,7 +198,18 @@ export default function About() {
           <motion.div
             className="relative flex justify-center items-center"
             variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 160, damping: 18 }}
           >
+            <motion.div
+              className="absolute w-80 h-80 md:w-[25rem] md:h-[25rem] rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle at 50% 50%, rgba(92,108,255,0.08), rgba(0,0,0,0) 70%)',
+                zIndex: -1,
+              }}
+              animate={{ scale: [1, 1.04, 1], opacity: [0.12, 0.2, 0.12] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+            />
             {/* Main Circular Photo Container - STATIC NO ANIMATION */}
             <div
               className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden"
@@ -218,6 +229,13 @@ export default function About() {
                 <div className="w-full h-full bg-gray-700 animate-pulse" />
               )}
             </div>
+            <div
+              className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
+              style={{
+                border: '2px solid rgba(255,255,255,0.08)',
+                boxShadow: 'inset 0 0 20px rgba(255,255,255,0.05), 0 0 20px rgba(0,0,0,0.3)'
+              }}
+            />
           </motion.div>
 
           {/* Text Section - Right */}
