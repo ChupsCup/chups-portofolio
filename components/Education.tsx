@@ -54,6 +54,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const [paused, setPaused] = useState(false)
   const autoPlayMs = 3500
   const stripRef = useRef<HTMLUListElement>(null)
+  const progress = (items && items.length ? (slide + 1) / items.length : (slide + 1) / certificates.length) * 100
 
   const goTo = (i: number) => {
     const len = data.length
@@ -145,13 +146,28 @@ export default function Education({ certificates = defaultCertificates }: { cert
               <li key={cert.id} className="snap-start shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem]">
                 <button
                   onClick={() => setActive(idx)}
-                  className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                  onMouseMove={(e)=>{
+                    const t = e.currentTarget as HTMLButtonElement
+                    const r = t.getBoundingClientRect()
+                    const mx = (e.clientX - r.left) / r.width
+                    const my = (e.clientY - r.top) / r.height
+                    t.style.setProperty('--mx', mx.toString())
+                    t.style.setProperty('--my', my.toString())
+                  }}
+                  onMouseLeave={(e)=>{
+                    const t = e.currentTarget as HTMLButtonElement
+                    t.style.removeProperty('--mx')
+                    t.style.removeProperty('--my')
+                  }}
+                  className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] will-change-transform"
                   style={{
                     background: 'linear-gradient(140deg, rgba(92,108,255,0.35), rgba(255,255,255,0.06) 45%, rgba(92,108,255,0.2))',
-                    border: '1px solid rgba(255,255,255,0.08)'
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    transform: 'perspective(900px) rotateX(calc((var(--my,0.5)-0.5)*6deg)) rotateY(calc((0.5-var(--mx,0.5))*6deg))'
                   }}
                 >
                   <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden" style={{ background: '#0A0A0A' }}>
+                    <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
                     {cert.imageUrl ? (
                       <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
                     ) : (
@@ -160,6 +176,13 @@ export default function Education({ certificates = defaultCertificates }: { cert
                         <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
                       </div>
                     )}
+                    {/* Floating chips */}
+                    <div className="absolute top-3 left-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)', backdropFilter: 'blur(6px)' }}>
+                      <span className="opacity-90">{cert.issuer}</span>
+                    </div>
+                    <div className="absolute top-3 right-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium" style={{ background: 'rgba(12,12,12,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)', backdropFilter: 'blur(6px)' }}>
+                      <span className="opacity-90">{cert.date}</span>
+                    </div>
                     <div className="pointer-events-none absolute inset-0" style={{
                       background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.06), transparent 60%)'
                     }} />
@@ -204,6 +227,13 @@ export default function Education({ certificates = defaultCertificates }: { cert
                 style={ i===slide ? { background: '#5C6CFF', boxShadow: '0 0 10px rgba(92,108,255,0.6)' } : { background: 'rgba(255,255,255,0.3)' } }
               />
             ))}
+          </div>
+
+          {/* Progress timeline */}
+          <div className="mt-3">
+            <div className="h-[6px] w-full rounded-full" style={{ background: 'rgba(255,255,255,0.14)' }}>
+              <div className="h-full rounded-full" style={{ width: `${progress}%`, background: '#5C6CFF', boxShadow: '0 0 10px rgba(92,108,255,0.5)' }} />
+            </div>
           </div>
         </div>
 
