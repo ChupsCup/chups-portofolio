@@ -52,7 +52,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const [active, setActive] = useState<number | null>(null)
   const [slide, setSlide] = useState(0)
   const [paused, setPaused] = useState(false)
-  const autoPlayMs = 3500
+  const autoPlayMs = 4800
   const stripRef = useRef<HTMLUListElement>(null)
   const progress = (items && items.length ? (slide + 1) / items.length : (slide + 1) / certificates.length) * 100
 
@@ -81,6 +81,17 @@ export default function Education({ certificates = defaultCertificates }: { cert
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, paused, slide])
+
+  // Keyboard navigation (ArrowLeft/ArrowRight)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(slide - 1) }
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(slide + 1) }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slide])
 
   useEffect(() => {
     let mounted = true
@@ -132,7 +143,16 @@ export default function Education({ certificates = defaultCertificates }: { cert
           </motion.p>
         </motion.div>
 
-        <div className="relative" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
+        <div
+          className="relative"
+          onMouseEnter={()=>setPaused(true)}
+          onMouseLeave={()=>setPaused(false)}
+          onWheel={(e)=>{
+            const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+            if (Math.abs(dx) < 10) return
+            if (dx > 0) goTo(slide+1); else goTo(slide-1)
+          }}
+        >
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-white/70">Slide untuk melihat sertifikat</span>
             <div className="flex gap-2 opacity-80">
@@ -144,56 +164,54 @@ export default function Education({ certificates = defaultCertificates }: { cert
           <ul ref={stripRef} className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-2 no-scrollbar">
             {data.map((cert, idx) => (
               <li key={cert.id} className="snap-start shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem]">
-                <button
-                  onClick={() => setActive(idx)}
-                  onMouseMove={(e)=>{
-                    const t = e.currentTarget as HTMLButtonElement
-                    const r = t.getBoundingClientRect()
-                    const mx = (e.clientX - r.left) / r.width
-                    const my = (e.clientY - r.top) / r.height
-                    t.style.setProperty('--mx', mx.toString())
-                    t.style.setProperty('--my', my.toString())
-                  }}
-                  onMouseLeave={(e)=>{
-                    const t = e.currentTarget as HTMLButtonElement
-                    t.style.removeProperty('--mx')
-                    t.style.removeProperty('--my')
-                  }}
-                  className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] will-change-transform"
-                  style={{
-                    background: 'linear-gradient(140deg, rgba(92,108,255,0.35), rgba(255,255,255,0.06) 45%, rgba(92,108,255,0.2))',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    transform: 'perspective(900px) rotateX(calc((var(--my,0.5)-0.5)*6deg)) rotateY(calc((0.5-var(--mx,0.5))*6deg))'
-                  }}
-                >
-                  <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden" style={{ background: '#0A0A0A' }}>
-                    <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
-                    {cert.imageUrl ? (
-                      <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
-                        <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
-                        <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
+                {(() => {
+                  const len = data.length
+                  const raw = Math.abs(idx - slide)
+                  const d = Math.min(raw, len - raw)
+                  const scale = d === 0 ? 1.04 : d === 1 ? 0.9 : 0.84
+                  const blur = d === 0 ? '0px' : d === 1 ? '1.2px' : '2px'
+                  const opacity = d === 0 ? 1 : d === 1 ? 0.78 : 0.55
+                  const z = d === 0 ? 3 : d === 1 ? 2 : 1
+                  return (
+                    <button
+                      onClick={() => setActive(idx)}
+                      className="w-full aspect-[16/9] rounded-3xl overflow-hidden relative p-[2px] transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                      style={{
+                        background: 'linear-gradient(140deg, rgba(92,108,255,0.35), rgba(255,255,255,0.06) 45%, rgba(92,108,255,0.2))',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        transform: `scale(${scale})`,
+                        filter: `blur(${blur})`,
+                        opacity,
+                        zIndex: z,
+                        boxShadow: d === 0 ? 'inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 30px rgba(0,0,0,0.35)' : undefined,
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-2px)] overflow-hidden" style={{ background: '#0A0A0A' }}>
+                        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
+                        {cert.imageUrl ? (
+                          <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
+                            <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
+                            <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
+                          </div>
+                        )}
+                        <div className="pointer-events-none absolute inset-0" style={{
+                          background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.06), transparent 60%)'
+                        }} />
+                        <div className="absolute inset-x-0 bottom-0 p-3">
+                          <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/55 backdrop-blur-sm px-3 py-2 ring-1 ring-white/10">
+                            <span className="text-[11px] text-white/85 whitespace-nowrap">{cert.issuer} • {cert.date}</span>
+                            <span className="text-white font-semibold text-sm line-clamp-1">{cert.title}</span>
+                          </div>
+                        </div>
+                        {d === 0 && (
+                          <div className="absolute inset-x-3 bottom-2 h-[3px] rounded-full" style={{ background: '#5C6CFF', boxShadow: '0 0 12px rgba(92,108,255,0.65)' }} />
+                        )}
                       </div>
-                    )}
-                    {/* Floating chips */}
-                    <div className="absolute top-3 left-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)', backdropFilter: 'blur(6px)' }}>
-                      <span className="opacity-90">{cert.issuer}</span>
-                    </div>
-                    <div className="absolute top-3 right-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium" style={{ background: 'rgba(12,12,12,0.6)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)', backdropFilter: 'blur(6px)' }}>
-                      <span className="opacity-90">{cert.date}</span>
-                    </div>
-                    <div className="pointer-events-none absolute inset-0" style={{
-                      background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.06), transparent 60%)'
-                    }} />
-                    <div className="absolute inset-x-0 bottom-0 p-3">
-                      <div className="inline-flex max-w-full items-center gap-2 rounded-lg bg-black/55 backdrop-blur-sm px-3 py-2 ring-1 ring-white/10">
-                        <span className="text-[11px] text-white/85 whitespace-nowrap">{cert.issuer} • {cert.date}</span>
-                        <span className="text-white font-semibold text-sm line-clamp-1">{cert.title}</span>
-                      </div>
-                    </div>
-                  </div>
-                </button>
+                    </button>
+                  )
+                })()}
               </li>
             ))}
           </ul>
@@ -235,6 +253,19 @@ export default function Education({ certificates = defaultCertificates }: { cert
               <div className="h-full rounded-full" style={{ width: `${progress}%`, background: '#5C6CFF', boxShadow: '0 0 10px rgba(92,108,255,0.5)' }} />
             </div>
           </div>
+
+          {/* Active caption */}
+          {data[slide] && (
+            <div className="mt-4 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(235,237,240,0.95)', backdropFilter: 'blur(6px)' }}>
+                <span className="opacity-90">{data[slide].issuer}</span>
+                <span className="opacity-50">•</span>
+                <span className="opacity-90">{data[slide].date}</span>
+                <span className="opacity-50">•</span>
+                <span className="font-semibold">{data[slide].title}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {active !== null && data[active] && (
