@@ -251,6 +251,12 @@ export default function AdminPage() {
     cv_url: ''
   })
   const [aboutId, setAboutId] = useState<number | null>(null)
+  const [aboutContentForm, setAboutContentForm] = useState({
+    title: '',
+    para1: '',
+    para2: '',
+    points: '' as string,
+  })
   const [heroForm, setHeroForm] = useState({
     title_prefix: "Hi, I'm fahri yusuf",
     highlight: 'Developer',
@@ -277,6 +283,15 @@ export default function AdminPage() {
             status: json.status || '',
             cv_url: json.cv_url || ''
           })
+          if (json.about_content) {
+            const c = json.about_content
+            setAboutContentForm({
+              title: c.title || '',
+              para1: c.para1 || '',
+              para2: c.para2 || '',
+              points: Array.isArray(c.points) ? c.points.join('\n') : (c.points || ''),
+            })
+          }
           return
         }
       } catch {}
@@ -1448,13 +1463,57 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               />
             </div>
 
+            {/* About Content */}
+            <div className="md:col-span-2 border-t border-white/10 pt-4" />
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-sm text-gray-300">Judul About</label>
+              <input
+                type="text"
+                value={aboutContentForm.title}
+                onChange={(e) => setAboutContentForm({ ...aboutContentForm, title: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-700 rounded text-white"
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-sm text-gray-300">Paragraf 1 (About)</label>
+              <textarea
+                rows={3}
+                value={aboutContentForm.para1}
+                onChange={(e) => setAboutContentForm({ ...aboutContentForm, para1: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-700 rounded text-white"
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-sm text-gray-300">Paragraf 2 (About)</label>
+              <textarea
+                rows={3}
+                value={aboutContentForm.para2}
+                onChange={(e) => setAboutContentForm({ ...aboutContentForm, para2: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-700 rounded text-white"
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-sm text-gray-300">Poin About (satu per baris)</label>
+              <textarea
+                rows={4}
+                value={aboutContentForm.points}
+                onChange={(e) => setAboutContentForm({ ...aboutContentForm, points: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-700 rounded text-white"
+              />
+            </div>
           </div>
           <div className="flex gap-3 mt-6">
             <button
               onClick={async () => {
                 try {
-                  // Save About JSON only (no hero, hero saved in its own tab)
-                  const payload = { ...aboutForm }
+                  // Save About JSON (with about_content), hero saved in its own tab
+                  const about_content = {
+                    title: aboutContentForm.title,
+                    para1: aboutContentForm.para1,
+                    para2: aboutContentForm.para2,
+                    points: aboutContentForm.points.split('\n').map(s=>s.trim()).filter(Boolean),
+                  }
+                  const payload = { ...aboutForm, about_content }
                   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
                   const { error: uploadError } = await supabase.storage.from('portfolio').upload('about/about.json', blob, { upsert: true })
                   if (uploadError) throw uploadError
@@ -1481,7 +1540,7 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               Save
             </button>
             <button
-              onClick={() => { setAboutId(null); setAboutForm({ name: '', location: '', education: '', email: '', phone: '', status: '', cv_url: '' }); }}
+              onClick={() => { setAboutId(null); setAboutForm({ name: '', location: '', education: '', email: '', phone: '', status: '', cv_url: '' }); setAboutContentForm({ title: '', para1: '', para2: '', points: '' }); }}
               className="px-6 py-2 bg-gray-600 rounded hover:bg-gray-700"
             >
               Clear

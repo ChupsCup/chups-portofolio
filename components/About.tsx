@@ -13,18 +13,7 @@ export default function About() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [about, setAbout] = useState<AboutInfo | null>(null)
   const [loading, setLoading] = useState(true)
-  const [hero, setHero] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>({
-    title_prefix: "Hello! I'm a",
-    highlight: 'passionate developer',
-    para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
-    para2: "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
-    points: [
-      'Clean & Maintainable Code',
-      'Responsive Design',
-      'Performance Optimization',
-      'Modern Best Practices',
-    ],
-  })
+  
 
   useEffect(() => {
     const fetchProfilePhoto = async () => {
@@ -53,22 +42,11 @@ export default function About() {
 
     const fetchAbout = async () => {
       try {
-        // 1) Try from Storage JSON
+        // 1) Try from Storage JSON (about only)
         const { data, error } = await supabase.storage.from('portfolio').download('about/about.json')
         if (!error && data) {
           const text = await data.text()
           const json = JSON.parse(text)
-          // If file contains combined object { ...about fields, hero: {...} }
-          if (json.hero) {
-            const h = json.hero
-            setHero({
-              title_prefix: h.title_prefix || hero.title_prefix,
-              highlight: h.highlight || hero.highlight,
-              para1: h.para1 || hero.para1,
-              para2: h.para2 || hero.para2,
-              points: Array.isArray(h.points) && h.points.length ? h.points : hero.points,
-            })
-          }
           // Map known about fields if present
           setAbout({
             id: json.id ?? 0,
@@ -261,35 +239,19 @@ export default function About() {
           <ParallaxSection offset={30}>
             <motion.div className="space-y-6">
               <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
-                {hero.title_prefix}{' '}
-                <span
-                  style={{
-                    color: '#5C6CFF',
-                  }}
-                >
-                  {hero.highlight}
-                </span>
+                {about?.name || 'Nama Lengkap'}
               </motion.h3>
-              <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
-                {hero.para1}
-              </motion.p>
-              <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
-                {hero.para2}
-              </motion.p>
-              <motion.div variants={itemVariants} className="space-y-3 pt-4">
-                {hero.points.map((skill, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#5C6CFF' }}>
-                      <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-[rgb(var(--foreground-rgb))]">{skill}</span>
-                  </div>
-                ))}
-              </motion.div>
-
-              {/* Info Cards */}
+              { (about?.status || about?.location) && (
+                <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
+                  {(about?.status || '')}{about?.status && about?.location ? ' • ' : ''}{about?.location || ''}
+                </motion.p>
+              )}
+              { about?.education && (
+                <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
+                  Pendidikan: {about.education}
+                </motion.p>
+              )}
+            
               <motion.div
                 variants={itemVariants}
                 className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6"
