@@ -252,11 +252,11 @@ export default function AdminPage() {
   })
   const [aboutId, setAboutId] = useState<number | null>(null)
   const [heroForm, setHeroForm] = useState({
-    title_prefix: "Hello! I'm a",
-    highlight: 'passionate developer',
-    para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
-    para2: "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
-    points: 'Clean & Maintainable Code\nResponsive Design\nPerformance Optimization\nModern Best Practices'
+    title_prefix: "Hi, I'm fahri yusuf",
+    highlight: 'Developer',
+    para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+    para2: '',
+    points: 'Full Stack Developer\nFrontend Enthusiast\nUI Motion Addict'
   })
 
   const fetchAbout = async () => {
