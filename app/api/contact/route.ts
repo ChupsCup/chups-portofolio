@@ -16,7 +16,11 @@ export async function POST(req: Request) {
     }
 
     // Prefer Discord webhook if available
-    const discordWebhook = process.env.DISCORD_WEBHOOK_URL
+    let discordWebhook = process.env.DISCORD_WEBHOOK_URL || ''
+    // normalize old domain to new
+    if (discordWebhook.startsWith('https://discordapp.com/')) {
+      discordWebhook = discordWebhook.replace('https://discordapp.com/', 'https://discord.com/')
+    }
     let notified: 'discord' | 'email' | 'none' = 'none'
     if (discordWebhook) {
       try {
@@ -82,6 +86,9 @@ export async function POST(req: Request) {
       }
     }
 
+    if (notified === 'none') {
+      return NextResponse.json({ ok: false, notified }, { status: 500 })
+    }
     return NextResponse.json({ ok: true, notified })
   } catch (error) {
     console.error('Contact API error:', error)
