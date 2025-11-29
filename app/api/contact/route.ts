@@ -15,39 +15,74 @@ export async function POST(req: Request) {
       console.warn('Failed to insert contact message to Supabase (non-fatal):', e)
     }
 
-    // Send email via Resend (no extra dependency needed)
-    const apiKey = process.env.RESEND_API_KEY
-    let emailed = false
-    if (apiKey) {
+    // Prefer Discord webhook if available
+    const discordWebhook = process.env.DISCORD_WEBHOOK_URL
+    let notified: 'discord' | 'email' | 'none' = 'none'
+    if (discordWebhook) {
       try {
-        const res = await fetch('https://api.resend.com/emails', {
+        const res = await fetch(discordWebhook, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            from: 'Portfolio <onboarding@resend.dev>',
-            to: ['fahriysuf@gmail.com'],
-            subject: `New contact message from ${name}`,
-            reply_to: email,
-            text: `You have a new contact message.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+            content: `📬 New contact message`,
+            embeds: [
+              {
+                title: `From: ${name}`,
+                description: message,
+                color: 5814783,
+                fields: [
+                  { name: 'Email', value: email, inline: true },
+                ],
+                timestamp: new Date().toISOString(),
+              },
+            ],
           }),
         })
         if (!res.ok) {
           const t = await res.text()
-          console.warn('Resend error:', t)
+          console.warn('Discord webhook error:', t)
         } else {
-          emailed = true
+          notified = 'discord'
         }
       } catch (e) {
-        console.warn('Failed to send email via Resend (non-fatal):', e)
+        console.warn('Failed to send Discord webhook (non-fatal):', e)
       }
-    } else {
-      console.warn('RESEND_API_KEY not set; skipping email send.')
     }
 
-    return NextResponse.json({ ok: true, emailed })
+    // If no Discord, try Resend email
+    if (notified === 'none') {
+      const apiKey = process.env.RESEND_API_KEY
+      if (apiKey) {
+        try {
+          const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+              from: 'Portfolio <onboarding@resend.dev>',
+              to: ['fahriysuf@gmail.com'],
+              subject: `New contact message from ${name}`,
+              reply_to: email,
+              text: `You have a new contact message.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+            }),
+          })
+          if (!res.ok) {
+            const t = await res.text()
+            console.warn('Resend error:', t)
+          } else {
+            notified = 'email'
+          }
+        } catch (e) {
+          console.warn('Failed to send email via Resend (non-fatal):', e)
+        }
+      } else {
+        console.warn('No DISCORD_WEBHOOK_URL or RESEND_API_KEY set; skipping notifications.')
+      }
+    }
+
+    return NextResponse.json({ ok: true, notified })
   } catch (error) {
     console.error('Contact API error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
