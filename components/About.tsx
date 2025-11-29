@@ -13,8 +13,9 @@ export default function About() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [about, setAbout] = useState<AboutInfo | null>(null)
   const [loading, setLoading] = useState(true)
-  const [aboutContent, setAboutContent] = useState<{ title: string; para1: string; para2: string; points: string[] }>({
-    title: "Hello! I'm a passionate developer",
+  const [aboutContent, setAboutContent] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>({
+    title_prefix: "Hello! I'm a",
+    highlight: 'passionate developer',
     para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
     para2: "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
     points: [
@@ -72,11 +73,31 @@ export default function About() {
           } as AboutInfo)
           if (json.about_content) {
             const c = json.about_content
+            const pts = Array.isArray(c.points)
+              ? c.points
+              : (typeof c.points === 'string' && c.points.trim().length)
+                ? c.points.split(/\r?\n/).filter(Boolean)
+                : aboutContent.points
             setAboutContent({
-              title: c.title || aboutContent.title,
+              title_prefix: c.title_prefix || aboutContent.title_prefix,
+              highlight: c.highlight || aboutContent.highlight,
               para1: c.para1 || aboutContent.para1,
               para2: c.para2 || aboutContent.para2,
-              points: Array.isArray(c.points) && c.points.length ? c.points : aboutContent.points,
+              points: pts,
+            })
+          } else if (json.hero) {
+            const h = json.hero
+            const pts = Array.isArray(h.points)
+              ? h.points
+              : (typeof h.points === 'string' && h.points.trim().length)
+                ? h.points.split(/\r?\n/).filter(Boolean)
+                : aboutContent.points
+            setAboutContent({
+              title_prefix: h.title_prefix || aboutContent.title_prefix,
+              highlight: h.highlight || aboutContent.highlight,
+              para1: h.para1 || aboutContent.para1,
+              para2: h.para2 || aboutContent.para2,
+              points: pts,
             })
           }
           return
@@ -258,20 +279,11 @@ export default function About() {
           {/* Text Section - Right */}
           <ParallaxSection offset={30}>
             <motion.div className="space-y-6">
-              {
-                (() => {
-                  const words = aboutContent.title.trim().split(' ')
-                  const highlight = words.length >= 2 ? words.slice(-2).join(' ') : words.slice(-1).join(' ')
-                  const prefix = words.length >= 2 ? words.slice(0, -2).join(' ') : ''
-                  return (
-                    <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
-                      {prefix} {highlight && (
-                        <span style={{ color: '#5C6CFF' }}>{highlight}</span>
-                      )}
-                    </motion.h3>
-                  )
-                })()
-              }
+              <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
+                {aboutContent.title_prefix} {aboutContent.highlight && (
+                  <span style={{ color: '#5C6CFF' }}>{aboutContent.highlight}</span>
+                )}
+              </motion.h3>
               <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
                 {aboutContent.para1}
               </motion.p>

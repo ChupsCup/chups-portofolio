@@ -310,6 +310,24 @@ export default function AdminPage() {
     } catch {}
   }
 
+  // Load Hero content from Storage for Hero tab
+  const fetchHero = async () => {
+    try {
+      const { data: file, error: fileErr } = await supabase.storage.from('portfolio').download('hero/hero.json')
+      if (!fileErr && file) {
+        const text = await file.text()
+        const json = JSON.parse(text)
+        setHeroForm({
+          title_prefix: json.title_prefix || "Hi, I'm fahri yusuf",
+          highlight: json.highlight || 'Developer',
+          para1: json.para1 || 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+          para2: json.para2 || '',
+          points: Array.isArray(json.points) ? json.points.join('\n') : (json.points || 'Full Stack Developer\nFrontend Enthusiast\nUI Motion Addict'),
+        })
+      }
+    } catch {}
+  }
+
   const handleCvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
