@@ -17,12 +17,12 @@ export default function Contact() {
     setStatus('loading')
 
     try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert([formData])
-
-      if (error) throw error
-
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!res.ok) throw new Error(await res.text())
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
       setTimeout(() => setStatus('idle'), 5000)
