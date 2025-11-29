@@ -1479,12 +1479,21 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
 
             {/* About Content */}
             <div className="md:col-span-2 border-t border-white/10 pt-4" />
-            <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm text-gray-300">Judul About</label>
+            <div className="space-y-2 md:col-span-1">
+              <label className="block text-sm text-gray-300">Judul (prefix)</label>
               <input
                 type="text"
-                value={aboutContentForm.title}
-                onChange={(e) => setAboutContentForm({ ...aboutContentForm, title: e.target.value })}
+                value={aboutContentForm.title_prefix}
+                onChange={(e) => setAboutContentForm({ ...aboutContentForm, title_prefix: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-700 rounded text-white"
+              />
+            </div>
+            <div className="space-y-2 md:col-span-1">
+              <label className="block text-sm text-gray-300">Kata highlight</label>
+              <input
+                type="text"
+                value={aboutContentForm.highlight}
+                onChange={(e) => setAboutContentForm({ ...aboutContentForm, highlight: e.target.value })}
                 className="w-full px-4 py-2 bg-gray-700 rounded text-white"
               />
             </div>
