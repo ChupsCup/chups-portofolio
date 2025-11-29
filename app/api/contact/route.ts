@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+export const runtime = 'nodejs'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(req: Request) {
@@ -87,7 +88,7 @@ export async function POST(req: Request) {
     }
 
     if (notified === 'none') {
-      return NextResponse.json({ ok: false, notified }, { status: 500 })
+      return NextResponse.json({ ok: false, notified, hint: 'No Discord webhook or email sent. Check DISCORD_WEBHOOK_URL or RESEND_API_KEY and server logs.' }, { status: 500 })
     }
     return NextResponse.json({ ok: true, notified })
   } catch (error) {
