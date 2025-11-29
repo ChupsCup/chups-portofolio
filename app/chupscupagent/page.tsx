@@ -250,6 +250,7 @@ export default function AdminPage() {
     status: '',
     cv_url: '',
   })
+  const [aboutId, setAboutId] = useState<number | null>(null)
 
   const [aboutContentForm, setAboutContentForm] = useState({
     title_prefix: '',
@@ -1494,7 +1495,8 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
                 try {
                   // Save About JSON (with about_content), hero saved in its own tab
                   const about_content = {
-                    title: aboutContentForm.title,
+                    title_prefix: aboutContentForm.title_prefix,
+                    highlight: aboutContentForm.highlight,
                     para1: aboutContentForm.para1,
                     para2: aboutContentForm.para2,
                     points: aboutContentForm.points.split('\n').map(s=>s.trim()).filter(Boolean),
@@ -1526,7 +1528,7 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               Save
             </button>
             <button
-              onClick={() => { setAboutId(null); setAboutForm({ name: '', location: '', education: '', email: '', phone: '', status: '', cv_url: '' }); setAboutContentForm({ title: '', para1: '', para2: '', points: '' }); }}
+              onClick={() => { setAboutId(null); setAboutForm({ name: '', location: '', education: '', email: '', phone: '', status: '', cv_url: '' }); setAboutContentForm({ title_prefix: '', highlight: '', para1: '', para2: '', points: '' }); }}
               className="px-6 py-2 bg-gray-600 rounded hover:bg-gray-700"
             >
               Clear
