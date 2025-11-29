@@ -52,6 +52,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const [active, setActive] = useState<number | null>(null)
   const [slide, setSlide] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [fitView, setFitView] = useState(true)
   const autoPlayMs = 4800
   const enableAutoplay = false
   const stripRef = useRef<HTMLUListElement>(null)
@@ -155,72 +156,35 @@ export default function Education({ certificates = defaultCertificates }: { cert
           }}
         >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-white/70">Slide untuk melihat sertifikat</span>
-            <div className="flex gap-2 opacity-80">
-              <button aria-label="prev" className="px-3 py-1 rounded border border-white/10" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,237,240,0.95)' }} onClick={() => goTo(slide-1)}>{'<'}</button>
-              <button aria-label="next" className="px-3 py-1 rounded border border-white/10" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,237,240,0.95)' }} onClick={() => goTo(slide+1)}>{'>'}</button>
-            </div>
+            <span className="text-sm text-white/70">Klik kartu untuk melihat sertifikat</span>
+            <span className="text-xs text-white/50">Grid view</span>
           </div>
 
-          <div className="flex justify-center">
-            {data[slide] && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.map((cert, idx) => (
               <button
-                onClick={() => setActive(slide)}
-                className="w-[85vw] sm:w-[70vw] md:w-[60vw] lg:w-[42rem] aspect-[16/9] rounded-3xl overflow-hidden relative transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
-                style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 0 26px rgba(0,0,0,0.45)',
-                  transform: 'scale(1.08)'
-                }}
+                key={cert.id}
+                onClick={() => setActive(idx)}
+                className="group w-full aspect-[16/9] rounded-2xl overflow-hidden relative transition-all hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05)' }}
               >
-                <div className="absolute inset-0 rounded-[calc(theme(borderRadius.3xl)-1px)] overflow-hidden" style={{ background: '#080808' }}>
-                  <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
-                  {data[slide].imageUrl ? (
-                    <img src={data[slide].imageUrl} alt={data[slide].title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 rounded-[calc(theme(borderRadius.2xl)-1px)] overflow-hidden" style={{ background: '#080808' }}>
+                  {cert.imageUrl ? (
+                    <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
-                      <span className="text-xs text-white/80">{data[slide].issuer} • {data[slide].date}</span>
-                      <span className="text-base font-semibold text-white line-clamp-2">{data[slide].title}</span>
+                      <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
+                      <span className="text-base font-semibold text-white line-clamp-2">{cert.title}</span>
                     </div>
                   )}
-                  <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.035), transparent 60%)' }} />
-                  <div className="absolute inset-x-4 bottom-2 h-[3px] rounded-full" style={{ background: '#5C6CFF', boxShadow: '0 0 12px rgba(92,108,255,0.6)' }} />
+                  <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(90% 60% at 50% 0%, rgba(255,255,255,0.03), transparent 60%)' }} />
+                  <div className="absolute inset-x-3 bottom-2 h-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#5C6CFF', boxShadow: '0 0 8px rgba(92,108,255,0.5)' }} />
                 </div>
               </button>
-            )}
-          </div>
-
-          <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1">
-            <button
-              aria-label="prev"
-              className="pointer-events-auto h-10 w-10 rounded-full grid place-items-center border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
-              style={{ background: 'rgba(15,15,15,0.8)', color: 'rgba(235,237,240,0.95)' }}
-              onClick={() => goTo(slide-1)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button
-              aria-label="next"
-              className="pointer-events-auto h-10 w-10 rounded-full grid place-items-center border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
-              style={{ background: 'rgba(15,15,15,0.8)', color: 'rgba(235,237,240,0.95)' }}
-              onClick={() => goTo(slide+1)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-
-          <div className="mt-4 flex items-center justify-center gap-2">
-            {data.map((_, i)=> (
-              <button
-                key={i}
-                aria-label={`go to ${i+1}`}
-                onClick={()=> goTo(i)}
-                className={`h-2.5 rounded-full transition-all ${i===slide? 'w-7 scale-110' : 'w-2.5'}`}
-                style={ i===slide ? { background: '#5C6CFF', boxShadow: '0 0 10px rgba(92,108,255,0.6)' } : { background: 'rgba(255,255,255,0.3)' } }
-              />
             ))}
           </div>
+
+          {/* Removed arrows and dots in grid layout */}
 
           {/* Timeline rail with nodes */}
           {/* Simplified dots only (keep the existing dots above) */}
@@ -230,40 +194,28 @@ export default function Education({ certificates = defaultCertificates }: { cert
 
         {active !== null && data[active] && (
           <div
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
             onClick={() => setActive(null)}
           >
             <div className="relative w-[95vw] max-w-[1400px] h-[90vh]" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="text-sm text-white/80">{data[active].issuer} • {data[active].date}</div>
-                  <h3 className="text-xl font-bold text-white">{data[active].title}</h3>
-                </div>
-                <div className="flex gap-2">
-                  {data[active].credentialUrl && (
-                    <a
-                      href={data[active].credentialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 rounded font-medium"
-                      style={{ background: '#5C6CFF', color: '#0A0A0A' }}
-                    >
-                      View Credential
-                    </a>
-                  )}
-                  <button className="px-4 py-2 rounded bg-white/10 text-white" onClick={() => setActive(null)}>Close</button>
-                </div>
-              </div>
-              <div className="relative w-full h-full rounded-xl overflow-auto bg-black">
+              <button className="absolute top-2 right-2 z-10 px-3 py-1 rounded bg-white/10 text-white text-sm" onClick={() => setActive(null)}>Close</button>
+              <div
+                className={`relative w-full h-full rounded-xl ${fitView ? 'overflow-hidden' : 'overflow-auto'} bg-black`}
+                onDoubleClick={() => setFitView((v)=>!v)}
+              >
                 {data[active].imageUrl ? (
-                  <div className="min-w-full min-h-full flex items-center justify-center p-2">
-                    <img
-                      src={data[active].imageUrl}
-                      alt={data[active].title}
-                      className="block"
-                      style={{ maxWidth: 'none', maxHeight: 'none' }}
-                    />
-                  </div>
+                  fitView ? (
+                    <img src={data[active].imageUrl} alt={data[active].title} className="w-full h-full object-contain" />
+                  ) : (
+                    <div className="min-w-full min-h-full flex items-center justify-center p-2">
+                      <img
+                        src={data[active].imageUrl}
+                        alt={data[active].title}
+                        className="block"
+                        style={{ maxWidth: 'none', maxHeight: 'none' }}
+                      />
+                    </div>
+                  )
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-white/80">
                     <div className="text-2xl font-bold mb-2">{data[active].title}</div>
