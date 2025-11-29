@@ -52,7 +52,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const [active, setActive] = useState<number | null>(null)
   const [slide, setSlide] = useState(0)
   const [paused, setPaused] = useState(false)
-  const [fitView, setFitView] = useState(false)
+  // Modal image always fits inside viewport (no scroll)
   const autoPlayMs = 4800
   const enableAutoplay = false
   const stripRef = useRef<HTMLUListElement>(null)
@@ -197,25 +197,16 @@ export default function Education({ certificates = defaultCertificates }: { cert
             className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
             onClick={() => setActive(null)}
           >
-            <div className="relative w-[95vw] max-w-[1400px] h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <div className="relative w-[90vw] max-w-[1200px] h-[80vh]" onClick={(e) => e.stopPropagation()}>
               <button className="absolute top-2 right-2 z-10 px-3 py-1 rounded bg-white/10 text-white text-sm" onClick={() => setActive(null)}>Close</button>
-              <div
-                className={`relative w-full h-full rounded-xl ${fitView ? 'overflow-hidden' : 'overflow-auto'} bg-black`}
-                onDoubleClick={() => setFitView((v)=>!v)}
-              >
+              <div className="relative w-full h-full rounded-xl overflow-hidden bg-black flex items-center justify-center">
                 {data[active].imageUrl ? (
-                  fitView ? (
-                    <img src={data[active].imageUrl} alt={data[active].title} className="w-full h-full object-contain" />
-                  ) : (
-                    <div className="min-w-full min-h-full flex items-center justify-center p-2">
-                      <img
-                        src={data[active].imageUrl}
-                        alt={data[active].title}
-                        className="block"
-                        style={{ maxWidth: 'none', maxHeight: 'none' }}
-                      />
-                    </div>
-                  )
+                  <img
+                    src={data[active].imageUrl}
+                    alt={data[active].title}
+                    className="object-contain"
+                    style={{ maxWidth: '80vw', maxHeight: '75vh' }}
+                  />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-white/80">
                     <div className="text-2xl font-bold mb-2">{data[active].title}</div>
