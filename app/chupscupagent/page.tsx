@@ -260,6 +260,15 @@ export default function AdminPage() {
     points: ''
   })
 
+  // HERO CRUD form state (separate from About)
+  const [heroForm, setHeroForm] = useState({
+    title_prefix: "Hello! I'm a",
+    highlight: 'passionate developer',
+    para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
+    para2: '',
+    points: 'Full Stack Developer\nFrontend Enthusiast\nUI Motion Addict',
+  })
+
   const fetchAbout = async () => {
     try {
       // Try load from Storage JSON first (only about fields + about_content)
