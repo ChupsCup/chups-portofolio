@@ -49,7 +49,7 @@ function MagneticButton({ href, variant = 'filled', children }: { href: string; 
 
 export default function Hero() {
   const [particles, setParticles] = useState<{ x: number; y: number; size: number; duration: number; delay: number }[]>([])
-  const [hero, setHero] = useState<{ title_prefix: string; highlight: string; para1: string; points: string[] } | null>(null)
+  const [hero, setHero] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] } | null>(null)
   useEffect(() => {
     const list = Array.from({ length: 22 }).map(() => ({
       x: Math.random() * 100,
@@ -75,6 +75,7 @@ export default function Hero() {
               title_prefix: h.title_prefix || "Hi, I'm fahri yusuf",
               highlight: h.highlight || 'Developer',
               para1: h.para1 || 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+              para2: h.para2 || '',
               points: Array.isArray(h.points) && h.points.length ? h.points : [
                 'Full Stack Developer',
                 'Frontend Enthusiast',
@@ -88,6 +89,7 @@ export default function Hero() {
               title_prefix: "Hi, I'm fahri yusuf",
               highlight: 'Developer',
               para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+              para2: '',
               points: ['Full Stack Developer', 'Frontend Enthusiast', 'UI Motion Addict'],
             })
           }
@@ -98,6 +100,7 @@ export default function Hero() {
             title_prefix: "Hi, I'm fahri yusuf",
             highlight: 'Developer',
             para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+            para2: '',
             points: ['Full Stack Developer', 'Frontend Enthusiast', 'UI Motion Addict'],
           })
         }
@@ -175,6 +178,11 @@ export default function Hero() {
             <motion.p variants={itemVariants} className="text-lg text-[rgb(var(--foreground-rgb))] opacity-70 leading-relaxed max-w-xl">
               {hero?.para1 ?? 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.'}
             </motion.p>
+            { (hero?.para2 ?? '').trim().length > 0 && (
+              <motion.p variants={itemVariants} className="text-base text-[rgb(var(--foreground-rgb))] opacity-60 leading-relaxed max-w-xl">
+                {hero!.para2}
+              </motion.p>
+            ) }
 
             <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-4">
               <ButtonPill href="#projects" label="View My Work" variant="cobalt" />
