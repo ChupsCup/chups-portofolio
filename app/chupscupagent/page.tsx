@@ -55,7 +55,7 @@ export default function AdminPage() {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [setupLoading, setSetupLoading] = useState(false)
   const [setupMessage, setSetupMessage] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'profile' | 'experience' | 'about' | 'skills' | 'education'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'profile' | 'experience' | 'about' | 'skills' | 'education' | 'hero'>('dashboard')
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -261,7 +261,7 @@ export default function AdminPage() {
 
   const fetchAbout = async () => {
     try {
-      // Try load from Storage JSON first (includes hero fields)
+      // Try load from Storage JSON first (only about fields)
       try {
         const { data: file, error: fileErr } = await supabase.storage.from('portfolio').download('about/about.json')
         if (!fileErr && file) {
@@ -277,16 +277,6 @@ export default function AdminPage() {
             status: json.status || '',
             cv_url: json.cv_url || ''
           })
-          if (json.hero) {
-            const h = json.hero
-            setHeroForm({
-              title_prefix: h.title_prefix || heroForm.title_prefix,
-              highlight: h.highlight || heroForm.highlight,
-              para1: h.para1 || heroForm.para1,
-              para2: h.para2 || heroForm.para2,
-              points: Array.isArray(h.points) ? h.points.join('\n') : (h.points || heroForm.points)
-            })
-          }
           return
         }
       } catch {}
@@ -296,6 +286,24 @@ export default function AdminPage() {
         const a = data[0] as any
         setAboutId(a.id)
         setAboutForm({ name: a.name, location: a.location, education: a.education, email: a.email, phone: a.phone, status: a.status, cv_url: a.cv_url || '' })
+      }
+    } catch {}
+  }
+
+  // HERO CRUD (terpisah dari About)
+  const fetchHero = async () => {
+    try {
+      const { data: file, error: fileErr } = await supabase.storage.from('portfolio').download('hero/hero.json')
+      if (!fileErr && file) {
+        const text = await file.text()
+        const json = JSON.parse(text)
+        setHeroForm({
+          title_prefix: json.title_prefix || "Hello! I'm a",
+          highlight: json.highlight || 'passionate developer',
+          para1: json.para1 || "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
+          para2: json.para2 || "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
+          points: Array.isArray(json.points) ? json.points.join('\n') : (json.points || 'Clean & Maintainable Code\nResponsive Design\nPerformance Optimization\nModern Best Practices')
+        })
       }
     } catch {}
   }
@@ -911,6 +919,7 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               { key: 'dashboard', label: 'Dashboard', icon: '🏠' },
               { key: 'projects', label: 'Projects', icon: '📁' },
               { key: 'experience', label: 'Experience', icon: '💼' },
+              { key: 'hero', label: 'Hero', icon: '⚡' },
               { key: 'about', label: 'About', icon: '🧾' },
               { key: 'education', label: 'Education', icon: '🎓' },
               { key: 'skills', label: 'Skills', icon: '🛠' },
@@ -918,7 +927,7 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
             ].map((item) => (
               <button
                 key={item.key}
-                onClick={() => { if(item.key==='about'){ setActiveTab('about'); fetchAbout(); } else { setActiveTab(item.key as any) } }}
+                onClick={() => { if(item.key==='about'){ setActiveTab('about'); fetchAbout(); } else if(item.key==='hero'){ setActiveTab('hero'); fetchHero(); } else { setActiveTab(item.key as any) } }}
                 className={`w-full px-3 py-2 md:px-4 md:py-3 rounded-full border transition flex items-center justify-center gap-2 text-sm md:text-[0.95rem] ${
                   activeTab === (item.key as any)
                     ? 'bg-accent text-white border-accent'
@@ -938,6 +947,7 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               { key: 'dashboard', label: 'Dashboard', icon: '🏠' },
               { key: 'projects', label: 'Projects', icon: '📁' },
               { key: 'experience', label: 'Experience', icon: '💼' },
+              { key: 'hero', label: 'Hero', icon: '⚡' },
               { key: 'about', label: 'About', icon: '🧾' },
               { key: 'education', label: 'Education', icon: '🎓' },
               { key: 'skills', label: 'Skills', icon: '🛠' },
@@ -945,7 +955,7 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
             ].map((item) => (
               <button
                 key={item.key}
-                onClick={() => { if(item.key==='about'){ setActiveTab('about'); fetchAbout(); } else { setActiveTab(item.key as any) } }}
+                onClick={() => { if(item.key==='about'){ setActiveTab('about'); fetchAbout(); } else if(item.key==='hero'){ setActiveTab('hero'); fetchHero(); } else { setActiveTab(item.key as any) } }}
                 className={`w-full px-4 py-2 rounded-full border text-left transition flex items-center gap-2 ${
                   activeTab === (item.key as any)
                     ? 'bg-accent text-white border-accent'
@@ -1438,8 +1448,59 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               />
             </div>
 
-            {/* Hero Content */}
-            <div className="md:col-span-2 border-t border-white/10 pt-4" />
+          </div>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={async () => {
+                try {
+                  // Save About JSON only (no hero, hero saved in its own tab)
+                  const payload = { ...aboutForm }
+                  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+                  const { error: uploadError } = await supabase.storage.from('portfolio').upload('about/about.json', blob, { upsert: true })
+                  if (uploadError) throw uploadError
+
+                  // Also try to persist to DB if available (best-effort)
+                  try {
+                    if (aboutId) {
+                      await supabase.from('about_info').update(aboutForm).eq('id', aboutId)
+                    } else {
+                      await supabase.from('about_info').insert([aboutForm])
+                    }
+                  } catch {}
+
+                  alert('About saved!')
+                } catch (e) {
+                  console.error(e)
+                  alert('Failed to save About')
+                } finally {
+                  fetchAbout()
+                }
+              }}
+              className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => { setAboutId(null); setAboutForm({ name: '', location: '', education: '', email: '', phone: '', status: '', cv_url: '' }); }}
+              className="px-6 py-2 bg-gray-600 rounded hover:bg-gray-700"
+            >
+              Clear
+            </button>
+            <label className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-green-700 rounded hover:bg-green-800 cursor-pointer">
+              <input type="file" accept="application/pdf" className="hidden" onChange={handleCvUpload} />
+              Upload CV (PDF)
+            </label>
+          </div>
+        </div>
+        </>
+        )}
+
+        {/* Hero Tab */}
+        {activeTab === 'hero' && (
+        <>
+        <div className="bg-gray-800 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-4">Edit Hero</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2 md:col-span-1">
               <label className="block text-sm text-gray-300">Judul (prefix)</label>
               <input
@@ -1490,34 +1551,22 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
             <button
               onClick={async () => {
                 try {
-                  // Save About JSON to Storage for reliability
-                  const hero = {
+                  const payload = {
                     title_prefix: heroForm.title_prefix,
                     highlight: heroForm.highlight,
                     para1: heroForm.para1,
                     para2: heroForm.para2,
-                    points: heroForm.points.split('\n').map(s => s.trim()).filter(Boolean)
+                    points: heroForm.points.split('\n').map(s => s.trim()).filter(Boolean),
                   }
-                  const payload = { ...aboutForm, hero }
                   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
-                  const { error: uploadError } = await supabase.storage.from('portfolio').upload('about/about.json', blob, { upsert: true })
+                  const { error: uploadError } = await supabase.storage.from('portfolio').upload('hero/hero.json', blob, { upsert: true })
                   if (uploadError) throw uploadError
-
-                  // Also try to persist to DB if available (best-effort)
-                  try {
-                    if (aboutId) {
-                      await supabase.from('about_info').update(aboutForm).eq('id', aboutId)
-                    } else {
-                      await supabase.from('about_info').insert([aboutForm])
-                    }
-                  } catch {}
-
-                  alert('About saved!')
+                  alert('Hero saved!')
                 } catch (e) {
                   console.error(e)
-                  alert('Failed to save About')
+                  alert('Failed to save Hero')
                 } finally {
-                  fetchAbout()
+                  fetchHero()
                 }
               }}
               className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700"
@@ -1525,21 +1574,17 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
               Save
             </button>
             <button
-              onClick={() => { setAboutId(null); setAboutForm({ name: '', location: '', education: '', email: '', phone: '', status: '', cv_url: '' }); setHeroForm({
+              onClick={() => setHeroForm({
                 title_prefix: "Hello! I'm a",
                 highlight: 'passionate developer',
                 para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
                 para2: "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
                 points: 'Clean & Maintainable Code\nResponsive Design\nPerformance Optimization\nModern Best Practices'
-              }) }}
+              })}
               className="px-6 py-2 bg-gray-600 rounded hover:bg-gray-700"
             >
               Clear
             </button>
-            <label className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-green-700 rounded hover:bg-green-800 cursor-pointer">
-              <input type="file" accept="application/pdf" className="hidden" onChange={handleCvUpload} />
-              Upload CV (PDF)
-            </label>
           </div>
         </div>
         </>

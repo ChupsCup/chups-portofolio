@@ -65,11 +65,11 @@ export default function Hero() {
     let mounted = true
     ;(async () => {
       try {
-        const { data, error } = await supabase.storage.from('portfolio').download('about/about.json')
+        const { data, error } = await supabase.storage.from('portfolio').download('hero/hero.json')
         if (!error && data) {
           const text = await data.text()
           const json = JSON.parse(text)
-          const h = json?.hero || {}
+          const h = json || {}
           if (mounted) {
             setHero({
               title_prefix: h.title_prefix || "Hi, I'm fahri yusuf",
