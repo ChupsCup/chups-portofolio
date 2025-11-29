@@ -191,7 +191,7 @@ export default function Hero() {
 
             <motion.div variants={itemVariants} className="flex gap-6 pt-4">
               <a
-                href="https://github.com"
+                href="https://github.com/ChupsCup"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-white transition"
@@ -201,7 +201,7 @@ export default function Hero() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/fahri-yusuf-73bb75217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-white transition"
@@ -211,13 +211,13 @@ export default function Hero() {
                 </svg>
               </a>
               <a
-                href="https://twitter.com"
+                href="https://wa.me/6285121017198"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-white transition"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                  <path d="M20.52 3.48C18.2 1.16 15.21 0 12 0 5.37 0 0 5.37 0 12c0 2.11.55 4.19 1.6 6.02L0 24l6.17-1.62A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.2-3.48-8.52zM12 22a9.9 9.9 0 0 1-5.06-1.39l-.36-.21-3.7.97.99-3.6-.23-.36A9.94 9.94 0 1 1 22 12c0 5.51-4.49 10-10 10zm5.27-7.59c-.29-.15-1.71-.84-1.98-.94-.26-.1-.45-.15-.64.14-.2.29-.75.95-.92 1.15-.17.2-.33.22-.62.07-.29-.15-1.24-.45-2.36-1.45-.87-.77-1.45-1.7-1.62-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.43-.51.15-.17.19-.3.28-.49.1-.2.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.14-.24-.58-.47-.5-.64-.5h-.55c-.19 0-.5.07-.77.36-.26.29-1.01 1-1.01 2.45 0 1.45 1.03 2.86 1.18 3.05.15.2 2.04 3.14 4.95 4.4.69.3 1.23.47 1.66.61.69.22 1.32.19 1.82.12.56-.08 1.71-.69 1.96-1.37.24-.68.24-1.25.16-1.37-.08-.12-.26-.2-.55-.34z"/>
                 </svg>
               </a>
             </motion.div>
