@@ -4,6 +4,7 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 import TextReveal from './TextReveal'
 import TextTypewriter from './TextTypewriter'
 import ParallaxSection from './ParallaxSection'
@@ -48,6 +49,7 @@ function MagneticButton({ href, variant = 'filled', children }: { href: string; 
 
 export default function Hero() {
   const [particles, setParticles] = useState<{ x: number; y: number; size: number; duration: number; delay: number }[]>([])
+  const [hero, setHero] = useState<{ title_prefix: string; highlight: string; para1: string; points: string[] } | null>(null)
   useEffect(() => {
     const list = Array.from({ length: 22 }).map(() => ({
       x: Math.random() * 100,
@@ -57,6 +59,51 @@ export default function Hero() {
       delay: Math.random() * 4,
     }))
     setParticles(list)
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const { data, error } = await supabase.storage.from('portfolio').download('about/about.json')
+        if (!error && data) {
+          const text = await data.text()
+          const json = JSON.parse(text)
+          const h = json?.hero || {}
+          if (mounted) {
+            setHero({
+              title_prefix: h.title_prefix || "Hi, I'm fahri yusuf",
+              highlight: h.highlight || 'Developer',
+              para1: h.para1 || 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+              points: Array.isArray(h.points) && h.points.length ? h.points : [
+                'Full Stack Developer',
+                'Frontend Enthusiast',
+                'UI Motion Addict',
+              ],
+            })
+          }
+        } else {
+          if (mounted) {
+            setHero({
+              title_prefix: "Hi, I'm fahri yusuf",
+              highlight: 'Developer',
+              para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+              points: ['Full Stack Developer', 'Frontend Enthusiast', 'UI Motion Addict'],
+            })
+          }
+        }
+      } catch {
+        if (mounted) {
+          setHero({
+            title_prefix: "Hi, I'm fahri yusuf",
+            highlight: 'Developer',
+            para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+            points: ['Full Stack Developer', 'Frontend Enthusiast', 'UI Motion Addict'],
+          })
+        }
+      }
+    })()
+    return () => { mounted = false }
   }, [])
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -110,23 +157,23 @@ export default function Hero() {
             <motion.div variants={itemVariants}>
               <div className="space-y-2">
                 <TextReveal className="text-5xl md:text-6xl font-extrabold text-[rgb(var(--foreground-rgb))] leading-tight">
-                  Hi, I'm fahri yusuf
+                  {hero?.title_prefix ?? "Hi, I'm fahri yusuf"}
                 </TextReveal>
                 <motion.div
                   className="text-5xl md:text-6xl font-bold leading-tight"
                   style={{ color: '#5C6CFF' }}
                 >
-                  Developer
+                  {hero?.highlight ?? 'Developer'}
                 </motion.div>
               </div>
             </motion.div>
 
             <motion.div variants={itemVariants} className="text-xl md:text-2xl text-[rgb(var(--foreground-rgb))] opacity-80 font-medium">
-              <TextTypewriter words={["Full Stack Developer", "Frontend Enthusiast", "UI Motion Addict"]} />
+              <TextTypewriter words={hero?.points ?? ["Full Stack Developer", "Frontend Enthusiast", "UI Motion Addict"]} />
             </motion.div>
 
             <motion.p variants={itemVariants} className="text-lg text-[rgb(var(--foreground-rgb))] opacity-70 leading-relaxed max-w-xl">
-              I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.
+              {hero?.para1 ?? 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.'}
             </motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-4">
