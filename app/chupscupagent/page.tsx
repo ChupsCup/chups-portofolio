@@ -248,26 +248,20 @@ export default function AdminPage() {
     email: '',
     phone: '',
     status: '',
-    cv_url: ''
+    cv_url: '',
   })
-  const [aboutId, setAboutId] = useState<number | null>(null)
+
   const [aboutContentForm, setAboutContentForm] = useState({
-    title: '',
+    title_prefix: '',
+    highlight: '',
     para1: '',
     para2: '',
-    points: '' as string,
-  })
-  const [heroForm, setHeroForm] = useState({
-    title_prefix: "Hi, I'm fahri yusuf",
-    highlight: 'Developer',
-    para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
-    para2: '',
-    points: 'Full Stack Developer\nFrontend Enthusiast\nUI Motion Addict'
+    points: ''
   })
 
   const fetchAbout = async () => {
     try {
-      // Try load from Storage JSON first (only about fields)
+      // Try load from Storage JSON first (only about fields + about_content)
       try {
         const { data: file, error: fileErr } = await supabase.storage.from('portfolio').download('about/about.json')
         if (!fileErr && file) {
@@ -286,10 +280,20 @@ export default function AdminPage() {
           if (json.about_content) {
             const c = json.about_content
             setAboutContentForm({
-              title: c.title || '',
+              title_prefix: c.title_prefix || aboutContentForm.title_prefix,
+              highlight: c.highlight || aboutContentForm.highlight,
               para1: c.para1 || '',
               para2: c.para2 || '',
               points: Array.isArray(c.points) ? c.points.join('\n') : (c.points || ''),
+            })
+          } else if (json.hero) {
+            const h = json.hero
+            setAboutContentForm({
+              title_prefix: h.title_prefix || aboutContentForm.title_prefix,
+              highlight: h.highlight || aboutContentForm.highlight,
+              para1: h.para1 || aboutContentForm.para1,
+              para2: h.para2 || aboutContentForm.para2,
+              points: Array.isArray(h.points) ? h.points.join('\n') : (h.points || aboutContentForm.points),
             })
           }
           return
@@ -301,24 +305,6 @@ export default function AdminPage() {
         const a = data[0] as any
         setAboutId(a.id)
         setAboutForm({ name: a.name, location: a.location, education: a.education, email: a.email, phone: a.phone, status: a.status, cv_url: a.cv_url || '' })
-      }
-    } catch {}
-  }
-
-  // HERO CRUD (terpisah dari About)
-  const fetchHero = async () => {
-    try {
-      const { data: file, error: fileErr } = await supabase.storage.from('portfolio').download('hero/hero.json')
-      if (!fileErr && file) {
-        const text = await file.text()
-        const json = JSON.parse(text)
-        setHeroForm({
-          title_prefix: json.title_prefix || "Hello! I'm a",
-          highlight: json.highlight || 'passionate developer',
-          para1: json.para1 || "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
-          para2: json.para2 || "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
-          points: Array.isArray(json.points) ? json.points.join('\n') : (json.points || 'Clean & Maintainable Code\nResponsive Design\nPerformance Optimization\nModern Best Practices')
-        })
       }
     } catch {}
   }

@@ -13,6 +13,17 @@ export default function About() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [about, setAbout] = useState<AboutInfo | null>(null)
   const [loading, setLoading] = useState(true)
+  const [aboutContent, setAboutContent] = useState<{ title: string; para1: string; para2: string; points: string[] }>({
+    title: "Hello! I'm a passionate developer",
+    para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
+    para2: "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
+    points: [
+      'Clean & Maintainable Code',
+      'Responsive Design',
+      'Performance Optimization',
+      'Modern Best Practices',
+    ],
+  })
   
 
   useEffect(() => {
@@ -59,6 +70,15 @@ export default function About() {
             cv_url: json.cv_url ?? about?.cv_url ?? '',
             created_at: json.created_at ?? new Date().toISOString(),
           } as AboutInfo)
+          if (json.about_content) {
+            const c = json.about_content
+            setAboutContent({
+              title: c.title || aboutContent.title,
+              para1: c.para1 || aboutContent.para1,
+              para2: c.para2 || aboutContent.para2,
+              points: Array.isArray(c.points) && c.points.length ? c.points : aboutContent.points,
+            })
+          }
           return
         }
       } catch {}
@@ -238,19 +258,38 @@ export default function About() {
           {/* Text Section - Right */}
           <ParallaxSection offset={30}>
             <motion.div className="space-y-6">
-              <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
-                {about?.name || 'Nama Lengkap'}
-              </motion.h3>
-              { (about?.status || about?.location) && (
-                <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
-                  {(about?.status || '')}{about?.status && about?.location ? ' • ' : ''}{about?.location || ''}
-                </motion.p>
-              )}
-              { about?.education && (
-                <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
-                  Pendidikan: {about.education}
-                </motion.p>
-              )}
+              {
+                (() => {
+                  const words = aboutContent.title.trim().split(' ')
+                  const highlight = words.length >= 2 ? words.slice(-2).join(' ') : words.slice(-1).join(' ')
+                  const prefix = words.length >= 2 ? words.slice(0, -2).join(' ') : ''
+                  return (
+                    <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
+                      {prefix} {highlight && (
+                        <span style={{ color: '#5C6CFF' }}>{highlight}</span>
+                      )}
+                    </motion.h3>
+                  )
+                })()
+              }
+              <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
+                {aboutContent.para1}
+              </motion.p>
+              <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
+                {aboutContent.para2}
+              </motion.p>
+              <motion.div variants={itemVariants} className="space-y-3 pt-2">
+                {aboutContent.points.map((skill, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#5C6CFF' }}>
+                      <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-[rgb(var(--foreground-rgb))]">{skill}</span>
+                  </div>
+                ))}
+              </motion.div>
             
               <motion.div
                 variants={itemVariants}
