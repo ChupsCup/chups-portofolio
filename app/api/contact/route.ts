@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     }
 
     // Telegram Bot API
-    const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+    const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8421212689:AAFoEXfPwLvHc9DUejBdhDeglani-EzbY2M'
     let TG_CHAT_ID = process.env.TELEGRAM_CHAT_ID || ''
 
     if (!TG_TOKEN) {
@@ -43,8 +43,14 @@ export async function POST(req: Request) {
     try {
       if (!TG_CHAT_ID) {
         // Try to discover chat_id from recent updates
-        const updResp = await fetch(`${base}/getUpdates`)
-        const upd = await updResp.json().catch(() => ({}))
+        let updResp = await fetch(`${base}/getUpdates`)
+        let upd = await updResp.json().catch(() => ({}))
+        if (upd?.error_code === 409 || String(upd?.description || '').toLowerCase().includes('webhook')) {
+          // Bot has webhook set, delete it then retry getUpdates
+          await fetch(`${base}/deleteWebhook`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ drop_pending_updates: false }) })
+          updResp = await fetch(`${base}/getUpdates`)
+          upd = await updResp.json().catch(() => ({}))
+        }
         const updates = upd?.result || []
         const lastMsg = [...updates].reverse().find((u: any) => u?.message?.chat?.id)
         if (lastMsg?.message?.chat?.id) TG_CHAT_ID = String(lastMsg.message.chat.id)
@@ -54,7 +60,7 @@ export async function POST(req: Request) {
         const meResp = await fetch(`${base}/getMe`)
         const me = await meResp.json().catch(() => ({}))
         const handle = me?.result?.username ? `https://t.me/${me.result.username}` : undefined
-        const hint = handle ? `Open ${handle} and send any message once to initialize chat, then retry.` : 'Open your bot in Telegram and send any message to initialize chat, then retry.'
+        const hint = handle ? `Open ${handle} and send any message once to initialize chat, then retry. If bot previously used webhook, we removed it automatically.` : 'Open your bot in Telegram and send any message to initialize chat, then retry.'
         return NextResponse.json({ ok: false, provider: 'telegram', error: 'Missing chat id', hint }, { status: 400 })
       }
 
