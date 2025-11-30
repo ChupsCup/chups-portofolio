@@ -16,79 +16,65 @@ export async function POST(req: Request) {
       console.warn('Failed to insert contact message to Supabase (non-fatal):', e)
     }
 
-    // Prefer Discord webhook if available
+    // Discord webhook (only)
     let discordWebhook = process.env.DISCORD_WEBHOOK_URL || ''
     // normalize old domain to new
     if (discordWebhook.startsWith('https://discordapp.com/')) {
       discordWebhook = discordWebhook.replace('https://discordapp.com/', 'https://discord.com/')
     }
-    let notified: 'discord' | 'email' | 'none' = 'none'
+    let notified: 'discord' | 'none' = 'none'
     if (discordWebhook) {
       try {
-        const res = await fetch(discordWebhook, {
+        // 1) Minimal payload first (highest compatibility)
+        const minimal = await fetch(discordWebhook, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            content: `📬 New contact message`,
-            embeds: [
-              {
-                title: `From: ${name}`,
-                description: message,
-                color: 5814783,
-                fields: [
-                  { name: 'Email', value: email, inline: true },
-                ],
-                timestamp: new Date().toISOString(),
-              },
-            ],
+            username: 'Portfolio Bot',
+            content: `📬 New contact message\n\n**Name:** ${name}\n**Email:** ${email}\n\n${message}`.slice(0, 1800),
+            allowed_mentions: { parse: [] },
           }),
         })
-        if (!res.ok) {
-          const t = await res.text()
-          console.warn('Discord webhook error:', t)
-        } else {
+        if (minimal.ok) {
           notified = 'discord'
-        }
-      } catch (e) {
-        console.warn('Failed to send Discord webhook (non-fatal):', e)
-      }
-    }
-
-    // If no Discord, try Resend email
-    if (notified === 'none') {
-      const apiKey = process.env.RESEND_API_KEY
-      if (apiKey) {
-        try {
-          const res = await fetch('https://api.resend.com/emails', {
+        } else {
+          const text1 = await minimal.text()
+          console.warn('Discord webhook minimal error:', text1)
+          // 2) Try rich embed as fallback
+          const rich = await fetch(discordWebhook, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${apiKey}`,
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              from: 'Portfolio <onboarding@resend.dev>',
-              to: ['fahriysuf@gmail.com'],
-              subject: `New contact message from ${name}`,
-              reply_to: email,
-              text: `You have a new contact message.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+              username: 'Portfolio Bot',
+              content: '📬 New contact message',
+              embeds: [
+                {
+                  title: `From: ${name}`,
+                  description: (message || '').slice(0, 1800),
+                  color: 5814783,
+                  fields: [
+                    { name: 'Email', value: email, inline: true },
+                  ],
+                  timestamp: new Date().toISOString(),
+                },
+              ],
+              allowed_mentions: { parse: [] },
             }),
           })
-          if (!res.ok) {
-            const t = await res.text()
-            console.warn('Resend error:', t)
-          } else {
-            notified = 'email'
+          if (!rich.ok) {
+            const text2 = await rich.text()
+            return NextResponse.json({ ok: false, notified: 'none', provider: 'discord', error: text2 || text1 }, { status: rich.status || minimal.status || 500 })
           }
-        } catch (e) {
-          console.warn('Failed to send email via Resend (non-fatal):', e)
+          notified = 'discord'
         }
-      } else {
-        console.warn('No DISCORD_WEBHOOK_URL or RESEND_API_KEY set; skipping notifications.')
+      } catch (e: any) {
+        console.warn('Failed to send Discord webhook:', e)
+        return NextResponse.json({ ok: false, notified: 'none', provider: 'discord', error: String(e) }, { status: 500 })
       }
     }
 
     if (notified === 'none') {
-      return NextResponse.json({ ok: false, notified, hint: 'No Discord webhook or email sent. Check DISCORD_WEBHOOK_URL or RESEND_API_KEY and server logs.' }, { status: 500 })
+      return NextResponse.json({ ok: false, notified, hint: 'Discord webhook not configured or failed. Check DISCORD_WEBHOOK_URL and server logs.' }, { status: 500 })
     }
     return NextResponse.json({ ok: true, notified })
   } catch (error) {
