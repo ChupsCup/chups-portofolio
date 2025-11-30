@@ -18,19 +18,20 @@ export default function Contact() {
     setStatus('loading')
 
     try {
-      // 1) Best-effort save to Supabase (optional)
-      try {
-        await supabase.from('contact_messages').insert([formData])
-      } catch {}
-
-      // 2) Open WhatsApp with prefilled message
-      const phone = '6285121017198' // user's number in international format without +
-      const text = `Halo, saya ${formData.name} (%20${formData.email}).%0A%0A${encodeURIComponent(formData.message)}`
-      const url = `https://wa.me/${phone}?text=${text}`
-      const win = window.open(url, '_blank')
-      if (!win) {
-        // popup blocked, fallback to same tab
-        window.location.href = url
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!res.ok) {
+        let msg = 'Request failed'
+        try {
+          const data = await res.json()
+          msg = data?.error || data?.hint || JSON.stringify(data)
+        } catch {
+          msg = await res.text()
+        }
+        throw new Error(msg)
       }
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
