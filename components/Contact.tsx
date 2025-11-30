@@ -11,32 +11,33 @@ export default function Contact() {
     message: '',
   })
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorText, setErrorText] = useState<string>('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-      if (!res.ok) {
-        let msg = 'Request failed'
-        try {
-          const data = await res.json()
-          msg = data?.error || data?.hint || JSON.stringify(data)
-        } catch {
-          msg = await res.text()
-        }
-        throw new Error(msg)
+      // 1) Best-effort save to Supabase (optional)
+      try {
+        await supabase.from('contact_messages').insert([formData])
+      } catch {}
+
+      // 2) Open WhatsApp with prefilled message
+      const phone = '6285121017198' // user's number in international format without +
+      const text = `Halo, saya ${formData.name} (%20${formData.email}).%0A%0A${encodeURIComponent(formData.message)}`
+      const url = `https://wa.me/${phone}?text=${text}`
+      const win = window.open(url, '_blank')
+      if (!win) {
+        // popup blocked, fallback to same tab
+        window.location.href = url
       }
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
       setTimeout(() => setStatus('idle'), 5000)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error)
+      setErrorText(error?.message || 'Gagal membuka WhatsApp')
       setStatus('error')
       setTimeout(() => setStatus('idle'), 5000)
     }
@@ -257,7 +258,7 @@ export default function Contact() {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg"
                 >
-                  ❌ Failed to send message. Please try again or email me directly.
+                  ❌ {errorText || 'Failed to send message. Please try again or email me directly.'}
                 </motion.div>
               )}
             </form>
