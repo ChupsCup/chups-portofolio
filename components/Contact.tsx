@@ -22,7 +22,16 @@ export default function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
-      if (!res.ok) throw new Error(await res.text())
+      if (!res.ok) {
+        let msg = 'Request failed'
+        try {
+          const data = await res.json()
+          msg = data?.error || data?.hint || JSON.stringify(data)
+        } catch {
+          msg = await res.text()
+        }
+        throw new Error(msg)
+      }
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
       setTimeout(() => setStatus('idle'), 5000)
@@ -179,7 +188,7 @@ export default function Contact() {
                   required
                   className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
-                  placeholder="your.email@example.com"
+                  placeholder="fahriysuf@gmail.com"
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
