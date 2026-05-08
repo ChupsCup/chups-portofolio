@@ -1,5 +1,5 @@
-const supabaseUrl = 'https://oemaqbrvwbosbinjrxei.supabase.co';
-const supabaseServiceKey = 'sbp_c5ed6ba941156ee12f5d60fb56da8edbef167808';
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 async function setupStorage() {
   try {

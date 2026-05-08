@@ -131,10 +131,11 @@ export default function AdminSkills() {
     }
 
     try {
+      // Do not send service role from the client. Server uses SUPABASE_SERVICE_ROLE from environment.
       const res = await fetch('/api/skills', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'seed', data: payload, serviceRole: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbWFxYnJ2d2Jvc2JpbmpyeGVpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTM4OTI1NiwiZXhwIjoyMDc2OTY1MjU2fQ.g8kTWYNtaaNeakqNATVY5M0Dxi7dH8anx2M7ka_g_SU' })
+        body: JSON.stringify({ type: 'seed', data: payload })
       })
       if (!res.ok) {
         let msg = 'Failed to seed dataset'

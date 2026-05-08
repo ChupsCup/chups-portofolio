@@ -6,11 +6,12 @@ import { supabase, Project } from '@/lib/supabase'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { pickAccentByKey } from '@/lib/accents'
-import ButtonPill from '@/components/ButtonPill'
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalIndex, setModalIndex] = useState<number | null>(null)
 
   useEffect(() => {
     fetchProjects()
@@ -120,6 +121,10 @@ export default function Projects() {
                   target.style.setProperty('--x', `${x}%`)
                   target.style.setProperty('--y', `${y}%`)
                 }}
+                onClick={() => {
+                  setModalIndex(idx)
+                  setModalOpen(true)
+                }}
               >
                 <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ background: 'radial-gradient(320px 140px at var(--x,50%) var(--y,50%), rgba(92,108,255,0.18), transparent 60%)' }}
@@ -160,20 +165,42 @@ export default function Projects() {
                       )
                     })}
                   </div>
-                  <div className="flex gap-3">
-                    {project.demo_url && (
-                      <ButtonPill href={project.demo_url} label="Live Demo" variant="auto" />
-                    )}
-                    {project.github_url && (
-                      <ButtonPill href={project.github_url} label="GitHub" variant="auto" />
-                    )}
-                  </div>
+                  {/* Entire card is clickable to open modal (no separate button) */}
                 </div>
               </motion.div>
             </ParallaxSection>
           ))}
         </motion.div>
       </div>
+      {/* Simple modal for viewing project image */}
+      {modalOpen && modalIndex !== null && projects[modalIndex] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setModalOpen(false)}
+        >
+          <div className="max-w-3xl w-full bg-transparent" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-[#0b0b0b] rounded-lg overflow-hidden shadow-xl">
+              {projects[modalIndex].image_url ? (
+                <img src={projects[modalIndex].image_url} alt={projects[modalIndex].title} className="w-full object-contain max-h-[70vh] bg-black" />
+              ) : (
+                <div className="w-full h-64 flex items-center justify-center text-white/40">No image</div>
+              )}
+              <div className="p-4">
+                <h3 className="text-lg font-bold text-white">{projects[modalIndex].title}</h3>
+                <p className="text-white/80 mt-2">{projects[modalIndex].description}</p>
+                <div className="mt-4 text-right">
+                  <button
+                    onClick={() => setModalOpen(false)}
+                    className="px-4 py-2 bg-white/10 text-white rounded-md hover:bg-white/20"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

@@ -9,9 +9,12 @@ import json
 import sys
 
 # Supabase credentials
-SUPABASE_URL = "https://oemaqbrvwbosbinjrxei.supabase.co"
-PROJECT_ID = "oemaqbrvwbosbinjrxei"
-SERVICE_ROLE_KEY = "sbp_c5ed6ba941156ee12f5d60fb56da8edbef167808"
+import os
+
+# Read credentials from environment variables. Do NOT hardcode secrets in files.
+SUPABASE_URL = os.environ.get('SUPABASE_URL') or os.environ.get('NEXT_PUBLIC_SUPABASE_URL') or ''
+PROJECT_ID = os.environ.get('SUPABASE_PROJECT_ID') or ''
+SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE') or os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or ''
 
 def setup_bucket():
     """Setup storage bucket menggunakan Supabase Management API"""

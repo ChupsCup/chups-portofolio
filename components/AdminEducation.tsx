@@ -13,7 +13,7 @@ type Edu = {
   created_at?: string
 }
 
-const SERVICE_ROLE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbWFxYnJ2d2Jvc2JpbmpyeGVpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTM4OTI1NiwiZXhwIjoyMDc2OTY1MjU2fQ.g8kTWYNtaaNeakqNATVY5M0Dxi7dH8anx2M7ka_g_SU'
+// Service role must be used only on the server. Do NOT hardcode it here.
 
 export default function AdminEducation() {
   const [items, setItems] = useState<Edu[]>([])
@@ -37,7 +37,8 @@ export default function AdminEducation() {
   useEffect(() => {
     (async () => {
       try {
-        await fetch('/api/education/setup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ serviceRole: SERVICE_ROLE }) })
+        // Server-side setup route will use SUPABASE_SERVICE_ROLE from env; do not send secret from client
+        await fetch('/api/education/setup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
       } catch {}
       fetchItems()
     })()
@@ -45,7 +46,7 @@ export default function AdminEducation() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const payload = { serviceRole: SERVICE_ROLE, data: form }
+  const payload = { data: form }
     const method = editingId ? 'PUT' : 'POST'
     const body = editingId ? { ...payload, id: editingId } : payload
     const res = await fetch('/api/education', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
@@ -60,7 +61,7 @@ export default function AdminEducation() {
   }
 
   async function handleDelete(id: string) {
-    const res = await fetch(`/api/education?id=${id}&serviceRole=${SERVICE_ROLE}`, { method: 'DELETE' })
+  const res = await fetch(`/api/education?id=${id}`, { method: 'DELETE' })
     if (!res.ok) {
       const j = await res.json().catch(() => ({}))
       alert(j.error || 'Failed to delete')

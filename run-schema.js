@@ -4,9 +4,9 @@ const https = require('https');
 // Read SQL file
 const sqlContent = fs.readFileSync('supabase-schema.sql', 'utf8');
 
-// Supabase credentials
-const token = 'sbp_f512786d09e02bf8306e91f089f878564cb82618';
-const projectId = 'oemaqbrvwbosbinjrxei';
+// Supabase credentials - read from environment variables
+const token = process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const projectId = process.env.SUPABASE_PROJECT_ID || '';
 const url = `https://api.supabase.com/v1/projects/${projectId}/database/query`;
 
 // Prepare request

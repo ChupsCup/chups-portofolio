@@ -9,7 +9,7 @@ Karena service role key tidak bisa digunakan untuk create bucket via API, silaka
 - Login dengan akun Anda
 
 ### 2. Pilih Project
-- Cari project: **oemaqbrvwbosbinjrxei**
+- Cari project: **your-project-id**
 - Klik untuk membuka
 
 ### 3. Buka Storage

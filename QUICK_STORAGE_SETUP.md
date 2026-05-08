@@ -12,7 +12,7 @@ Membuat bucket "portfolio" agar fitur upload foto di admin panel berfungsi.
 ### 1️⃣ Login Supabase Dashboard
 - Buka: https://supabase.com
 - Login dengan akun Anda
-- Pilih project: **oemaqbrvwbosbinjrxei**
+- Pilih project: **your-project-id**
 
 ### 2️⃣ Buka Storage
 - Di sidebar kiri, cari **"Storage"**
@@ -104,7 +104,7 @@ Jika berhasil, Anda bisa:
 
 ## 📚 Referensi
 - Supabase Docs: https://supabase.com/docs/guides/storage
-- Project URL: https://oemaqbrvwbosbinjrxei.supabase.co
+- Project URL: https://your-project.supabase.co
 
 Selamat! 🎉
 
