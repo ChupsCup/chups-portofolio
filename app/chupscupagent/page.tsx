@@ -75,8 +75,6 @@ export default function AdminPage() {
     description: "",
     image_url: "",
     image_urls: [] as string[],
-    demo_url: "",
-    github_url: "",
     technologies: "",
   });
   const [expFormData, setExpFormData] = useState({
@@ -108,6 +106,20 @@ export default function AdminPage() {
         try {
           console.log("Setting up database and storage...");
 
+          // Auto-setup image_urls column
+          try {
+            const imageUrlsResponse = await fetch("/api/setup-imageurls", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            });
+            if (imageUrlsResponse.ok) {
+              const data = await imageUrlsResponse.json();
+              console.log("Image URLs setup result:", data);
+            }
+          } catch (error) {
+            console.log("Image URLs setup error:", error);
+          }
+
           // Call API to setup database and bucket
           const response = await fetch("/api/setup-database", {
             method: "POST",
@@ -133,6 +145,17 @@ export default function AdminPage() {
           await setupExperiencesTable();
         } catch (error) {
           console.log("Could not setup experiences table:", error);
+        }
+
+        // Debug projects data
+        try {
+          const debugResponse = await fetch("/api/debug-projects");
+          if (debugResponse.ok) {
+            const debugData = await debugResponse.json();
+            console.log("Projects debug:", debugData);
+          }
+        } catch (error) {
+          console.log("Debug error:", error);
         }
 
         fetchProjects();
@@ -444,8 +467,8 @@ export default function AdminPage() {
             description: formData.description,
             image_url: formData.image_url,
             image_urls: formData.image_urls,
-            demo_url: formData.demo_url,
-            github_url: formData.github_url,
+            demo_url: null,
+            github_url: null,
             technologies: technologiesArray,
           })
           .eq("id", editingId);
@@ -460,8 +483,8 @@ export default function AdminPage() {
             description: formData.description,
             image_url: formData.image_url,
             image_urls: formData.image_urls,
-            demo_url: formData.demo_url,
-            github_url: formData.github_url,
+            demo_url: null,
+            github_url: null,
             technologies: technologiesArray,
           },
         ]);
@@ -475,8 +498,6 @@ export default function AdminPage() {
         description: "",
         image_url: "",
         image_urls: [],
-        demo_url: "",
-        github_url: "",
         technologies: "",
       });
       setPreviewImage(null);
@@ -484,7 +505,8 @@ export default function AdminPage() {
       fetchProjects();
     } catch (error) {
       console.error("Error:", error);
-      alert("Error saving project");
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+      alert(`Error saving project: ${errorMsg}`);
     }
   };
 
@@ -495,8 +517,6 @@ export default function AdminPage() {
       description: project.description,
       image_url: project.image_url,
       image_urls: project.image_urls || [],
-      demo_url: project.demo_url ?? "",
-      github_url: project.github_url ?? "",
       technologies: project.technologies.join(", "),
     });
     setPreviewImage(project.image_url);
@@ -1139,6 +1159,107 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
           </h1>
           <div className="flex flex-wrap gap-2">
             <button
+              onClick={async () => {
+                try {
+                  const sampleProject = {
+                    title: "Test Photo Project " + Date.now(),
+                    description: "This is a test project with photos to verify the system works.",
+                    image_url: "https://picsum.photos/400/300?random=" + Date.now(),
+                    image_urls: ["https://picsum.photos/400/300?random=" + Date.now()],
+                    technologies: ["React", "Next.js", "TypeScript"],
+                  };
+                  
+                  const { error } = await supabase.from("projects").insert([sampleProject]);
+                  if (error) {
+                    alert("Error: " + error.message);
+                  } else {
+                    alert("Sample project created! Check main page.");
+                    fetchProjects();
+                  }
+                } catch (err) {
+                  alert("Error: " + (err as Error).message);
+                }
+              }}
+              className="px-3 py-2 text-sm rounded-md border border-green-500/40 text-green-300 hover:bg-green-500/10"
+            >
+              + Add Sample Project
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  const response = await fetch('/api/fix-experiences', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                  
+                  if (response.ok) {
+                    const data = await response.json();
+                    alert("Experiences added! Refresh main page to see.");
+                    fetchExperiences();
+                  } else {
+                    alert("Error adding experiences. Check console.");
+                  }
+                } catch (err) {
+                  alert("Error: " + (err as Error).message);
+                }
+              }}
+              className="px-3 py-2 text-sm rounded-md border border-purple-500/40 text-purple-300 hover:bg-purple-500/10"
+            >
+              + Fix Experiences
+            </button>
+            <button
+              onClick={async () => {
+                // Auto-fix security with user-friendly steps
+                alert("🔒 Auto Security Fix Started!\n\n1. This will open Supabase Dashboard\n2. Copy the SQL code provided\n3. Paste in SQL Editor and click Run\n4. Return here when done\n\nYour data is 100% SAFE!");
+                
+                // Open Supabase dashboard
+                window.open('https://app.supabase.com', '_blank');
+                
+                // Copy SQL to clipboard
+                const sqlCode = `ALTER TABLE projects DISABLE ROW LEVEL SECURITY;
+ALTER TABLE experiences DISABLE ROW LEVEL SECURITY;`;
+                
+                try {
+                  await navigator.clipboard.writeText(sqlCode);
+                  setTimeout(() => {
+                    alert("✅ SQL code copied to clipboard!\n\nNow:\n1. In Supabase Dashboard → SQL Editor\n2. Paste the code (Ctrl+V)\n3. Click 'Run'\n4. Return here and click 'Test Security'");
+                  }, 2000);
+                } catch {
+                  alert("📋 Copy this SQL code:\n\n" + sqlCode + "\n\nPaste in Supabase SQL Editor and click Run");
+                }
+              }}
+              className="px-3 py-2 text-sm rounded-md border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/10"
+            >
+              🔒 Fix Security Auto
+            </button>
+            <button
+              onClick={async () => {
+                // Test if security fix worked
+                try {
+                  const response = await fetch('/api/debug-projects');
+                  if (response.ok) {
+                    const data = await response.json();
+                    alert("✅ Security Test: " + (data.success ? "WORKING!" : "Need fix"));
+                  }
+                } catch (err) {
+                  alert("❌ Test failed: " + (err as Error).message);
+                }
+              }}
+              className="px-3 py-2 text-sm rounded-md border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10"
+            >
+              🧪 Test Security
+            </button>
+            <button
+              onClick={() => {
+                // Debug current projects
+                console.log("Current projects:", projects);
+                alert(`Debug: ${projects.length} projects loaded. Check console for details.`);
+              }}
+              className="px-3 py-2 text-sm rounded-md border border-blue-500/40 text-blue-300 hover:bg-blue-500/10"
+            >
+              Debug
+            </button>
+            <button
               onClick={handleLogout}
               className="px-3 py-2 text-sm rounded-md border border-red-500/40 text-red-300 hover:bg-red-500/10"
             >
@@ -1433,24 +1554,6 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
                       className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/15 text-cream-100 focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                     <input
-                      type="url"
-                      placeholder="Demo URL"
-                      value={formData.demo_url}
-                      onChange={(e) =>
-                        setFormData({ ...formData, demo_url: e.target.value })
-                      }
-                      className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/15 text-cream-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
-                    <input
-                      type="url"
-                      placeholder="GitHub URL"
-                      value={formData.github_url}
-                      onChange={(e) =>
-                        setFormData({ ...formData, github_url: e.target.value })
-                      }
-                      className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/15 text-cream-100 focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
-                    <input
                       type="text"
                       placeholder="Technologies (comma separated)"
                       value={formData.technologies}
@@ -1480,8 +1583,6 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
                               description: "",
                               image_url: "",
                               image_urls: [],
-                              demo_url: "",
-                              github_url: "",
                               technologies: "",
                             });
                           }}

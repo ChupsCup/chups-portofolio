@@ -146,7 +146,7 @@ export default function About() {
   const infoItems = [
     {
       label: 'Nama',
-      value: about?.name || 'Hizkia Siahaan',
+      value: about?.name || '',
       icon: (
         <svg className="w-5 h-5 text-cream-50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
@@ -155,7 +155,7 @@ export default function About() {
     },
     {
       label: 'Domisili',
-      value: about?.location || 'Medan, Indonesia',
+      value: about?.location || '',
       icon: (
         <svg className="w-5 h-5 text-cream-50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2C7.589 2 4 5.589 4 10c0 5.25 7 12 8 12s8-6.75 8-12c0-4.411-3.589-8-8-8Zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
@@ -164,7 +164,7 @@ export default function About() {
     },
     {
       label: 'Pendidikan',
-      value: about?.education || 'Teknik Informatika USU',
+      value: about?.education || '',
       icon: (
         <svg className="w-5 h-5 text-cream-50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 3 1 9l11 6 9-4.909V17h2V9L12 3Zm0 11.197L4.236 9 12 4.803 19.764 9 12 14.197ZM5 13.5V18c0 2.209 3.582 4 8 4s8-1.791 8-4v-4.5l-2 1.091V18c0 .825-2.686 2-6 2s-6-1.175-6-2v-3.409L5 13.5Z"/>
@@ -173,7 +173,7 @@ export default function About() {
     },
     {
       label: 'Email',
-      value: about?.email || 'emma@example.com',
+      value: about?.email || '',
       icon: (
         <svg className="w-5 h-5 text-cream-50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z" />
@@ -182,7 +182,7 @@ export default function About() {
     },
     {
       label: 'Phone',
-      value: about?.phone || '+62 812-3456-7890',
+      value: about?.phone || '',
       icon: (
         <svg className="w-5 h-5 text-cream-50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C11.85 21 3 12.15 3 1a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.24 1.01l-2.21 2.2Z" />
@@ -191,7 +191,7 @@ export default function About() {
     },
     {
       label: 'Status',
-      value: about?.status || 'Available for Work',
+      value: about?.status || '',
       icon: (
         <svg className="w-5 h-5 text-cream-50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M20 6h-4V4a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2ZM10 4h4v2h-4V4Zm10 14H4V8h16v10Z" />

@@ -29,11 +29,7 @@ export default function Projects() {
       setProjects(data || []);
     } catch (error) {
       console.error("Error fetching projects:", error);
-      if (process.env.NODE_ENV !== "production") {
-        setProjects(demoProjects);
-      } else {
-        setProjects([]);
-      }
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -421,42 +417,3 @@ export default function Projects() {
     </section>
   );
 }
-
-const demoProjects: Project[] = [
-  {
-    id: 1,
-    title: "E-Commerce Platform",
-    description:
-      "A full-featured e-commerce platform with cart, checkout, and payment integration.",
-    image_url: "",
-    image_urls: [],
-    demo_url: "https://example.com",
-    github_url: "https://github.com",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Stripe"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    title: "Task Management App",
-    description:
-      "A collaborative task management application with real-time updates.",
-    image_url: "",
-    image_urls: [],
-    demo_url: "https://example.com",
-    github_url: "https://github.com",
-    technologies: ["React", "Firebase", "Material-UI"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    title: "Weather Dashboard",
-    description:
-      "A beautiful weather dashboard with forecasts and interactive maps.",
-    image_url: "",
-    image_urls: [],
-    demo_url: "https://example.com",
-    github_url: "https://github.com",
-    technologies: ["Vue.js", "OpenWeather API", "Chart.js"],
-    created_at: new Date().toISOString(),
-  },
-];

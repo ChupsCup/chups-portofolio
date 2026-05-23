@@ -9,7 +9,7 @@ import GlobalEffects from '@/components/GlobalEffects'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Portfolio - Your Name',
+  title: 'Portfolio',
   description: 'Professional portfolio website showcasing my projects and skills',
 }
 

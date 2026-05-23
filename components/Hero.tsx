@@ -72,36 +72,32 @@ export default function Hero() {
           const h = json || {}
           if (mounted) {
             setHero({
-              title_prefix: h.title_prefix || "Hi, I'm fahri yusuf",
-              highlight: h.highlight || 'Developer',
-              para1: h.para1 || 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+              title_prefix: h.title_prefix || '',
+              highlight: h.highlight || '',
+              para1: h.para1 || '',
               para2: h.para2 || '',
-              points: Array.isArray(h.points) && h.points.length ? h.points : [
-                'Full Stack Developer',
-                'Frontend Enthusiast',
-                'UI Motion Addict',
-              ],
+              points: Array.isArray(h.points) && h.points.length ? h.points : [],
             })
           }
         } else {
           if (mounted) {
             setHero({
-              title_prefix: "Hi, I'm fahri yusuf",
-              highlight: 'Developer',
-              para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+              title_prefix: '',
+              highlight: '',
+              para1: '',
               para2: '',
-              points: ['Full Stack Developer', 'Frontend Enthusiast', 'UI Motion Addict'],
+              points: [],
             })
           }
         }
       } catch {
         if (mounted) {
           setHero({
-            title_prefix: "Hi, I'm fahri yusuf",
-            highlight: 'Developer',
-            para1: 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.',
+            title_prefix: '',
+            highlight: '',
+            para1: '',
             para2: '',
-            points: ['Full Stack Developer', 'Frontend Enthusiast', 'UI Motion Addict'],
+            points: [],
           })
         }
       }

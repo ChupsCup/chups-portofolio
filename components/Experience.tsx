@@ -36,6 +36,8 @@ export default function ExperienceSection() {
         .order('start_date', { ascending: false })
 
       if (error) {
+        console.log('Supabase error:', error);
+        
         // Silently handle table not found
         const errorMsg = error.message || JSON.stringify(error)
         if (
