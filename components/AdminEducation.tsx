@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
@@ -28,7 +29,7 @@ export default function AdminEducation() {
       const json = await res.json()
       setItems(json.items || [])
     } catch (e) {
-      console.error(e)
+      if (process.env.NODE_ENV !== 'production') console.error(e)
     } finally {
       setLoading(false)
     }
@@ -110,9 +111,11 @@ export default function AdminEducation() {
             <p className="text-xs text-gray-300 mt-1">Credential URL (optional): Link verifikasi sertifikat (jika ada).</p>
           </div>
           <div className="col-span-full">
-            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4">
               <input type="file" accept="image/*" onChange={(e)=>{const f=e.target.files?.[0]; if(f) uploadImage(f)}} />
-              {form.imageUrl && <img src={form.imageUrl} alt="preview" className="h-14 rounded" />}
+              {form.imageUrl && (
+                <Image src={form.imageUrl} alt="preview" width={56} height={56} className="h-14 rounded" />
+              )}
             </div>
             <p className="text-xs text-gray-300 mt-1">Upload Image: Unggah gambar sertifikat/thumbnail.</p>
           </div>
@@ -126,9 +129,11 @@ export default function AdminEducation() {
       <div className="bg-gray-800 p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-4">Items</h3>
         <div className="grid md:grid-cols-2 gap-4">
-          {items.map(it=> (
+              {items.map(it=> (
             <div key={it.id} className="bg-gray-700 rounded p-4 flex gap-4 items-start">
-              {it.imageUrl && <img src={it.imageUrl} alt={it.title} className="h-16 w-16 object-cover rounded" />}
+              {it.imageUrl && (
+                <Image src={it.imageUrl} alt={it.title} width={64} height={64} className="object-cover rounded" />
+              )}
               <div className="flex-1">
                 <div className="font-semibold">{it.title}</div>
                 <div className="text-sm text-gray-300">{it.issuer} • {it.date}</div>

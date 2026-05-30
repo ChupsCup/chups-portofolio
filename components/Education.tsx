@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import ScrambleText from './ScrambleText'
@@ -170,7 +171,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
               >
                 <div className="absolute inset-0 rounded-[calc(theme(borderRadius.2xl)-1px)] overflow-hidden" style={{ background: '#080808' }}>
                   {cert.imageUrl ? (
-                    <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover" />
+                    <Image src={cert.imageUrl} alt={cert.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
                   ) : (
                     <div className="w-full h-full flex flex-col items-start justify-end p-4" style={{ background: 'rgba(0,0,0,0.38)' }}>
                       <span className="text-xs text-white/80">{cert.issuer} • {cert.date}</span>
@@ -201,12 +202,14 @@ export default function Education({ certificates = defaultCertificates }: { cert
               <button className="absolute top-2 right-2 z-10 px-3 py-1 rounded bg-white/10 text-white text-sm" onClick={() => setActive(null)}>Close</button>
               <div className="relative w-full h-full rounded-xl overflow-hidden bg-black flex items-center justify-center">
                 {data[active].imageUrl ? (
-                  <img
-                    src={data[active].imageUrl}
-                    alt={data[active].title}
-                    className="object-contain"
-                    style={{ maxWidth: '80vw', maxHeight: '75vh' }}
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={data[active].imageUrl}
+                      alt={data[active].title}
+                      fill
+                      style={{ objectFit: 'contain' }}
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-white/80">
                     <div className="text-2xl font-bold mb-2">{data[active].title}</div>

@@ -35,7 +35,7 @@ export default function ExperienceSection() {
         .order('start_date', { ascending: false })
 
       if (error) {
-        console.log('Supabase error:', error);
+        if (process.env.NODE_ENV !== 'production') console.log('Supabase error:', error);
         
         // Silently handle table not found
         const errorMsg = error.message || JSON.stringify(error)
@@ -71,7 +71,7 @@ export default function ExperienceSection() {
       }
       setExperiences(data || [])
     } catch (error) {
-      console.log('Error fetching experiences:', error)
+      if (process.env.NODE_ENV !== 'production') console.log('Error fetching experiences:', error)
       setExperiences([])
     } finally {
       setLoading(false)

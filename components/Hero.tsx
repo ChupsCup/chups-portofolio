@@ -192,6 +192,7 @@ export default function Hero() {
                 href="https://github.com/ChupsCup"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub Profile"
                 className="text-white/70 hover:text-white transition"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -202,6 +203,7 @@ export default function Hero() {
                 href="https://www.linkedin.com/in/fahri-yusuf-73bb75217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn Profile"
                 className="text-white/70 hover:text-white transition"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -212,6 +214,7 @@ export default function Hero() {
                 href="https://wa.me/6285121017198"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="WhatsApp Chat"
                 className="text-white/70 hover:text-white transition"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

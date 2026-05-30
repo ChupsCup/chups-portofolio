@@ -36,8 +36,8 @@ export default function Contact() {
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
       setTimeout(() => setStatus('idle'), 5000)
-    } catch (error: any) {
-      console.error('Error sending message:', error)
+      } catch (error: any) {
+      if (process.env.NODE_ENV !== 'production') console.error('Error sending message:', error)
       setErrorText(error?.message || 'Gagal membuka WhatsApp')
       setStatus('error')
       setTimeout(() => setStatus('idle'), 5000)
@@ -173,6 +173,7 @@ export default function Contact() {
                   className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
                   placeholder="Your Name"
+                  autoComplete="name"
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
@@ -192,6 +193,7 @@ export default function Contact() {
                   className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
                   placeholder="fahriysuf@gmail.com"
+                  autoComplete="email"
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
@@ -211,6 +213,7 @@ export default function Contact() {
                   className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm resize-none"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
                   placeholder="Your message..."
+                  autoComplete="off"
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
