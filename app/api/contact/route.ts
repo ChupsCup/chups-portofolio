@@ -17,11 +17,11 @@ export async function POST(req: Request) {
     }
 
     // Telegram Bot API
-    const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8421212689:AAFoEXfPwLvHc9DUejBdhDeglani-EzbY2M'
+    const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN
     let TG_CHAT_ID = process.env.TELEGRAM_CHAT_ID || ''
 
     if (!TG_TOKEN) {
-      return NextResponse.json({ ok: false, hint: 'Telegram not configured. Set TELEGRAM_BOT_TOKEN (and optionally TELEGRAM_CHAT_ID).' }, { status: 501 })
+      return NextResponse.json({ ok: false, hint: 'Telegram not configured. Set TELEGRAM_BOT_TOKEN (and optionally TELEGRAM_CHAT_ID) in environment variables.' }, { status: 501 })
     }
 
     const base = `https://api.telegram.org/bot${TG_TOKEN}`

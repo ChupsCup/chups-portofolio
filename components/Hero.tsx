@@ -155,9 +155,11 @@ export default function Hero() {
           >
             <motion.div variants={itemVariants}>
               <div className="space-y-2">
-                <TextReveal className="text-5xl md:text-6xl font-extrabold text-[rgb(var(--foreground-rgb))] leading-tight">
-                  {hero?.title_prefix ?? "Hi, I'm fahri yusuf"}
-                </TextReveal>
+                <h1 className="text-5xl md:text-6xl font-extrabold text-[rgb(var(--foreground-rgb))] leading-tight">
+                  <TextReveal>
+                    {hero?.title_prefix ?? "Hi, I'm fahri yusuf"}
+                  </TextReveal>
+                </h1>
                 <motion.div
                   className="text-5xl md:text-6xl font-bold leading-tight"
                   style={{ color: '#5C6CFF' }}

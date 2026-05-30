@@ -8,23 +8,13 @@ import ButtonPill from '@/components/ButtonPill'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { supabase, AboutInfo } from '@/lib/supabase'
+import { DEFAULT_ABOUT_INFO, DEFAULT_ABOUT_CONTENT } from '@/lib/defaultData'
 
 export default function About() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [about, setAbout] = useState<AboutInfo | null>(null)
   const [loading, setLoading] = useState(true)
-  const [aboutContent, setAboutContent] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>({
-    title_prefix: "Hello! I'm a",
-    highlight: 'passionate developer',
-    para1: "I'm a full-stack developer with a passion for creating beautiful and functional web applications.",
-    para2: "I specialize in building responsive, user-friendly applications using the latest technologies like React, Next.js, TypeScript, and more. I'm always eager to learn new technologies and improve my skills.",
-    points: [
-      'Clean & Maintainable Code',
-      'Responsive Design',
-      'Performance Optimization',
-      'Modern Best Practices',
-    ],
-  })
+  const [aboutContent, setAboutContent] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>(DEFAULT_ABOUT_CONTENT)
   
 
   useEffect(() => {
@@ -61,14 +51,14 @@ export default function About() {
           const json = JSON.parse(text)
           // Map known about fields if present
           setAbout({
-            id: json.id ?? 0,
-            name: json.name ?? about?.name ?? '',
-            location: json.location ?? about?.location ?? '',
-            education: json.education ?? about?.education ?? '',
-            email: json.email ?? about?.email ?? '',
-            phone: json.phone ?? about?.phone ?? '',
-            status: json.status ?? about?.status ?? '',
-            cv_url: json.cv_url ?? about?.cv_url ?? '',
+            id: json.id ?? DEFAULT_ABOUT_INFO.id,
+            name: json.name ?? DEFAULT_ABOUT_INFO.name,
+            location: json.location ?? DEFAULT_ABOUT_INFO.location,
+            education: json.education ?? DEFAULT_ABOUT_INFO.education,
+            email: json.email ?? DEFAULT_ABOUT_INFO.email,
+            phone: json.phone ?? DEFAULT_ABOUT_INFO.phone,
+            status: json.status ?? DEFAULT_ABOUT_INFO.status,
+            cv_url: json.cv_url ?? DEFAULT_ABOUT_INFO.cv_url,
             created_at: json.created_at ?? new Date().toISOString(),
           } as AboutInfo)
           if (json.about_content) {
@@ -77,12 +67,12 @@ export default function About() {
               ? c.points
               : (typeof c.points === 'string' && c.points.trim().length)
                 ? c.points.split(/\r?\n/).filter(Boolean)
-                : aboutContent.points
+                : DEFAULT_ABOUT_CONTENT.points
             setAboutContent({
-              title_prefix: c.title_prefix || aboutContent.title_prefix,
-              highlight: c.highlight || aboutContent.highlight,
-              para1: c.para1 || aboutContent.para1,
-              para2: c.para2 || aboutContent.para2,
+              title_prefix: c.title_prefix || DEFAULT_ABOUT_CONTENT.title_prefix,
+              highlight: c.highlight || DEFAULT_ABOUT_CONTENT.highlight,
+              para1: c.para1 || DEFAULT_ABOUT_CONTENT.para1,
+              para2: c.para2 || DEFAULT_ABOUT_CONTENT.para2,
               points: pts,
             })
           } else if (json.hero) {
@@ -91,18 +81,22 @@ export default function About() {
               ? h.points
               : (typeof h.points === 'string' && h.points.trim().length)
                 ? h.points.split(/\r?\n/).filter(Boolean)
-                : aboutContent.points
+                : DEFAULT_ABOUT_CONTENT.points
             setAboutContent({
-              title_prefix: h.title_prefix || aboutContent.title_prefix,
-              highlight: h.highlight || aboutContent.highlight,
-              para1: h.para1 || aboutContent.para1,
-              para2: h.para2 || aboutContent.para2,
+              title_prefix: h.title_prefix || DEFAULT_ABOUT_CONTENT.title_prefix,
+              highlight: h.highlight || DEFAULT_ABOUT_CONTENT.highlight,
+              para1: h.para1 || DEFAULT_ABOUT_CONTENT.para1,
+              para2: h.para2 || DEFAULT_ABOUT_CONTENT.para2,
               points: pts,
             })
           }
           return
         }
       } catch {}
+      
+      // If no storage data, use default
+      setAbout(DEFAULT_ABOUT_INFO)
+      setAboutContent(DEFAULT_ABOUT_CONTENT)
     }
 
     fetchProfilePhoto()

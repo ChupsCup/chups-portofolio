@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
+import { DEFAULT_SKILLS, DEFAULT_SOFT_SKILLS } from '@/lib/defaultData'
 
 type Skill = {
   id: string
@@ -22,6 +23,31 @@ type Category = {
   skills: Skill[]
 }
 
+const convertDefaultSkillsToCategories = (): Category[] => {
+  const categories = new Map<string, Skill[]>()
+  
+  DEFAULT_SKILLS.forEach((skill: any) => {
+    const category = skill.category || 'Other'
+    if (!categories.has(category)) {
+      categories.set(category, [])
+    }
+    categories.get(category)!.push({
+      id: skill.id,
+      name: skill.name,
+      level: 85, // default level
+      type: skill.level || 'Advanced',
+      category_id: category,
+    })
+  })
+  
+  return Array.from(categories.entries()).map(([title, skills]) => ({
+    id: title.toLowerCase(),
+    title,
+    efficiency: 85,
+    skills,
+  }))
+}
+
 const Skills: NextPage = () => {
   const [systemPacks, setSystemPacks] = useState<Category[]>([])
   const [softSkills, setSoftSkills] = useState<string[]>([])
@@ -32,10 +58,12 @@ const Skills: NextPage = () => {
       try {
         const response = await fetch('/api/skills')
         const data = await response.json()
-        setSystemPacks(data.categories || [])
-        setSoftSkills(data.softSkills?.map((s: { name: string }) => s.name) || [])
+        setSystemPacks(data.categories || convertDefaultSkillsToCategories())
+        setSoftSkills(data.softSkills?.map((s: { name: string }) => s.name) || DEFAULT_SOFT_SKILLS)
       } catch (error) {
-        console.error('Error fetching skills:', error)
+        console.error('Error fetching skills - using default data:', error)
+        setSystemPacks(convertDefaultSkillsToCategories())
+        setSoftSkills(DEFAULT_SOFT_SKILLS)
       } finally {
         setLoading(false)
       }

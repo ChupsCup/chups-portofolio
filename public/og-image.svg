@@ -1,0 +1,39 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#grad)"/>
+  
+  <!-- Accent line -->
+  <rect x="0" y="0" width="1200" height="4" fill="#5C6CFF"/>
+  
+  <!-- Main title -->
+  <text x="600" y="200" font-size="72" font-weight="bold" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif">
+    Fahri Yusuf
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="280" font-size="48" text-anchor="middle" fill="#5C6CFF" font-family="Arial, sans-serif">
+    Full-Stack Developer
+  </text>
+  
+  <!-- Description -->
+  <text x="600" y="370" font-size="32" text-anchor="middle" fill="#cccccc" font-family="Arial, sans-serif">
+    React • Next.js • TypeScript
+  </text>
+  
+  <!-- Location -->
+  <text x="600" y="450" font-size="24" text-anchor="middle" fill="#999999" font-family="Arial, sans-serif">
+    Jakarta, Indonesia
+  </text>
+  
+  <!-- Website URL -->
+  <text x="600" y="550" font-size="20" text-anchor="middle" fill="#5C6CFF" font-family="Arial, sans-serif">
+    chups-portofolio.vercel.app
+  </text>
+</svg>

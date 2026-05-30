@@ -7,6 +7,7 @@ import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { pickAccentByKey } from '@/lib/accents'
 import { setupExperiencesTable } from '@/lib/setupDatabase'
+import { DEFAULT_EXPERIENCES } from '@/lib/defaultData'
 
 const HAS_SUPABASE = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -18,7 +19,7 @@ export default function ExperienceSection() {
 
   useEffect(() => {
     if (!HAS_SUPABASE) {
-      setExperiences([])
+      setExperiences(DEFAULT_EXPERIENCES)
       setLoading(false)
       return
     }
@@ -48,7 +49,7 @@ export default function ExperienceSection() {
           errorMsg.includes('404') ||
           errorMsg.includes('schema cache')
         ) {
-          console.log('experiences table not found - this is normal if not set up yet')
+          console.log('experiences table not found - using default data')
           try {
             const ok = await setupExperiencesTable()
             if (ok) {
@@ -58,12 +59,12 @@ export default function ExperienceSection() {
                 .from('experiences')
                 .select('*')
                 .order('start_date', { ascending: false })
-              setExperiences(retry || [])
+              setExperiences(retry || DEFAULT_EXPERIENCES)
             } else {
-              setExperiences([])
+              setExperiences(DEFAULT_EXPERIENCES)
             }
           } catch {
-            setExperiences([])
+            setExperiences(DEFAULT_EXPERIENCES)
           } finally {
             setLoading(false)
           }
@@ -71,10 +72,10 @@ export default function ExperienceSection() {
         }
         throw error
       }
-      setExperiences(data || [])
+      setExperiences(data || DEFAULT_EXPERIENCES)
     } catch (error) {
-      console.log('Error fetching experiences (table may not be created yet):', error)
-      setExperiences([])
+      console.log('Error fetching experiences - using default data:', error)
+      setExperiences(DEFAULT_EXPERIENCES)
     } finally {
       setLoading(false)
     }
@@ -114,10 +115,6 @@ export default function ExperienceSection() {
         </div>
       </section>
     )
-  }
-
-  if (experiences.length === 0) {
-    return null
   }
 
   return (
