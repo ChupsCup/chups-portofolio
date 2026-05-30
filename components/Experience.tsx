@@ -7,7 +7,6 @@ import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { pickAccentByKey } from '@/lib/accents'
 import { setupExperiencesTable } from '@/lib/setupDatabase'
-import { DEFAULT_EXPERIENCES } from '@/lib/defaultData'
 
 const HAS_SUPABASE = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -19,7 +18,6 @@ export default function ExperienceSection() {
 
   useEffect(() => {
     if (!HAS_SUPABASE) {
-      setExperiences(DEFAULT_EXPERIENCES)
       setLoading(false)
       return
     }
@@ -49,7 +47,6 @@ export default function ExperienceSection() {
           errorMsg.includes('404') ||
           errorMsg.includes('schema cache')
         ) {
-          console.log('experiences table not found - using default data')
           try {
             const ok = await setupExperiencesTable()
             if (ok) {
@@ -59,12 +56,12 @@ export default function ExperienceSection() {
                 .from('experiences')
                 .select('*')
                 .order('start_date', { ascending: false })
-              setExperiences(retry || DEFAULT_EXPERIENCES)
+              setExperiences(retry || [])
             } else {
-              setExperiences(DEFAULT_EXPERIENCES)
+              setExperiences([])
             }
           } catch {
-            setExperiences(DEFAULT_EXPERIENCES)
+            setExperiences([])
           } finally {
             setLoading(false)
           }
@@ -72,10 +69,10 @@ export default function ExperienceSection() {
         }
         throw error
       }
-      setExperiences(data || DEFAULT_EXPERIENCES)
+      setExperiences(data || [])
     } catch (error) {
-      console.log('Error fetching experiences - using default data:', error)
-      setExperiences(DEFAULT_EXPERIENCES)
+      console.log('Error fetching experiences:', error)
+      setExperiences([])
     } finally {
       setLoading(false)
     }
@@ -144,7 +141,11 @@ export default function ExperienceSection() {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            {experiences.map((exp, index) => (
+            {experiences.length === 0 ? (
+            <div className="text-center text-white/70 py-16">
+              No experience data available.
+            </div>
+          ) : experiences.map((exp, index) => (
               <motion.div
                 key={exp.id}
                 variants={itemVariants}

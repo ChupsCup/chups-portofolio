@@ -8,13 +8,12 @@ import ButtonPill from '@/components/ButtonPill'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { supabase, AboutInfo } from '@/lib/supabase'
-import { DEFAULT_ABOUT_INFO, DEFAULT_ABOUT_CONTENT } from '@/lib/defaultData'
 
 export default function About() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [about, setAbout] = useState<AboutInfo | null>(null)
   const [loading, setLoading] = useState(true)
-  const [aboutContent, setAboutContent] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>(DEFAULT_ABOUT_CONTENT)
+  const [aboutContent, setAboutContent] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>({ title_prefix: '', highlight: '', para1: '', para2: '', points: [] })
   
 
   useEffect(() => {
@@ -27,16 +26,14 @@ export default function About() {
           .limit(1)
 
         if (error) throw error
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && data[0].photo_url) {
           setProfilePhoto(data[0].photo_url)
         } else {
-          // Fallback ke default image jika tidak ada
-          setProfilePhoto('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop')
+          setProfilePhoto(null)
         }
       } catch (error) {
         console.error('Error fetching profile photo:', error)
-        // Fallback ke default image
-        setProfilePhoto('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop')
+        setProfilePhoto(null)
       } finally {
         setLoading(false)
       }
@@ -51,14 +48,14 @@ export default function About() {
           const json = JSON.parse(text)
           // Map known about fields if present
           setAbout({
-            id: json.id ?? DEFAULT_ABOUT_INFO.id,
-            name: json.name ?? DEFAULT_ABOUT_INFO.name,
-            location: json.location ?? DEFAULT_ABOUT_INFO.location,
-            education: json.education ?? DEFAULT_ABOUT_INFO.education,
-            email: json.email ?? DEFAULT_ABOUT_INFO.email,
-            phone: json.phone ?? DEFAULT_ABOUT_INFO.phone,
-            status: json.status ?? DEFAULT_ABOUT_INFO.status,
-            cv_url: json.cv_url ?? DEFAULT_ABOUT_INFO.cv_url,
+            id: json.id ?? 0,
+            name: json.name || '',
+            location: json.location || '',
+            education: json.education || '',
+            email: json.email || '',
+            phone: json.phone || '',
+            status: json.status || '',
+            cv_url: json.cv_url || '',
             created_at: json.created_at ?? new Date().toISOString(),
           } as AboutInfo)
           if (json.about_content) {
@@ -67,12 +64,12 @@ export default function About() {
               ? c.points
               : (typeof c.points === 'string' && c.points.trim().length)
                 ? c.points.split(/\r?\n/).filter(Boolean)
-                : DEFAULT_ABOUT_CONTENT.points
+                : []
             setAboutContent({
-              title_prefix: c.title_prefix || DEFAULT_ABOUT_CONTENT.title_prefix,
-              highlight: c.highlight || DEFAULT_ABOUT_CONTENT.highlight,
-              para1: c.para1 || DEFAULT_ABOUT_CONTENT.para1,
-              para2: c.para2 || DEFAULT_ABOUT_CONTENT.para2,
+              title_prefix: c.title_prefix || '',
+              highlight: c.highlight || '',
+              para1: c.para1 || '',
+              para2: c.para2 || '',
               points: pts,
             })
           } else if (json.hero) {
@@ -81,12 +78,12 @@ export default function About() {
               ? h.points
               : (typeof h.points === 'string' && h.points.trim().length)
                 ? h.points.split(/\r?\n/).filter(Boolean)
-                : DEFAULT_ABOUT_CONTENT.points
+                : []
             setAboutContent({
-              title_prefix: h.title_prefix || DEFAULT_ABOUT_CONTENT.title_prefix,
-              highlight: h.highlight || DEFAULT_ABOUT_CONTENT.highlight,
-              para1: h.para1 || DEFAULT_ABOUT_CONTENT.para1,
-              para2: h.para2 || DEFAULT_ABOUT_CONTENT.para2,
+              title_prefix: h.title_prefix || '',
+              highlight: h.highlight || '',
+              para1: h.para1 || '',
+              para2: h.para2 || '',
               points: pts,
             })
           }
@@ -94,9 +91,9 @@ export default function About() {
         }
       } catch {}
       
-      // If no storage data, use default
-      setAbout(DEFAULT_ABOUT_INFO)
-      setAboutContent(DEFAULT_ABOUT_CONTENT)
+      // If no storage data, leave about content empty
+      setAbout(null)
+      setAboutContent({ title_prefix: '', highlight: '', para1: '', para2: '', points: [] })
     }
 
     fetchProfilePhoto()
@@ -250,7 +247,7 @@ export default function About() {
               style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.45), 0 0 40px rgba(255,255,255,0.04)' }}
             >
               {/* Photo */}
-              {!loading && profilePhoto && (
+              {!loading && profilePhoto ? (
                 <Image
                   src={profilePhoto}
                   alt="Profile Photo"
@@ -258,8 +255,9 @@ export default function About() {
                   className="object-cover"
                   priority
                 />
-              )}
-              {loading && (
+              ) : !loading ? (
+                <div className="w-full h-full bg-gray-800" />
+              ) : (
                 <div className="w-full h-full bg-gray-700 animate-pulse" />
               )}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/22" />
@@ -274,34 +272,41 @@ export default function About() {
           <ParallaxSection offset={30}>
             <motion.div className="space-y-6">
               <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
-                {aboutContent.title_prefix} {aboutContent.highlight && (
-                  <span style={{ color: '#5C6CFF' }}>{aboutContent.highlight}</span>
+                {aboutContent.title_prefix}
+                {aboutContent.highlight && (
+                  <span style={{ color: '#5C6CFF' }}> {aboutContent.highlight}</span>
                 )}
               </motion.h3>
-              <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
-                {aboutContent.para1}
-              </motion.p>
-              <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
-                {aboutContent.para2}
-              </motion.p>
-              <motion.div variants={itemVariants} className="space-y-3 pt-2">
-                {aboutContent.points.map((skill, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#5C6CFF' }}>
-                      <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
+              {aboutContent.para1 && (
+                <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
+                  {aboutContent.para1}
+                </motion.p>
+              )}
+              {aboutContent.para2 && (
+                <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
+                  {aboutContent.para2}
+                </motion.p>
+              )}
+              {aboutContent.points.length > 0 && (
+                <motion.div variants={itemVariants} className="space-y-3 pt-2">
+                  {aboutContent.points.map((skill, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#5C6CFF' }}>
+                        <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span className="text-[rgb(var(--foreground-rgb))]">{skill}</span>
                     </div>
-                    <span className="text-[rgb(var(--foreground-rgb))]">{skill}</span>
-                  </div>
-                ))}
-              </motion.div>
+                  ))}
+                </motion.div>
+              )}
             
               <motion.div
                 variants={itemVariants}
                 className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6"
               >
-                {infoItems.map((item, idx) => (
+                {infoItems.filter((item) => item.value).map((item, idx) => (
                   <div
                     key={idx}
                     className="group relative flex items-start gap-3 p-4 bg-[rgba(255,255,255,0.04)] border border-white/10 rounded-xl shadow-sm hover:shadow-md transition-all will-change-transform"
@@ -329,7 +334,7 @@ export default function About() {
 
               {/* CTA Buttons */}
               <motion.div variants={itemVariants} className="pt-6 flex flex-wrap gap-3">
-                <ButtonPill href="/api/cv" label="Download CV" variant="cobalt" />
+                {about?.cv_url ? <ButtonPill href={about.cv_url} label="Download CV" variant="cobalt" /> : null}
                 <ButtonPill href="#contact" label="Get In Touch" variant="mint" />
               </motion.div>
             </motion.div>

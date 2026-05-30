@@ -6,7 +6,7 @@ import { supabase, Project } from "@/lib/supabase";
 import ParallaxSection from "./ParallaxSection";
 import ScrambleText from "./ScrambleText";
 import { pickAccentByKey } from "@/lib/accents";
-import { DEFAULT_PROJECTS } from "@/lib/defaultData";
+
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -27,10 +27,10 @@ export default function Projects() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProjects(data || DEFAULT_PROJECTS);
+      setProjects(data || []);
     } catch (error) {
-      console.error("Error fetching projects - using default data:", error);
-      setProjects(DEFAULT_PROJECTS);
+      console.error("Error fetching projects:", error);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -142,7 +142,11 @@ export default function Projects() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {projects.map((project, idx) => {
+          {projects.length === 0 ? (
+          <div className="col-span-full text-center text-white/70 py-16">
+            No projects available.
+          </div>
+        ) : projects.map((project, idx) => {
             const photos = getPhotos(project);
             return (
               <ParallaxSection

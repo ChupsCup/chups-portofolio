@@ -5,8 +5,6 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
-import { DEFAULT_SKILLS, DEFAULT_SOFT_SKILLS } from '@/lib/defaultData'
-
 type Skill = {
   id: string
   name: string
@@ -23,31 +21,6 @@ type Category = {
   skills: Skill[]
 }
 
-const convertDefaultSkillsToCategories = (): Category[] => {
-  const categories = new Map<string, Skill[]>()
-  
-  DEFAULT_SKILLS.forEach((skill: any) => {
-    const category = skill.category || 'Other'
-    if (!categories.has(category)) {
-      categories.set(category, [])
-    }
-    categories.get(category)!.push({
-      id: skill.id,
-      name: skill.name,
-      level: 85, // default level
-      type: skill.level || 'Advanced',
-      category_id: category,
-    })
-  })
-  
-  return Array.from(categories.entries()).map(([title, skills]) => ({
-    id: title.toLowerCase(),
-    title,
-    efficiency: 85,
-    skills,
-  }))
-}
-
 const Skills: NextPage = () => {
   const [systemPacks, setSystemPacks] = useState<Category[]>([])
   const [softSkills, setSoftSkills] = useState<string[]>([])
@@ -58,12 +31,12 @@ const Skills: NextPage = () => {
       try {
         const response = await fetch('/api/skills')
         const data = await response.json()
-        setSystemPacks(data.categories || convertDefaultSkillsToCategories())
-        setSoftSkills(data.softSkills?.map((s: { name: string }) => s.name) || DEFAULT_SOFT_SKILLS)
+        setSystemPacks(data.categories || [])
+        setSoftSkills(data.softSkills?.map((s: { name: string }) => s.name) || [])
       } catch (error) {
-        console.error('Error fetching skills - using default data:', error)
-        setSystemPacks(convertDefaultSkillsToCategories())
-        setSoftSkills(DEFAULT_SOFT_SKILLS)
+        console.error('Error fetching skills:', error)
+        setSystemPacks([])
+        setSoftSkills([])
       } finally {
         setLoading(false)
       }
@@ -211,7 +184,11 @@ const Skills: NextPage = () => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {systemPacks.map((category, idx) => {
+          {systemPacks.length === 0 ? (
+            <div className="col-span-full text-center text-white/70 py-16">
+              No skill categories available.
+            </div>
+          ) : systemPacks.map((category, idx) => {
             const isLast = idx === systemPacks.length - 1
             const centerLast = systemPacks.length % 3 === 1 && isLast
             return (
@@ -285,7 +262,9 @@ const Skills: NextPage = () => {
             Keterampilan Lunak
           </motion.h3>
           <motion.div variants={containerVariants} className="flex flex-wrap gap-3 justify-center">
-            {softSkills.map((skill, idx) => (
+            {softSkills.length === 0 ? (
+              <div className="text-white/70 py-10">No soft skills available.</div>
+            ) : softSkills.map((skill, idx) => (
               <motion.span
                 key={idx}
                 variants={itemVariants}
