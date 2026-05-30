@@ -6,8 +6,7 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export default async function Image() {
-  const photoUrl = 'https://oemaqbrvwbosbinjrxei.supabase.co/storage/v1/object/public/portfolio/photos/your-photo.jpg'
-
+  const photoUrl = 'https://oemaqbrvwbosbinjrxei.supabase.co/storage/v1/object/public/portfolio/profile/profile-1764578196789-IMG_20251201153204946.png'
   return new ImageResponse(
     (
       <div style={{ width: 1200, height: 630, background: '#0a0a0f', display: 'flex', position: 'relative', overflow: 'hidden' }}>
