@@ -49,6 +49,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://chups-portofolio.vercel.app',
   },
+  verification: {
+    google: '2XKFxkI4ZFFH85tdDVgo-UakEe7O8zPmr7kYXUwsPmw',
+  },
 }
 
 export const viewport: Viewport = {
