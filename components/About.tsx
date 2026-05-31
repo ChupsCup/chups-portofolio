@@ -334,7 +334,7 @@ export default function About() {
 
               {/* CTA Buttons */}
               <motion.div variants={itemVariants} className="pt-6 flex flex-wrap gap-3">
-                {about?.cv_url ? <ButtonPill href={about.cv_url} label="Download CV" variant="cobalt" /> : null}
+                <ButtonPill href="/api/cv" label="Download CV" variant="cobalt" />
                 <ButtonPill href="#contact" label="Get In Touch" variant="mint" />
               </motion.div>
             </motion.div>
