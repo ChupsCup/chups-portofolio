@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { supabase, Project } from "@/lib/supabase";
 import ParallaxSection from "./ParallaxSection";
 import ScrambleText from "./ScrambleText";
 import { pickAccentByKey } from "@/lib/accents";
 
+const MotionImage = motion(Image);
 
-export default function Projects() {
+function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -97,7 +99,14 @@ export default function Projects() {
     return (
       <section id="projects" className="py-20">
         <div className="max-w-6xl mx-auto p-4 md:p-8">
-          <div className="text-center text-white/60">Loading projects...</div>
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 w-48 rounded-full bg-white/10 mx-auto" />
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-8">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="h-72 rounded-3xl bg-white/5" />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -185,10 +194,13 @@ export default function Projects() {
                     style={{ background: "rgba(255,255,255,0.06)" }}
                   >
                     {project.image_url ? (
-                      <motion.img
+                      <MotionImage
                         src={project.image_url}
                         alt={project.title}
-                        className="w-full h-full object-cover"
+                        fill
+                        priority={false}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover"
                         whileHover={{ scale: 1.08 }}
                         transition={{
                           type: "spring" as const,
@@ -307,16 +319,24 @@ export default function Projects() {
                 >
                   {activePhotos.length > 0 ? (
                     <AnimatePresence mode="wait">
-                      <motion.img
+                      <motion.div
                         key={modalSlide}
-                        src={activePhotos[modalSlide]}
-                        alt={`${activeProject.title} photo ${modalSlide + 1}`}
-                        className="w-full object-contain max-h-[60vh]"
+                        className="relative w-full h-[60vh] min-h-[300px]"
                         initial={{ opacity: 0, x: 40 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -40 }}
                         transition={{ duration: 0.22 }}
-                      />
+                      >
+                        <MotionImage
+                          src={activePhotos[modalSlide]}
+                          alt={`${activeProject.title} photo ${modalSlide + 1}`}
+                          fill
+                          className="object-contain"
+                          sizes="100vw"
+                          priority={false}
+                          style={{ objectFit: 'contain' }}
+                        />
+                      </motion.div>
                     </AnimatePresence>
                   ) : (
                     <div className="w-full h-64 flex items-center justify-center text-white/40">
@@ -422,3 +442,5 @@ export default function Projects() {
     </section>
   );
 }
+
+export default memo(Projects)

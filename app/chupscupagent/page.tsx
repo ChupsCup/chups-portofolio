@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from 'next/image'
 import { supabase } from "@/lib/supabase";
 import {
   setupProfilePhotosTable,
@@ -1482,15 +1483,17 @@ ALTER TABLE experiences DISABLE ROW LEVEL SECURITY;`;
                         disabled={uploading}
                         className="w-full px-4 py-2 rounded-lg bg-[#0f1220] border border-white/10 text-cream-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent"
                       />
-                      {uploading && (
+                          {uploading && (
                         <p className="text-yellow-400">Uploading...</p>
                       )}
                       {previewImage && (
                         <div className="mt-4">
                           <p className="text-sm text-gray-400 mb-2">Preview:</p>
-                          <img
+                          <Image
                             src={previewImage}
                             alt="Preview"
+                            width={400}
+                            height={240}
                             className="w-full max-w-xs h-auto rounded"
                           />
                         </div>
@@ -1518,9 +1521,11 @@ ALTER TABLE experiences DISABLE ROW LEVEL SECURITY;`;
                           <div className="flex flex-wrap gap-2">
                             {formData.image_urls.map((url, i) => (
                               <div key={i} className="relative group">
-                                <img
+                                <Image
                                   src={url}
                                   alt={`foto ${i + 1}`}
+                                  width={80}
+                                  height={80}
                                   className="w-20 h-20 object-cover rounded border border-white/10"
                                 />
                                 <button
@@ -1614,9 +1619,11 @@ ALTER TABLE experiences DISABLE ROW LEVEL SECURITY;`;
                           {/* Image Preview */}
                           {project.image_url && (
                             <div className="flex-shrink-0">
-                              <img
+                              <Image
                                 src={project.image_url}
                                 alt={project.title}
+                                width={128}
+                                height={128}
                                 className="w-32 h-32 object-cover rounded"
                               />
                               {project.image_urls &&
@@ -1729,9 +1736,11 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
                       {previewImage && (
                         <div className="mt-4">
                           <p className="text-sm text-gray-400 mb-2">Preview:</p>
-                          <img
+                          <Image
                             src={previewImage}
                             alt="Preview"
+                            width={128}
+                            height={128}
                             className="w-32 h-32 object-cover rounded"
                           />
                         </div>
@@ -1758,9 +1767,11 @@ CREATE POLICY "Allow authenticated delete" ON profile_photos
                           key={photo.id}
                           className="bg-gray-800 p-4 rounded-lg"
                         >
-                          <img
+                          <Image
                             src={photo.photo_url}
                             alt="Profile"
+                            width={640}
+                            height={384}
                             className="w-full h-64 object-cover rounded mb-4"
                           />
                           <p className="text-sm text-gray-400 mb-4">

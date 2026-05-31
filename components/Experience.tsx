@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, memo } from 'react'
 import { motion } from 'framer-motion'
 import { supabase, Experience } from '@/lib/supabase'
 import ParallaxSection from './ParallaxSection'
@@ -12,7 +12,7 @@ const HAS_SUPABASE = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-export default function ExperienceSection() {
+function ExperienceSection() {
   const [experiences, setExperiences] = useState<Experience[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -108,7 +108,20 @@ export default function ExperienceSection() {
     return (
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-white/70">Loading experiences...</p>
+          <div className="animate-pulse space-y-6">
+            <div className="h-10 w-48 rounded-full bg-white/10 mx-auto" />
+            <div className="space-y-6">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="rounded-3xl bg-white/5 p-6">
+                  <div className="h-6 w-40 rounded-full bg-white/10 mb-4" />
+                  <div className="h-4 w-1/2 rounded-full bg-white/10 mb-6" />
+                  <div className="h-3 w-full rounded-full bg-white/10 mb-3" />
+                  <div className="h-3 w-5/6 rounded-full bg-white/10 mb-3" />
+                  <div className="h-3 w-3/4 rounded-full bg-white/10" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     )
@@ -215,4 +228,6 @@ export default function ExperienceSection() {
     </ParallaxSection>
   )
 }
+
+export default memo(ExperienceSection)
 

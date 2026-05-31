@@ -1,9 +1,8 @@
 
 'use client'
 
-import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import TextReveal from './TextReveal'
 import TextTypewriter from './TextTypewriter'

@@ -6,11 +6,11 @@ import InitialScrollGuard from '@/components/InitialScrollGuard'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import GlobalEffects from '@/components/GlobalEffects'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
 export const metadata: Metadata = {
-  title: 'Fahri Yusuf — Full-Stack Developer',
-  description: 'Portfolio Fahri Yusuf, Full-Stack Developer spesialis React, Next.js, TypeScript. Based in Jakarta, Indonesia.',
+  title: 'Fahri Yusuf — System Analyst & Developer',
+  description: 'Portfolio Fahri Yusuf, System Analyst & Full-Stack Developer berbasis di Jakarta, Indonesia. Spesialis React, Next.js, TypeScript, dan Laravel.',
   keywords: ['Fahri Yusuf', 'Full Stack Developer', 'React', 'Next.js', 'TypeScript', 'Jakarta', 'Indonesia', 'portfolio'],
   authors: [{ name: 'Fahri Yusuf', url: 'https://chups-portofolio.vercel.app' }],
   creator: 'Fahri Yusuf',
@@ -18,15 +18,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://chups-portofolio.vercel.app',
-    title: 'Fahri Yusuf — Full-Stack Developer',
-    description: 'Portfolio Fahri Yusuf, Full-Stack Developer spesialis React, Next.js, TypeScript. Lihat project, skill, dan experience saya.',
+    title: 'Fahri Yusuf — System Analyst & Developer',
+    description: 'Portfolio Fahri Yusuf, System Analyst & Full-Stack Developer berbasis di Jakarta, Indonesia. Spesialis React, Next.js, TypeScript, dan Laravel.',
     siteName: 'Fahri Yusuf Portfolio',
     images: [
       {
         url: '/og-image.svg',
         width: 1200,
         height: 630,
-        alt: 'Fahri Yusuf — Full-Stack Developer',
+        alt: 'Fahri Yusuf — System Analyst & Developer',
       },
     ],
   },
@@ -63,8 +63,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head />
-      <body className={inter.className}>
+        <head>
+          <link rel="icon" href="/favicon.ico" />
+          <meta name="description" content={metadata.description ?? ''} />
+          <script dangerouslySetInnerHTML={{ __html: `if (${JSON.stringify(process.env.NODE_ENV)} === "production") { console.log = function(){}; console.info = function(){}; console.debug = function(){}; console.warn = function(){}; }` }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Fahri Yusuf",
+            jobTitle: "System Analyst & Full-Stack Developer",
+            url: "https://chups-portofolio.vercel.app",
+            email: "fahriysuf@gmail.com",
+            address: { "@type": "PostalAddress", addressLocality: "Jakarta", addressCountry: "ID" },
+            sameAs: ["https://github.com/ChupsCup", "https://www.linkedin.com/in/fahri-yusuf-73bb75217"]
+          }) }} />
+        </head>
+        <body className={inter.className}>
         <ClientErrorBoundary>
           <InitialScrollGuard />
           <GlobalEffects />
