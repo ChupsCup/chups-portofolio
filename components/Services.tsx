@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 
 const COLORS = {
   mint: '#96E6A1',
@@ -14,10 +13,8 @@ function TiltPill({ href, color, label }: { href: string; color: string; label: 
   return (
     <div className="flex flex-col items-start">
       <Link href={href} className="block">
-        <motion.div
-          whileHover={{ rotate: -12, y: -6, scale: 1.02 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          className="relative w-44 sm:w-56 h-28 rounded-full"
+        <div
+          className="relative w-44 sm:w-56 h-28 rounded-full hover-lift"
           style={{
             background: color,
             boxShadow: `inset 0 0 0 2px rgba(255,255,255,0.2), 0 10px 30px rgba(0,0,0,0.5)`,
@@ -37,7 +34,7 @@ function TiltPill({ href, color, label }: { href: string; color: string; label: 
               <path d="M7 7h10v10"/>
             </svg>
           </div>
-        </motion.div>
+        </div>
       </Link>
       <div className="mt-5 text-white/90 text-sm sm:text-base">
         {label}

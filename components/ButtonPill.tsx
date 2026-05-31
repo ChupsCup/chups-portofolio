@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { pickAccentByKey, nearestAccentName } from '@/lib/accents'
 
 type Variant = 'mint' | 'yellow' | 'cobalt' | 'pink' | 'neutral' | 'auto'
@@ -19,10 +18,8 @@ export default function ButtonPill({ href, label, variant = 'cobalt' }: { href: 
   const theme = VARIANTS[chosen as Exclude<Variant, 'auto'>]
   return (
     <Link href={href} className="inline-block">
-      <motion.div
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.98 }}
-        className="relative h-12 sm:h-14 pr-14 pl-6 rounded-full flex items-center gap-3"
+      <div
+        className="relative h-12 sm:h-14 pr-14 pl-6 rounded-full flex items-center gap-3 hover-scale"
         style={{
           background: theme.bg,
           border: `1px solid ${theme.ring}`,
@@ -52,7 +49,7 @@ export default function ButtonPill({ href, label, variant = 'cobalt' }: { href: 
             <path d="M7 7h10v10"/>
           </svg>
         </span>
-      </motion.div>
+      </div>
     </Link>
   )
 }

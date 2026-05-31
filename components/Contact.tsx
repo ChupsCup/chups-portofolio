@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -51,64 +51,27 @@ export default function Contact() {
     })
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  }
-
-  const inputVariants = {
-    focus: {
-      scale: 1.02,
-      transition: { type: 'spring' as const, stiffness: 300, damping: 20 },
-    },
-  }
-
   return (
   <section id="contact" className="py-20">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <motion.div
-          className="text-center mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--foreground-rgb))] mb-4">
-            Get In Touch
-          </motion.h2>
-          <motion.div variants={itemVariants} className="w-20 h-1 mx-auto" style={{ background: '#5C6CFF' }}></motion.div>
-          <motion.p variants={itemVariants} className="mt-4 text-white/70 font-medium">
-            Have a project in mind? Let's work together!
-          </motion.p>
-        </motion.div>
+        <ScrollRevealGroup className="text-center mb-16">
+          <ScrollRevealItem index={0}>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--foreground-rgb))] mb-4">
+              Get In Touch
+            </h2>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={1}>
+            <div className="w-20 h-1 mx-auto" style={{ background: '#5C6CFF' }}></div>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={2}>
+            <p className="mt-4 text-white/70 font-medium">
+              Have a project in mind? Let's work together!
+            </p>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
 
-        <motion.div
-          className="grid md:grid-cols-2 gap-12 relative"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants} className="space-y-8">
+        <ScrollRevealGroup className="grid md:grid-cols-2 gap-12 relative">
+          <ScrollRevealItem index={0} className="space-y-8">
             <div>
               <h3 className="text-2xl font-bold text-[rgb(var(--foreground-rgb))] mb-6">
                 Contact Information
@@ -155,78 +118,70 @@ export default function Contact() {
                 </a>
               ))}
             </div>
-          </motion.div>
+          </ScrollRevealItem>
 
-          <motion.div variants={itemVariants} className="relative rounded-3xl p-8 shadow-xl backdrop-blur-sm overflow-hidden border" style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}>
+          <ScrollRevealItem index={1}>
+            <div className="relative rounded-3xl p-8 shadow-xl backdrop-blur-sm overflow-hidden border" style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}>
             <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-              <motion.div whileFocus="focus" variants={inputVariants}>
+              <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-[rgb(var(--foreground-rgb))] mb-2">
                   Name
                 </label>
-                <motion.input
+                <input
                   type="text"
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm"
+                  className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm focus-scale"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
                   placeholder="Your Name"
                   autoComplete="name"
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
-              </motion.div>
+              </div>
 
-              <motion.div whileFocus="focus" variants={inputVariants}>
+              <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-[rgb(var(--foreground-rgb))] mb-2">
                   Email
                 </label>
-                <motion.input
+                <input
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm"
+                  className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm focus-scale"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
                   placeholder="fahriysuf@gmail.com"
                   autoComplete="email"
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
-              </motion.div>
+              </div>
 
-              <motion.div whileFocus="focus" variants={inputVariants}>
+              <div>
                 <label htmlFor="message" className="block text-sm font-semibold text-[rgb(var(--foreground-rgb))] mb-2">
                   Message
                 </label>
-                <motion.textarea
+                <textarea
                   id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm resize-none"
+                  className="w-full px-4 py-3 backdrop-blur-md rounded-2xl focus:ring-2 focus:border-transparent transition-all shadow-sm resize-none focus-scale"
                   style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(235,237,240,0.95)' }}
                   placeholder="Your message..."
                   autoComplete="off"
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
                 />
-              </motion.div>
+              </div>
 
-              <motion.button
+              <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full px-6 py-3.5 rounded-2xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold relative overflow-hidden shadow-lg group"
+                className="w-full px-6 py-3.5 rounded-2xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold relative overflow-hidden shadow-lg group hover-scale"
                 style={{ background: '#5C6CFF', color: '#0A0A0A', boxShadow: '0 8px 24px rgba(92,108,255,0.35), inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.35)' }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
               >
                 <span
                   className="pointer-events-none absolute inset-0"
@@ -245,32 +200,24 @@ export default function Contact() {
                   }}
                 />
                 {status === 'loading' ? 'Sending...' : 'Send Message'}
-              </motion.button>
+              </button>
 
               {status === 'success' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg"
-                >
+                <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg animate-fade-in">
                   ✅ Message sent successfully! I'll get back to you soon.
-                </motion.div>
+                </div>
               )}
 
               {status === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg"
-                >
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg animate-fade-in">
                   ❌ {errorText || 'Failed to send message. Please try again or email me directly.'}
-                </motion.div>
+                </div>
               )}
             </form>
-          </motion.div>
-        </motion.div>
+            </div>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
       </div>
     </section>
   )
 }
-

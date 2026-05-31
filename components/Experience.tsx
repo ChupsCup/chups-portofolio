@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { supabase, Experience } from '@/lib/supabase'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
+import ScrollReveal, { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
 import { pickAccentByKey } from '@/lib/accents'
 import { setupExperiencesTable } from '@/lib/setupDatabase'
 
@@ -37,7 +37,6 @@ export default function ExperienceSection() {
       if (error) {
         if (process.env.NODE_ENV !== 'production') console.log('Supabase error:', error);
         
-        // Silently handle table not found
         const errorMsg = error.message || JSON.stringify(error)
         if (
           error.code === 'PGRST116' ||
@@ -50,7 +49,6 @@ export default function ExperienceSection() {
           try {
             const ok = await setupExperiencesTable()
             if (ok) {
-              // small delay for schema cache to refresh then retry
               await new Promise((r) => setTimeout(r, 1000))
               const { data: retry } = await supabase
                 .from('experiences')
@@ -78,27 +76,6 @@ export default function ExperienceSection() {
     }
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })
@@ -112,7 +89,7 @@ export default function ExperienceSection() {
             <div className="h-10 w-48 rounded-full bg-white/10 mx-auto" />
             <div className="space-y-6">
               {[1, 2, 3].map((item) => (
-                <div key={item} className="rounded-3xl bg-white/5 p-6">
+                <div key={item} className="rounded-3xl bg-white/5 p-6 min-h-[180px]">
                   <div className="h-6 w-40 rounded-full bg-white/10 mb-4" />
                   <div className="h-4 w-1/2 rounded-full bg-white/10 mb-6" />
                   <div className="h-3 w-full rounded-full bg-white/10 mb-3" />
@@ -131,44 +108,27 @@ export default function ExperienceSection() {
     <ParallaxSection>
       <section id="experience" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Title */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
+          <ScrollReveal className="mb-16">
             <ScrambleText
               text="My Experience"
               className="text-4xl md:text-5xl font-extrabold mb-4 text-[rgb(var(--foreground-rgb))]"
             />
             <div className="w-20 h-1 rounded-full" style={{ background: '#5C6CFF' }}></div>
-          </motion.div>
+          </ScrollReveal>
 
-          {/* Timeline */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
+          <ScrollRevealGroup className="space-y-8">
             {experiences.length === 0 ? (
             <div className="text-center text-white/70 py-16">
               No experience data available.
             </div>
           ) : experiences.map((exp, index) => (
-              <motion.div
-                key={exp.id}
-                variants={itemVariants}
-                className="relative pl-8 border-l-2"
-                style={{ borderColor: '#5C6CFF' }}
-              >
-                {/* Timeline dot */}
+              <ScrollRevealItem key={exp.id} index={index}>
+                <div
+                  className="relative pl-8 border-l-2"
+                  style={{ borderColor: '#5C6CFF' }}
+                >
                 <div className="absolute -left-4 top-0 w-6 h-6 rounded-full border-4" style={{ background: '#5C6CFF', borderColor: 'rgba(12,12,12,1)' }}></div>
 
-                {/* Content */}
                 <div
                   className="group p-6 rounded-lg shadow-md hover:shadow-lg transition-all border will-change-transform relative"
                   style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
@@ -202,7 +162,6 @@ export default function ExperienceSection() {
 
                   <div className="text-white/85 mb-4 leading-relaxed text-base whitespace-pre-line">{exp.description}</div>
 
-                  {/* Technologies */}
                   {exp.technologies && exp.technologies.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {exp.technologies.map((tech, idx) => {
@@ -220,12 +179,12 @@ export default function ExperienceSection() {
                     </div>
                   )}
                 </div>
-              </motion.div>
+                </div>
+              </ScrollRevealItem>
             ))}
-          </motion.div>
+          </ScrollRevealGroup>
         </div>
       </section>
     </ParallaxSection>
   )
 }
-

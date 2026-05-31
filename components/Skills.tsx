@@ -2,9 +2,11 @@
 
 import type { NextPage } from 'next'
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
+import { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
+import { useInViewOnce } from '@/hooks/useInViewOnce'
+
 type Skill = {
   id: string
   name: string
@@ -44,30 +46,6 @@ const Skills: NextPage = () => {
     
     fetchSkills()
   }, [])
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  } as const
 
   const TiltCard = ({ children }: { children: React.ReactNode }) => {
     const [pos, setPos] = useState({ x: 0, y: 0 })
@@ -112,27 +90,45 @@ const Skills: NextPage = () => {
     const c = 2 * Math.PI * r
     const pct = Math.max(0, Math.min(100, value))
     const dash = (pct / 100) * c
+    const { ref, inView } = useInViewOnce()
+
     return (
-      <motion.svg width="72" height="72" viewBox="0 0 72 72" className="shrink-0">
+      <svg ref={ref as never} width="72" height="72" viewBox="0 0 72 72" className="shrink-0">
         <circle cx="36" cy="36" r={r} className="fill-transparent" stroke="rgba(255,255,255,.12)" strokeWidth="6" />
-        <motion.circle
+        <circle
           cx="36"
           cy="36"
           r={r}
-          className="fill-transparent"
+          className={`fill-transparent gauge-ring ${inView ? 'is-visible' : ''}`}
           stroke="#5C6CFF"
           strokeLinecap="round"
           strokeWidth="6"
-          initial={{ strokeDasharray: `0 ${c}` }}
-          whileInView={{ strokeDasharray: `${dash} ${c}` }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          viewport={{ once: true }}
-          style={{ filter: 'drop-shadow(0 0 8px rgba(92,108,255,.5))' }}
+          style={{
+            ['--gauge-c' as string]: `${c}`,
+            ['--gauge-offset' as string]: `${c - dash}`,
+            filter: 'drop-shadow(0 0 8px rgba(92,108,255,.5))',
+          }}
         />
         <text x="36" y="40" textAnchor="middle" className="fill-current text-[12px] font-semibold">
           {value}%
         </text>
-      </motion.svg>
+      </svg>
+    )
+  }
+
+  const SkillProgressBar = ({ level }: { level: number }) => {
+    const { ref, inView } = useInViewOnce()
+    return (
+      <div ref={ref as never} className="relative w-full h-3.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div
+          className={`absolute left-0 top-0 h-full rounded-full progress-bar-fill ${inView ? 'is-visible' : ''}`}
+          style={{ ['--progress' as string]: `${level}%`, background: '#5C6CFF', boxShadow: '0 0 12px rgba(92,108,255,0.35)' }}
+        />
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-white/50 dark:bg-white/40 blur-sm pointer-events-none progress-bar-glow ${inView ? 'is-visible' : ''}`}
+          style={{ ['--progress' as string]: `${level}%` }}
+        />
+      </div>
     )
   }
 
@@ -140,7 +136,6 @@ const Skills: NextPage = () => {
     return (
       <section id="skills" className="py-20">
         <div className="max-w-6xl mx-auto p-4 md:p-8">
-
           <div className="animate-pulse">
             <div className="h-8 w-48 rounded mx-auto mb-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
             <div className="grid md:grid-cols-3 gap-8">
@@ -156,34 +151,22 @@ const Skills: NextPage = () => {
 
   return (
     <section id="skills" className="relative py-28">
-
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-
-        <motion.div
-          className="text-center mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants}>
+        <ScrollRevealGroup className="text-center mb-16">
+          <ScrollRevealItem index={0}>
             <ScrambleText
               text="System Packs"
               className="text-4xl md:text-6xl font-extrabold text-[rgb(var(--foreground-rgb))] mb-3 inline-block tracking-tight"
             />
-          </motion.div>
-          <motion.p variants={itemVariants} className="mt-2 text-white/70 text-sm max-w-2xl mx-auto">
-            Combining system analysis expertise with development to craft efficient, scalable, user‑centric products
-          </motion.p>
-        </motion.div>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={1}>
+            <p className="mt-2 text-white/70 text-sm max-w-2xl mx-auto">
+              Combining system analysis expertise with development to craft efficient, scalable, user‑centric products
+            </p>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
 
-        <motion.div
-          className="grid md:grid-cols-3 gap-10 mb-20"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
+        <ScrollRevealGroup className="grid md:grid-cols-3 gap-10 mb-20">
           {systemPacks.length === 0 ? (
             <div className="col-span-full text-center text-white/70 py-16">
               No skill categories available.
@@ -192,7 +175,7 @@ const Skills: NextPage = () => {
             const isLast = idx === systemPacks.length - 1
             const centerLast = systemPacks.length % 3 === 1 && isLast
             return (
-              <div key={category.id} className={centerLast ? 'md:col-start-2' : ''}>
+              <ScrollRevealItem key={category.id} index={idx} className={centerLast ? 'md:col-start-2' : ''}>
                 <ParallaxSection offset={idx % 2 === 0 ? 18 : -18}>
                   <TiltCard>
                     <div className="relative flex items-start gap-4 mb-6">
@@ -216,23 +199,7 @@ const Skills: NextPage = () => {
                               {skill.level}%
                             </span>
                           </div>
-                          <div className="relative w-full h-3.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <motion.div
-                              className="absolute left-0 top-0 h-full rounded-full"
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${skill.level}%` }}
-                              transition={{ duration: 1.2, ease: 'easeOut' }}
-                              viewport={{ once: true }}
-                              style={{ background: '#5C6CFF', boxShadow: '0 0 12px rgba(92,108,255,0.35)' }}
-                            />
-                            <motion.div
-                              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-white/50 dark:bg-white/40 blur-sm pointer-events-none"
-                              initial={{ left: '0%' }}
-                              whileInView={{ left: `${skill.level}%` }}
-                              transition={{ duration: 1.2, ease: 'easeOut' }}
-                              viewport={{ once: true }}
-                            />
-                          </div>
+                          <SkillProgressBar level={skill.level} />
                           {skill.note && (
                             <div className="mt-1 text-xs text-white/70">
                               {skill.note}
@@ -243,41 +210,33 @@ const Skills: NextPage = () => {
                     </div>
                   </TiltCard>
                 </ParallaxSection>
-              </div>
+              </ScrollRevealItem>
             )
           })}
-        </motion.div>
+        </ScrollRevealGroup>
 
-        <motion.div
-          className="mt-20"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.h3
-            variants={itemVariants}
-            className="text-center text-2xl font-bold tracking-tight text-[rgb(var(--foreground-rgb))] mb-6"
-          >
-            Keterampilan Lunak
-          </motion.h3>
-          <motion.div variants={containerVariants} className="flex flex-wrap gap-3 justify-center">
-            {softSkills.length === 0 ? (
-              <div className="text-white/70 py-10">No soft skills available.</div>
-            ) : softSkills.map((skill, idx) => (
-              <motion.span
-                key={idx}
-                variants={itemVariants}
-                whileHover={{ y: -3, scale: 1.06 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                className="px-4 py-2 rounded-full text-sm font-medium shadow-[0_6px_20px_-6px_rgba(0,0,0,0.25)]"
-                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,237,240,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}
-              >
-                <span className="relative z-[1]">{skill}</span>
-              </motion.span>
-            ))}
-          </motion.div>
-        </motion.div>
+        <ScrollRevealGroup className="mt-20">
+          <ScrollRevealItem index={0}>
+            <h3 className="text-center text-2xl font-bold tracking-tight text-[rgb(var(--foreground-rgb))] mb-6">
+              Keterampilan Lunak
+            </h3>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={1}>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {softSkills.length === 0 ? (
+                <div className="text-white/70 py-10">No soft skills available.</div>
+              ) : softSkills.map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-4 py-2 rounded-full text-sm font-medium shadow-[0_6px_20px_-6px_rgba(0,0,0,0.25)] hover-lift"
+                  style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(235,237,240,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}
+                >
+                  <span className="relative z-[1]">{skill}</span>
+                </span>
+              ))}
+            </div>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
       </div>
     </section>
   )

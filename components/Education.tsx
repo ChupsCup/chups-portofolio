@@ -1,9 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import ScrambleText from './ScrambleText'
+import { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
 
 type Certificate = {
   id: string
@@ -37,16 +37,6 @@ const defaultCertificates: Certificate[] = [
     credentialUrl: '#',
   },
 ]
-
-const container = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-} as const
-
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 160, damping: 18 } },
-} as const
 
 export default function Education({ certificates = defaultCertificates }: { certificates?: Certificate[] }) {
   const [items, setItems] = useState<Certificate[] | null>(null)
@@ -128,23 +118,19 @@ export default function Education({ certificates = defaultCertificates }: { cert
   return (
     <section id="education" className="py-24">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <motion.div
-          className="text-center mb-10"
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={item}>
+        <ScrollRevealGroup className="text-center mb-10">
+          <ScrollRevealItem index={0}>
             <ScrambleText
               text="My Education"
               className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--foreground-rgb))]"
             />
-          </motion.div>
-          <motion.p variants={item} className="mt-3 text-white/70 text-sm max-w-2xl mx-auto">
-            Certifications and courses that reinforce my System Analyst and Full‑Stack capabilities.
-          </motion.p>
-        </motion.div>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={1}>
+            <p className="mt-3 text-white/70 text-sm max-w-2xl mx-auto">
+              Certifications and courses that reinforce my System Analyst and Full‑Stack capabilities.
+            </p>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
 
         <div
           className="relative"

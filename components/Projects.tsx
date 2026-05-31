@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { supabase, Project } from "@/lib/supabase";
 import ParallaxSection from "./ParallaxSection";
 import ScrambleText from "./ScrambleText";
+import { ScrollRevealGroup, ScrollRevealItem } from "./ScrollReveal";
 import { pickAccentByKey } from "@/lib/accents";
-
-const MotionImage = motion(Image);
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -77,24 +75,6 @@ export default function Projects() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { type: "spring" as const, stiffness: 80, damping: 18 },
-    },
-  };
-
   if (loading) {
     return (
       <section id="projects" className="py-20">
@@ -118,39 +98,27 @@ export default function Projects() {
   return (
     <section id="projects" className="py-20">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <motion.div
-          className="text-center mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants}>
+        <ScrollRevealGroup className="text-center mb-16">
+          <ScrollRevealItem index={0}>
             <ScrambleText
               text="My Projects"
               className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--foreground-rgb))] mb-4 inline-block"
             />
-          </motion.div>
-          <motion.div
-            variants={itemVariants}
-            className="w-20 h-1 mx-auto"
-            style={{ background: "#5C6CFF" }}
-          />
-          <motion.p
-            variants={itemVariants}
-            className="mt-4 text-white/70 font-medium"
-          >
-            Here are some of my recent works
-          </motion.p>
-        </motion.div>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={1}>
+            <div
+              className="w-20 h-1 mx-auto"
+              style={{ background: "#5C6CFF" }}
+            />
+          </ScrollRevealItem>
+          <ScrollRevealItem index={2}>
+            <p className="mt-4 text-white/70 font-medium">
+              Here are some of my recent works
+            </p>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
 
-        <motion.div
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
+        <ScrollRevealGroup className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.length === 0 ? (
           <div className="col-span-full text-center text-white/70 py-16">
             No projects available.
@@ -158,13 +126,9 @@ export default function Projects() {
         ) : projects.map((project, idx) => {
             const photos = getPhotos(project);
             return (
-              <ParallaxSection
-                key={project.id}
-                offset={idx % 2 === 0 ? 15 : -15}
-              >
-                <motion.div
-                  variants={itemVariants}
-                  whileHover="hover"
+              <ScrollRevealItem key={project.id} index={idx % 6}>
+              <ParallaxSection offset={idx % 2 === 0 ? 15 : -15}>
+                <div
                   className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer will-change-transform border relative"
                   style={{
                     background: "rgba(255,255,255,0.04)",
@@ -188,25 +152,18 @@ export default function Projects() {
                     }}
                   />
 
-                  {/* Thumbnail */}
                   <div
-                    className="h-48 flex items-center justify-center overflow-hidden relative"
+                    className="relative h-48 flex items-center justify-center overflow-hidden"
                     style={{ background: "rgba(255,255,255,0.06)" }}
                   >
                     {project.image_url ? (
-                      <MotionImage
+                      <Image
                         src={project.image_url}
                         alt={project.title}
                         fill
                         priority={false}
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover"
-                        whileHover={{ scale: 1.08 }}
-                        transition={{
-                          type: "spring" as const,
-                          stiffness: 220,
-                          damping: 22,
-                        }}
+                        className="object-cover group-hover-scale"
                       />
                     ) : (
                       <svg
@@ -241,7 +198,6 @@ export default function Projects() {
                     )}
                   </div>
 
-                  {/* Card body */}
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-[rgb(var(--foreground-rgb))] mb-2">
                       {project.title}
@@ -264,181 +220,158 @@ export default function Projects() {
                       })}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </ParallaxSection>
+              </ScrollRevealItem>
             );
           })}
-        </motion.div>
+        </ScrollRevealGroup>
       </div>
 
-      {/* Gallery Modal */}
-      <AnimatePresence>
-        {modalOpen && activeProject && (
-          <motion.div
-            key="modal-backdrop"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeModal}
+      {modalOpen && activeProject && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 modal-backdrop"
+          onClick={closeModal}
+        >
+          <div
+            className="relative max-w-3xl w-full modal-panel"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              className="relative max-w-3xl w-full"
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 26 }}
-              onClick={(e) => e.stopPropagation()}
+            <button
+              onClick={closeModal}
+              className="absolute -top-10 right-0 z-50 text-white/70 hover:text-white transition-colors text-sm flex items-center gap-1"
             >
-              {/* Close button */}
-              <button
-                onClick={closeModal}
-                className="absolute -top-10 right-0 z-50 text-white/70 hover:text-white transition-colors text-sm flex items-center gap-1"
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Close
-              </button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              Close
+            </button>
 
-              <div className="bg-[#0b0b0b] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                {/* Photo area */}
-                <div
-                  className="relative bg-black"
-                  style={{ minHeight: "300px" }}
-                >
-                  {activePhotos.length > 0 ? (
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={modalSlide}
-                        className="relative w-full h-[60vh] min-h-[300px]"
-                        initial={{ opacity: 0, x: 40 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -40 }}
-                        transition={{ duration: 0.22 }}
-                      >
-                        <MotionImage
-                          src={activePhotos[modalSlide]}
-                          alt={`${activeProject.title} photo ${modalSlide + 1}`}
-                          fill
-                          className="object-contain"
-                          sizes="100vw"
-                          priority={false}
-                          style={{ objectFit: 'contain' }}
-                        />
-                      </motion.div>
-                    </AnimatePresence>
-                  ) : (
-                    <div className="w-full h-64 flex items-center justify-center text-white/40">
-                      No photos
-                    </div>
-                  )}
-
-                  {/* Prev / Next */}
-                  {activePhotos.length > 1 && (
-                    <>
-                      <button
-                        onClick={() =>
-                          setModalSlide(
-                            (s) =>
-                              (s - 1 + activePhotos.length) %
-                              activePhotos.length,
-                          )
-                        }
-                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors z-20"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 19l-7-7 7-7"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() =>
-                          setModalSlide((s) => (s + 1) % activePhotos.length)
-                        }
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors z-20"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </button>
-                      <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-20">
-                        {modalSlide + 1} / {activePhotos.length}
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Dot indicators */}
-                {activePhotos.length > 1 && (
-                  <div className="flex justify-center gap-1.5 py-3 bg-[#0b0b0b]">
-                    {activePhotos.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setModalSlide(i)}
-                        className={`rounded-full transition-all ${i === modalSlide ? "w-5 h-2 bg-white" : "w-2 h-2 bg-white/30 hover:bg-white/60"}`}
-                      />
-                    ))}
+            <div className="bg-[#0b0b0b] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+              <div
+                className="relative bg-black min-h-[300px]"
+              >
+                {activePhotos.length > 0 ? (
+                  <div
+                    key={modalSlide}
+                    className="relative w-full h-[60vh] min-h-[300px] modal-slide"
+                  >
+                    <Image
+                      src={activePhotos[modalSlide]}
+                      alt={`${activeProject.title} photo ${modalSlide + 1}`}
+                      fill
+                      className="object-contain"
+                      sizes="100vw"
+                      priority={false}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-64 flex items-center justify-center text-white/40">
+                    No photos
                   </div>
                 )}
 
-                {/* Info */}
-                <div className="p-5">
-                  <h3 className="text-lg font-bold text-white">
-                    {activeProject.title}
-                  </h3>
-                  <p className="text-white/70 mt-1 text-sm leading-relaxed">
-                    {activeProject.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {activeProject.technologies.map((tech, i) => {
-                      const chip = pickAccentByKey(`tech:${tech}`);
-                      return (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 text-black text-xs font-semibold rounded-full"
-                          style={{ background: chip }}
-                        >
-                          {tech}
-                        </span>
-                      );
-                    })}
-                  </div>
+                {activePhotos.length > 1 && (
+                  <>
+                    <button
+                      onClick={() =>
+                        setModalSlide(
+                          (s) =>
+                            (s - 1 + activePhotos.length) %
+                            activePhotos.length,
+                        )
+                      }
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors z-20"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() =>
+                        setModalSlide((s) => (s + 1) % activePhotos.length)
+                      }
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors z-20"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                    <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-20">
+                      {modalSlide + 1} / {activePhotos.length}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {activePhotos.length > 1 && (
+                <div className="flex justify-center gap-1.5 py-3 bg-[#0b0b0b]">
+                  {activePhotos.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setModalSlide(i)}
+                      className={`rounded-full transition-all ${i === modalSlide ? "w-5 h-2 bg-white" : "w-2 h-2 bg-white/30 hover:bg-white/60"}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-white">
+                  {activeProject.title}
+                </h3>
+                <p className="text-white/70 mt-1 text-sm leading-relaxed">
+                  {activeProject.description}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {activeProject.technologies.map((tech, i) => {
+                    const chip = pickAccentByKey(`tech:${tech}`);
+                    return (
+                      <span
+                        key={i}
+                        className="px-2 py-0.5 text-black text-xs font-semibold rounded-full"
+                        style={{ background: chip }}
+                      >
+                        {tech}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
 import ButtonPill from '@/components/ButtonPill'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
+import { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
 import { supabase, AboutInfo } from '@/lib/supabase'
 
 export default function About() {
@@ -41,12 +40,10 @@ export default function About() {
 
     const fetchAbout = async () => {
       try {
-        // 1) Try from Storage JSON (about only)
         const { data, error } = await supabase.storage.from('portfolio').download('about/about.json')
         if (!error && data) {
           const text = await data.text()
           const json = JSON.parse(text)
-          // Map known about fields if present
           setAbout({
             id: json.id ?? 0,
             name: json.name || '',
@@ -91,7 +88,6 @@ export default function About() {
         }
       } catch {}
       
-      // If no storage data, leave about content empty
       setAbout(null)
       setAboutContent({ title_prefix: '', highlight: '', para1: '', para2: '', points: [] })
     }
@@ -109,30 +105,6 @@ export default function About() {
       })
     } catch {}
   }, [])
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  }
 
   const infoItems = [
     {
@@ -194,34 +166,18 @@ export default function About() {
   return (
   <section id="about" className="py-20">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <motion.div
-          className="text-center mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants}>
+        <ScrollRevealGroup className="text-center mb-16">
+          <ScrollRevealItem index={0}>
             <ScrambleText text="About Me" className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--foreground-rgb))] mb-4 inline-block" />
-          </motion.div>
-          <motion.div variants={itemVariants} className="w-20 h-1 mx-auto" style={{ background: '#5C6CFF' }}></motion.div>
-        </motion.div>
+          </ScrollRevealItem>
+          <ScrollRevealItem index={1}>
+            <div className="w-20 h-1 mx-auto" style={{ background: '#5C6CFF' }}></div>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
 
-        <motion.div
-          className="grid md:grid-cols-2 gap-12 items-center"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {/* Photo Section - Left - BULAT with GAHAR Animation but Static Photo */}
-          <motion.div
-            className="relative flex justify-center items-center"
-            variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 160, damping: 18 }}
-          >
-            {/* Bold monochrome ring (static) */}
+        <ScrollRevealGroup className="grid md:grid-cols-2 gap-12 items-center">
+          <ScrollRevealItem index={0}>
+            <div className="relative flex justify-center items-center hover-scale">
             <div
               className="absolute w-[21rem] h-[21rem] md:w-[26rem] md:h-[26rem] rounded-full pointer-events-none"
               style={{
@@ -229,24 +185,18 @@ export default function About() {
                 boxShadow: '0 0 22px rgba(0,0,0,0.45), inset 0 0 12px rgba(255,255,255,0.05)'
               }}
             />
-            {/* Four tick markers rotating slowly (simple, gahar) */}
-            <motion.div
-              className="absolute w-[21rem] h-[21rem] md:w-[26rem] md:h-[26rem] rounded-full pointer-events-none"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-              style={{}}
+            <div
+              className="absolute w-[21rem] h-[21rem] md:w-[26rem] md:h-[26rem] rounded-full pointer-events-none animate-spin-slow"
             >
               <span className="absolute left-1/2 -translate-x-1/2 -top-3 w-8 h-[2px] bg-white/35 rounded" />
               <span className="absolute top-1/2 -translate-y-1/2 -right-3 w-[2px] h-8 bg-white/30 rounded" />
               <span className="absolute left-1/2 -translate-x-1/2 -bottom-3 w-8 h-[2px] bg-white/30 rounded" />
               <span className="absolute top-1/2 -translate-y-1/2 -left-3 w-[2px] h-8 bg-white/35 rounded" />
-            </motion.div>
-            {/* Main Circular Photo Container - STATIC NO ANIMATION */}
+            </div>
             <div
-              className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden"
+              className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden shrink-0"
               style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.45), 0 0 40px rgba(255,255,255,0.04)' }}
             >
-              {/* Photo */}
               {!loading && profilePhoto ? (
                 <Image
                   src={profilePhoto}
@@ -254,6 +204,7 @@ export default function About() {
                   fill
                   className="object-cover"
                   priority
+                  sizes="(max-width: 768px) 288px, 384px"
                 />
               ) : !loading ? (
                 <div className="w-full h-full bg-gray-800" />
@@ -266,29 +217,30 @@ export default function About() {
               className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
               style={{ border: '1px solid rgba(255,255,255,0.06)' }}
             />
-          </motion.div>
+            </div>
+          </ScrollRevealItem>
 
-          {/* Text Section - Right */}
+          <ScrollRevealItem index={1}>
           <ParallaxSection offset={30}>
-            <motion.div className="space-y-6">
-              <motion.h3 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
+            <div className="space-y-6">
+              <h3 className="text-3xl md:text-4xl font-extrabold text-[rgb(var(--foreground-rgb))]">
                 {aboutContent.title_prefix}
                 {aboutContent.highlight && (
                   <span style={{ color: '#5C6CFF' }}> {aboutContent.highlight}</span>
                 )}
-              </motion.h3>
+              </h3>
               {aboutContent.para1 && (
-                <motion.p variants={itemVariants} className="text-white/80 leading-relaxed text-lg">
+                <p className="text-white/80 leading-relaxed text-lg">
                   {aboutContent.para1}
-                </motion.p>
+                </p>
               )}
               {aboutContent.para2 && (
-                <motion.p variants={itemVariants} className="text-white/70 leading-relaxed">
+                <p className="text-white/70 leading-relaxed">
                   {aboutContent.para2}
-                </motion.p>
+                </p>
               )}
               {aboutContent.points.length > 0 && (
-                <motion.div variants={itemVariants} className="space-y-3 pt-2">
+                <div className="space-y-3 pt-2">
                   {aboutContent.points.map((skill, idx) => (
                     <div key={idx} className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#5C6CFF' }}>
@@ -299,13 +251,10 @@ export default function About() {
                       <span className="text-[rgb(var(--foreground-rgb))]">{skill}</span>
                     </div>
                   ))}
-                </motion.div>
+                </div>
               )}
             
-              <motion.div
-                variants={itemVariants}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6"
-              >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
                 {infoItems.filter((item) => item.value).map((item, idx) => (
                   <div
                     key={idx}
@@ -330,16 +279,16 @@ export default function About() {
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
 
-              {/* CTA Buttons */}
-              <motion.div variants={itemVariants} className="pt-6 flex flex-wrap gap-3">
+              <div className="pt-6 flex flex-wrap gap-3">
                 <ButtonPill href="/api/cv" label="Download CV" variant="cobalt" />
                 <ButtonPill href="#contact" label="Get In Touch" variant="mint" />
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </ParallaxSection>
-        </motion.div>
+          </ScrollRevealItem>
+        </ScrollRevealGroup>
       </div>
     </section>
   )

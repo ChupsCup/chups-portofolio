@@ -108,8 +108,8 @@ html, body {
 
 /* (hapus aturan global penyembunyi scrollbar agar tidak memicu double scroll) */
 
-/* Responsive media */
-img,
+/* Responsive media — avoid height:auto on fill images (causes CLS) */
+img:not([data-nimg="fill"]),
 video {
     max-width: 100%;
     height: auto;
@@ -157,7 +157,23 @@ video {
     }
 }
 
-/* Fast CSS animations to replace framer-motion for performance */
+.animate-fade-in-up-word {
+  display: inline-block;
+  opacity: 0;
+  animation: fadeInUpWord 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUpWord {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -204,4 +220,153 @@ video {
 
 .animate-fade-in-delayed-6 {
   animation: fadeInUp 0.5s ease-out 0.6s both;
+}
+
+/* Scroll reveal — replaces framer-motion whileInView */
+.scroll-reveal,
+.scroll-reveal-item {
+  opacity: 0;
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal--fade-up,
+.scroll-reveal-item {
+  transform: translateY(24px);
+}
+
+.scroll-reveal--fade-in {
+  transform: none;
+}
+
+.scroll-reveal--fade-left {
+  transform: translateX(-24px);
+}
+
+.scroll-reveal--fade-right {
+  transform: translateX(24px);
+}
+
+.scroll-reveal--scale-up {
+  transform: translateY(20px) scale(0.96);
+}
+
+.scroll-reveal.is-visible,
+.scroll-reveal-group.is-visible .scroll-reveal-item {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+}
+
+/* Progress bars animated on scroll */
+.progress-bar-fill {
+  width: 0;
+  transition: width 1.2s ease-out;
+}
+
+.progress-bar-fill.is-visible {
+  width: var(--progress, 0%);
+}
+
+.progress-bar-glow {
+  left: 0%;
+  transition: left 1.2s ease-out;
+}
+
+.progress-bar-glow.is-visible {
+  left: var(--progress, 0%);
+}
+
+/* Radial gauge */
+.gauge-ring {
+  stroke-dasharray: var(--gauge-c, 176);
+  stroke-dashoffset: var(--gauge-c, 176);
+  transition: stroke-dashoffset 1.2s ease-out;
+}
+
+.gauge-ring.is-visible {
+  stroke-dashoffset: var(--gauge-offset, 0);
+}
+
+/* Modal fade (CSS-only) */
+.modal-backdrop {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-panel {
+  animation: modalIn 0.28s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-slide {
+  animation: slideIn 0.22s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Interactive hover — replaces motion whileHover */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.04);
+}
+
+.hover-scale:active {
+  transform: scale(0.98);
+}
+
+.group-hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.group:hover .group-hover-scale {
+  transform: scale(1.08);
+}
+
+.focus-scale:focus {
+  transform: scale(1.02);
+}
+
+.focus-scale {
+  transition: transform 0.2s ease;
 }
