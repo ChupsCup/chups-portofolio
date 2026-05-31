@@ -21,8 +21,6 @@ type Category = {
   skills: Skill[]
 }
 
-import { memo } from 'react'
-
 const Skills: NextPage = () => {
   const [systemPacks, setSystemPacks] = useState<Category[]>([])
   const [softSkills, setSoftSkills] = useState<string[]>([])
@@ -285,4 +283,4 @@ const Skills: NextPage = () => {
   )
 }
 
-export default memo(Skills)
+export default Skills

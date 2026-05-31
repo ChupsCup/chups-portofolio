@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { supabase, Project } from "@/lib/supabase";
@@ -10,7 +10,7 @@ import { pickAccentByKey } from "@/lib/accents";
 
 const MotionImage = motion(Image);
 
-function Projects() {
+export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -442,5 +442,3 @@ function Projects() {
     </section>
   );
 }
-
-export default memo(Projects)

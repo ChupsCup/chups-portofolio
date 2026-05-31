@@ -156,3 +156,52 @@ video {
         border-color: rgba(var(--accent-color), 0.35);
     }
 }
+
+/* Fast CSS animations to replace framer-motion for performance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-in-delayed-1 {
+  animation: fadeInUp 0.5s ease-out 0.1s both;
+}
+
+.animate-fade-in-delayed-2 {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+.animate-fade-in-delayed-3 {
+  animation: fadeInUp 0.5s ease-out 0.3s both;
+}
+
+.animate-fade-in-delayed-4 {
+  animation: fadeInUp 0.5s ease-out 0.4s both;
+}
+
+.animate-fade-in-delayed-5 {
+  animation: fadeInUp 0.5s ease-out 0.5s both;
+}
+
+.animate-fade-in-delayed-6 {
+  animation: fadeInUp 0.5s ease-out 0.6s both;
+}

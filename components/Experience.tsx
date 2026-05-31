@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, memo } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { supabase, Experience } from '@/lib/supabase'
 import ParallaxSection from './ParallaxSection'
@@ -12,7 +12,7 @@ const HAS_SUPABASE = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-function ExperienceSection() {
+export default function ExperienceSection() {
   const [experiences, setExperiences] = useState<Experience[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -228,6 +228,4 @@ function ExperienceSection() {
     </ParallaxSection>
   )
 }
-
-export default memo(ExperienceSection)
 

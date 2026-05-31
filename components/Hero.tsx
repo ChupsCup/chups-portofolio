@@ -1,7 +1,6 @@
 
 'use client'
 
-import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import TextReveal from './TextReveal'
@@ -9,7 +8,7 @@ import TextTypewriter from './TextTypewriter'
 import ParallaxSection from './ParallaxSection'
 import ButtonPill from '@/components/ButtonPill'
 
-function MagneticButton({ href, variant = 'filled', children }: { href: string; variant?: 'filled' | 'outline'; children: React.ReactNode }) {
+function SimpleButton({ href, variant = 'filled', children }: { href: string; variant?: 'filled' | 'outline'; children: React.ReactNode }) {
   const ref = useRef<HTMLAnchorElement>(null)
 
   const onMouseMove = (e: React.MouseEvent) => {
@@ -28,38 +27,26 @@ function MagneticButton({ href, variant = 'filled', children }: { href: string; 
   }
 
   const base = variant === 'filled'
-    ? 'px-8 py-3 bg-accent text-white dark:bg-accent dark:text-brown-darker rounded-xl font-semibold text-center relative overflow-hidden group shadow-[0_10px_30px_rgba(232,184,138,0.35)]'
-    : 'px-8 py-3 border-2 border-accent text-accent dark:text-accent dark:border-accent rounded-xl font-semibold text-center relative overflow-hidden group'
+    ? 'px-8 py-3 bg-accent text-white dark:bg-accent dark:text-brown-darker rounded-xl font-semibold text-center relative overflow-hidden group shadow-[0_10px_30px_rgba(232,184,138,0.35)] transition-transform duration-300'
+    : 'px-8 py-3 border-2 border-accent text-accent dark:text-accent dark:border-accent rounded-xl font-semibold text-center relative overflow-hidden group transition-colors duration-300'
 
   return (
     <a href={href} ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} className={base}>
       <span className="relative z-10">{children}</span>
-      <motion.div
-        className={`absolute inset-0 ${variant === 'filled' ? 'bg-accent-dark dark:bg-accent-dark' : 'bg-accent/10'} pointer-events-none"`}
-        initial={{ x: '-100%' }}
-        whileHover={{ x: 0 }}
-        transition={{ type: 'spring', stiffness: 220, damping: 26 }}
-        style={{ zIndex: 0 }}
+      <div
+        className={`absolute inset-0 ${variant === 'filled' ? 'bg-accent-dark dark:bg-accent-dark' : 'bg-accent/10'} pointer-events-none transition-transform duration-300 origin-left`}
+        style={{ zIndex: 0, transform: 'scaleX(0)', transformOrigin: 'left' }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scaleX(1)')}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scaleX(0)')}
       />
-      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'radial-gradient(120px 40px at var(--x,50%) var(--y,50%), rgba(255,255,255,0.35), transparent)' }} />
+      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'radial-gradient(120px 40px at var(--x,50%) var(--y,50%), rgba(255,255,255,0.35), transparent)' }} />
     </a>
   )
 }
 
 export default function Hero() {
-  const [particles, setParticles] = useState<{ x: number; y: number; size: number; duration: number; delay: number }[]>([])
   const [hero, setHero] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] } | null>(null)
-  useEffect(() => {
-    const list = Array.from({ length: 22 }).map(() => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: 2 + Math.random() * 4,
-      duration: 4 + Math.random() * 6,
-      delay: Math.random() * 4,
-    }))
-    setParticles(list)
-  }, [])
-
+  
   useEffect(() => {
     let mounted = true
     ;(async () => {
@@ -103,39 +90,6 @@ export default function Hero() {
     })()
     return () => { mounted = false }
   }, [])
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 100,
-        damping: 15,
-        mass: 1,
-      },
-    },
-  }
-
-  const buttonVariants = {
-    hover: {
-      scale: 1.05,
-      transition: { type: 'spring' as const, stiffness: 400, damping: 10 },
-    },
-    tap: { scale: 0.95 },
-  }
 
   return (
   <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 overflow-hidden">
@@ -146,47 +100,44 @@ export default function Hero() {
       <div className="max-w-6xl mx-auto p-4 md:p-8 py-20 w-full relative">
         <div className="flex justify-center">
           {/* Center - Text Only */}
-          <motion.div
-            className="space-y-6 max-w-2xl"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+          <div
+            className="space-y-6 max-w-2xl animate-fade-in"
           >
-            <motion.div variants={itemVariants}>
+            <div className="animate-fade-in-delayed-1">
               <div className="space-y-2">
                 <h1 className="text-5xl md:text-6xl font-extrabold text-[rgb(var(--foreground-rgb))] leading-tight">
                   <TextReveal>
                     {hero?.title_prefix ?? "Hi, I'm fahri yusuf"}
                   </TextReveal>
                 </h1>
-                <motion.div
+                <div
                   className="text-5xl md:text-6xl font-bold leading-tight"
                   style={{ color: '#5C6CFF' }}
                 >
                   {hero?.highlight ?? 'Developer'}
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div variants={itemVariants} className="text-xl md:text-2xl text-[rgb(var(--foreground-rgb))] opacity-80 font-medium">
+            <div className="text-xl md:text-2xl text-[rgb(var(--foreground-rgb))] opacity-80 font-medium animate-fade-in-delayed-2">
               <TextTypewriter words={hero?.points ?? ["Full Stack Developer", "Frontend Enthusiast", "UI Motion Addict"]} />
-            </motion.div>
+            </div>
 
-            <motion.p variants={itemVariants} className="text-lg text-[rgb(var(--foreground-rgb))] opacity-70 leading-relaxed max-w-xl">
+            <p className="text-lg text-[rgb(var(--foreground-rgb))] opacity-70 leading-relaxed max-w-xl animate-fade-in-delayed-3">
               {hero?.para1 ?? 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.'}
-            </motion.p>
+            </p>
             { (hero?.para2 ?? '').trim().length > 0 && (
-              <motion.p variants={itemVariants} className="text-base text-[rgb(var(--foreground-rgb))] opacity-60 leading-relaxed max-w-xl">
+              <p className="text-base text-[rgb(var(--foreground-rgb))] opacity-60 leading-relaxed max-w-xl animate-fade-in-delayed-4">
                 {hero!.para2}
-              </motion.p>
+              </p>
             ) }
 
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-4">
+            <div className="flex flex-wrap gap-3 pt-4 animate-fade-in-delayed-5">
               <ButtonPill href="#projects" label="View My Work" variant="cobalt" />
               <ButtonPill href="#contact" label="Get In Touch" variant="mint" />
-            </motion.div>
+            </div>
 
-            <motion.div variants={itemVariants} className="flex gap-6 pt-4">
+            <div className="flex gap-6 pt-4 animate-fade-in-delayed-6">
               <a
                 href="https://github.com/ChupsCup"
                 target="_blank"
@@ -220,8 +171,8 @@ export default function Hero() {
                   <path d="M20.52 3.48C18.2 1.16 15.21 0 12 0 5.37 0 0 5.37 0 12c0 2.11.55 4.19 1.6 6.02L0 24l6.17-1.62A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.2-3.48-8.52zM12 22a9.9 9.9 0 0 1-5.06-1.39l-.36-.21-3.7.97.99-3.6-.23-.36A9.94 9.94 0 1 1 22 12c0 5.51-4.49 10-10 10zm5.27-7.59c-.29-.15-1.71-.84-1.98-.94-.26-.1-.45-.15-.64.14-.2.29-.75.95-.92 1.15-.17.2-.33.22-.62.07-.29-.15-1.24-.45-2.36-1.45-.87-.77-1.45-1.7-1.62-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.43-.51.15-.17.19-.3.28-.49.1-.2.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.14-.24-.58-.47-.5-.64-.5h-.55c-.19 0-.5.07-.77.36-.26.29-1.01 1-1.01 2.45 0 1.45 1.03 2.86 1.18 3.05.15.2 2.04 3.14 4.95 4.4.69.3 1.23.47 1.66.61.69.22 1.32.19 1.82.12.56-.08 1.71-.69 1.96-1.37.24-.68.24-1.25.16-1.37-.08-.12-.26-.2-.55-.34z"/>
                 </svg>
               </a>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </div>
       {/* Glitch styles */}
