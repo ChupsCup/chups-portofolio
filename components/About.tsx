@@ -7,15 +7,27 @@ import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
 import { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
 import { supabase, AboutInfo } from '@/lib/supabase'
+import type { AboutContent } from '@/lib/content'
 
-export default function About() {
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
-  const [about, setAbout] = useState<AboutInfo | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [aboutContent, setAboutContent] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] }>({ title_prefix: '', highlight: '', para1: '', para2: '', points: [] })
+const EMPTY_ABOUT_CONTENT: AboutContent = { title_prefix: '', highlight: '', para1: '', para2: '', points: [] }
+
+export default function About({
+  initialAbout,
+  initialAboutContent,
+  initialProfilePhoto,
+}: {
+  initialAbout?: AboutInfo | null
+  initialAboutContent?: AboutContent
+  initialProfilePhoto?: string | null
+}) {
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(initialProfilePhoto ?? null)
+  const [about, setAbout] = useState<AboutInfo | null>(initialAbout ?? null)
+  const [loading, setLoading] = useState(initialProfilePhoto === undefined)
+  const [aboutContent, setAboutContent] = useState<AboutContent>(initialAboutContent ?? EMPTY_ABOUT_CONTENT)
   
 
   useEffect(() => {
+    if (initialProfilePhoto !== undefined && initialAbout !== undefined) return
     const fetchProfilePhoto = async () => {
       try {
         const { data, error } = await supabase
@@ -46,7 +58,7 @@ export default function About() {
           const json = JSON.parse(text)
           setAbout({
             id: json.id ?? 0,
-            name: json.name || '',
+            name: (json.name || '').replace(/fahri\s+yusuf/gi, 'Fahri Yusuf'),
             location: json.location || '',
             education: json.education || '',
             email: json.email || '',
@@ -89,12 +101,12 @@ export default function About() {
       } catch {}
       
       setAbout(null)
-      setAboutContent({ title_prefix: '', highlight: '', para1: '', para2: '', points: [] })
+      setAboutContent(EMPTY_ABOUT_CONTENT)
     }
 
     fetchProfilePhoto()
     fetchAbout()
-  }, [])
+  }, [initialAbout, initialProfilePhoto])
   
   useEffect(() => {
     try {

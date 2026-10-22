@@ -1,5 +1,17 @@
 'use client'
 
+import Link from 'next/link'
+
+const quickLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/#about', label: 'About' },
+  { href: '/pengalaman', label: 'Pengalaman' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/sertifikasi', label: 'Sertifikasi' },
+  { href: '/#skills', label: 'Skills' },
+  { href: '/#contact', label: 'Contact' },
+]
+
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
@@ -17,11 +29,11 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              {['Home', 'About', 'Projects', 'Skills', 'Contact'].map((item) => (
-                <li key={item}>
-                  <a href={`#${item.toLowerCase()}`} className="text-white/70 hover:text-white transition">
-                    {item}
-                  </a>
+              {quickLinks.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="text-white/70 hover:text-white transition">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

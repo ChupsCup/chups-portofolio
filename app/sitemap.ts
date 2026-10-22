@@ -1,42 +1,34 @@
 import { MetadataRoute } from 'next'
 
+const SITE_URL = 'https://chups-portofolio.vercel.app'
+
 export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date('2026-10-22T00:00:00.000Z')
+
   return [
     {
-      url: 'https://chups-portofolio.vercel.app',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+      url: SITE_URL,
+      lastModified,
+      changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: 'https://chups-portofolio.vercel.app/#about',
-      lastModified: new Date(),
+      url: `${SITE_URL}/projects`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/pengalaman`,
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: 'https://chups-portofolio.vercel.app/#experience',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: 'https://chups-portofolio.vercel.app/#projects',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: 'https://chups-portofolio.vercel.app/#skills',
-      lastModified: new Date(),
+      url: `${SITE_URL}/sertifikasi`,
+      lastModified,
       changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: 'https://chups-portofolio.vercel.app/#contact',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.6,
+      priority: 0.8,
     },
   ]
 }

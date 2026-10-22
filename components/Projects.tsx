@@ -2,22 +2,24 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { supabase, Project } from "@/lib/supabase";
 import ParallaxSection from "./ParallaxSection";
 import ScrambleText from "./ScrambleText";
 import { ScrollRevealGroup, ScrollRevealItem } from "./ScrollReveal";
 import { pickAccentByKey } from "@/lib/accents";
 
-export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function Projects({ initialProjects }: { initialProjects?: Project[] }) {
+  const [projects, setProjects] = useState<Project[]>(initialProjects ?? []);
+  const [loading, setLoading] = useState(initialProjects === undefined);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [modalSlide, setModalSlide] = useState(0);
 
   useEffect(() => {
+    if (initialProjects !== undefined) return;
     fetchProjects();
-  }, []);
+  }, [initialProjects]);
 
   async function fetchProjects() {
     try {
@@ -115,6 +117,13 @@ export default function Projects() {
             <p className="mt-4 text-white/70 font-medium">
               Here are some of my recent works
             </p>
+            <Link
+              href="/projects"
+              className="inline-block mt-3 text-sm font-semibold"
+              style={{ color: '#5C6CFF' }}
+            >
+              Lihat semua projects →
+            </Link>
           </ScrollRevealItem>
         </ScrollRevealGroup>
 

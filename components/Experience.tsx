@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { supabase, Experience } from '@/lib/supabase'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
@@ -12,11 +13,12 @@ const HAS_SUPABASE = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
-export default function ExperienceSection() {
-  const [experiences, setExperiences] = useState<Experience[]>([])
-  const [loading, setLoading] = useState(true)
+export default function ExperienceSection({ initialExperiences }: { initialExperiences?: Experience[] }) {
+  const [experiences, setExperiences] = useState<Experience[]>(initialExperiences ?? [])
+  const [loading, setLoading] = useState(initialExperiences === undefined)
 
   useEffect(() => {
+    if (initialExperiences !== undefined) return
     if (!HAS_SUPABASE) {
       setLoading(false)
       return
@@ -25,7 +27,7 @@ export default function ExperienceSection() {
       setLoading(false)
     }, 10000)
     fetchExperiences().finally(() => clearTimeout(timeoutId))
-  }, [])
+  }, [initialExperiences])
 
   async function fetchExperiences() {
     try {
@@ -114,6 +116,13 @@ export default function ExperienceSection() {
               className="text-4xl md:text-5xl font-extrabold mb-4 text-[rgb(var(--foreground-rgb))]"
             />
             <div className="w-20 h-1 rounded-full" style={{ background: '#5C6CFF' }}></div>
+            <Link
+              href="/pengalaman"
+              className="inline-block mt-4 text-sm font-semibold"
+              style={{ color: '#5C6CFF' }}
+            >
+              Lihat detail pengalaman →
+            </Link>
           </ScrollReveal>
 
           <ScrollRevealGroup className="space-y-8">

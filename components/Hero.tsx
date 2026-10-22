@@ -3,10 +3,26 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import type { HeroContent } from '@/lib/content'
 import TextReveal from './TextReveal'
 import TextTypewriter from './TextTypewriter'
 import ParallaxSection from './ParallaxSection'
 import ButtonPill from '@/components/ButtonPill'
+
+const FALLBACK_TITLE = "Hi, I'm Fahri Yusuf"
+const FALLBACK_HIGHLIGHT = 'System Analyst & Developer'
+const FALLBACK_PARA =
+  'Fahri Yusuf, System Analyst & Full-Stack Developer berbasis di Jakarta, Indonesia. Berpengalaman membangun sistem informasi, aplikasi web, dan solusi data untuk operasional bisnis.'
+const FALLBACK_POINTS = [
+  'System Analyst',
+  'Business Analyst',
+  'Full-Stack Developer',
+  'Software Engineer',
+  'IT Business Analyst',
+  'IT Support',
+]
+
+const normalizeName = (value: string) => (value ? value.replace(/fahri\s+yusuf/gi, 'Fahri Yusuf') : value)
 
 function SimpleButton({ href, variant = 'filled', children }: { href: string; variant?: 'filled' | 'outline'; children: React.ReactNode }) {
   const ref = useRef<HTMLAnchorElement>(null)
@@ -44,10 +60,11 @@ function SimpleButton({ href, variant = 'filled', children }: { href: string; va
   )
 }
 
-export default function Hero() {
-  const [hero, setHero] = useState<{ title_prefix: string; highlight: string; para1: string; para2: string; points: string[] } | null>(null)
+export default function Hero({ initialHero }: { initialHero?: HeroContent }) {
+  const [hero, setHero] = useState<HeroContent | null>(initialHero ?? null)
   
   useEffect(() => {
+    if (initialHero) return
     let mounted = true
     ;(async () => {
       try {
@@ -58,38 +75,38 @@ export default function Hero() {
           const h = json || {}
           if (mounted) {
             setHero({
-              title_prefix: h.title_prefix || '',
-              highlight: h.highlight || '',
-              para1: h.para1 || '',
+              title_prefix: normalizeName(h.title_prefix || FALLBACK_TITLE),
+              highlight: h.highlight || FALLBACK_HIGHLIGHT,
+              para1: h.para1 || FALLBACK_PARA,
               para2: h.para2 || '',
-              points: Array.isArray(h.points) && h.points.length ? h.points : [],
+              points: Array.isArray(h.points) && h.points.length ? h.points : FALLBACK_POINTS,
             })
           }
         } else {
           if (mounted) {
             setHero({
-              title_prefix: '',
-              highlight: '',
-              para1: '',
+              title_prefix: FALLBACK_TITLE,
+              highlight: FALLBACK_HIGHLIGHT,
+              para1: FALLBACK_PARA,
               para2: '',
-              points: [],
+              points: FALLBACK_POINTS,
             })
           }
         }
       } catch {
         if (mounted) {
           setHero({
-            title_prefix: '',
-            highlight: '',
-            para1: '',
+            title_prefix: FALLBACK_TITLE,
+            highlight: FALLBACK_HIGHLIGHT,
+            para1: FALLBACK_PARA,
             para2: '',
-            points: [],
+            points: FALLBACK_POINTS,
           })
         }
       }
     })()
     return () => { mounted = false }
-  }, [])
+  }, [initialHero])
 
   return (
   <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 overflow-hidden">
@@ -107,24 +124,24 @@ export default function Hero() {
               <div className="space-y-2">
                 <h1 className="text-5xl md:text-6xl font-extrabold text-[rgb(var(--foreground-rgb))] leading-tight">
                   <TextReveal>
-                    {hero?.title_prefix ?? "Hi, I'm fahri yusuf"}
+                    {hero?.title_prefix || FALLBACK_TITLE}
                   </TextReveal>
+                  <span
+                    className="block text-5xl md:text-6xl font-bold leading-tight"
+                    style={{ color: '#5C6CFF' }}
+                  >
+                    {hero?.highlight || FALLBACK_HIGHLIGHT}
+                  </span>
                 </h1>
-                <div
-                  className="text-5xl md:text-6xl font-bold leading-tight"
-                  style={{ color: '#5C6CFF' }}
-                >
-                  {hero?.highlight ?? 'Developer'}
-                </div>
               </div>
             </div>
 
             <div className="text-xl md:text-2xl text-[rgb(var(--foreground-rgb))] opacity-80 font-medium animate-fade-in-delayed-2">
-              <TextTypewriter words={hero?.points ?? ["Full Stack Developer", "Frontend Enthusiast", "UI Motion Addict"]} />
+              <TextTypewriter words={hero?.points?.length ? hero.points : FALLBACK_POINTS} />
             </div>
 
             <p className="text-lg text-[rgb(var(--foreground-rgb))] opacity-70 leading-relaxed max-w-xl animate-fade-in-delayed-3">
-              {hero?.para1 ?? 'I build beautiful and functional web applications. Passionate about creating great user experiences with modern technologies.'}
+              {hero?.para1 || FALLBACK_PARA}
             </p>
             { (hero?.para2 ?? '').trim().length > 0 && (
               <p className="text-base text-[rgb(var(--foreground-rgb))] opacity-60 leading-relaxed max-w-xl animate-fade-in-delayed-4">

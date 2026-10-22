@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-# Block API routes from indexing
+# Block API routes & admin panel from indexing
 Disallow: /api/
+Disallow: /chupscupagent
 
 Sitemap: https://chups-portofolio.vercel.app/sitemap.xml

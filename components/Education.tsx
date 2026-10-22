@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import ScrambleText from './ScrambleText'
 import { ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal'
@@ -38,8 +39,8 @@ const defaultCertificates: Certificate[] = [
   },
 ]
 
-export default function Education({ certificates = defaultCertificates }: { certificates?: Certificate[] }) {
-  const [items, setItems] = useState<Certificate[] | null>(null)
+export default function Education({ certificates }: { certificates?: Certificate[] }) {
+  const [items, setItems] = useState<Certificate[] | null>(certificates ?? null)
   const [active, setActive] = useState<number | null>(null)
   const [slide, setSlide] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -47,7 +48,9 @@ export default function Education({ certificates = defaultCertificates }: { cert
   const autoPlayMs = 4800
   const enableAutoplay = false
   const stripRef = useRef<HTMLUListElement>(null)
-  const progress = (items && items.length ? (slide + 1) / items.length : (slide + 1) / certificates.length) * 100
+  const fallback = certificates && certificates.length ? certificates : defaultCertificates
+  const data = items && items.length ? items : fallback
+  const progress = ((slide + 1) / (data.length || 1)) * 100
 
   const goTo = (i: number) => {
     const len = data.length
@@ -87,6 +90,7 @@ export default function Education({ certificates = defaultCertificates }: { cert
   }, [slide])
 
   useEffect(() => {
+    if (certificates !== undefined) return
     let mounted = true
     ;(async () => {
       try {
@@ -103,17 +107,15 @@ export default function Education({ certificates = defaultCertificates }: { cert
               credentialUrl: x.credentialUrl || undefined,
               imageUrl: x.imageUrl || undefined,
             }))
-            setItems(mapped.length ? mapped : certificates)
+            setItems(mapped.length ? mapped : defaultCertificates)
           }
         }
       } catch {
-        if (mounted) setItems(certificates)
+        if (mounted) setItems(defaultCertificates)
       }
     })()
     return () => { mounted = false }
-  }, [])
-
-  const data = items && items.length ? items : certificates
+  }, [certificates])
 
   return (
     <section id="education" className="py-24">
@@ -129,6 +131,13 @@ export default function Education({ certificates = defaultCertificates }: { cert
             <p className="mt-3 text-white/70 text-sm max-w-2xl mx-auto">
               Certifications and courses that reinforce my System Analyst and Full‑Stack capabilities.
             </p>
+            <Link
+              href="/sertifikasi"
+              className="inline-block mt-3 text-sm font-semibold"
+              style={{ color: '#5C6CFF' }}
+            >
+              Lihat semua sertifikasi →
+            </Link>
           </ScrollRevealItem>
         </ScrollRevealGroup>
 

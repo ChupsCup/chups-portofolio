@@ -11,16 +11,18 @@ const inter = Inter({ subsets: ['latin'], display: 'swap' })
 export const metadata: Metadata = {
   title: 'Fahri Yusuf — System Analyst & Developer',
   description: 'Portfolio Fahri Yusuf, System Analyst & Full-Stack Developer berbasis di Jakarta, Indonesia. Spesialis React, Next.js, TypeScript, dan Laravel.',
-  keywords: ['Fahri Yusuf', 'Full Stack Developer', 'React', 'Next.js', 'TypeScript', 'Jakarta', 'Indonesia', 'portfolio'],
+  keywords: ['Fahri Yusuf', 'Full Stack Developer', 'System Analyst', 'Fahri Yusuf Developer', 'React', 'Next.js', 'TypeScript', 'Jakarta', 'Indonesia', 'portfolio'],
   authors: [{ name: 'Fahri Yusuf', url: 'https://chups-portofolio.vercel.app' }],
   creator: 'Fahri Yusuf',
   metadataBase: new URL('https://chups-portofolio.vercel.app'),
+  applicationName: 'Fahri Yusuf Portfolio',
   openGraph: {
     type: 'website',
     url: 'https://chups-portofolio.vercel.app',
     title: 'Fahri Yusuf — System Analyst & Developer',
     description: 'Portfolio Fahri Yusuf, System Analyst & Full-Stack Developer berbasis di Jakarta, Indonesia. Spesialis React, Next.js, TypeScript, dan Laravel.',
     siteName: 'Fahri Yusuf Portfolio',
+    locale: 'id_ID',
     images: [
       {
         url: '/og-image.svg',
@@ -46,9 +48,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  alternates: {
-    canonical: 'https://chups-portofolio.vercel.app',
-  },
   verification: {
     google: '2XKFxkI4ZFFH85tdDVgo-UakEe7O8zPmr7kYXUwsPmw',
   },
@@ -65,20 +64,51 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="id">
         <head>
           <link rel="icon" href="/favicon.ico" />
-          <meta name="description" content={metadata.description ?? ''} />
           <script dangerouslySetInnerHTML={{ __html: `if (${JSON.stringify(process.env.NODE_ENV)} === "production") { console.log = function(){}; console.info = function(){}; console.debug = function(){}; console.warn = function(){}; }` }} />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Person",
-            name: "Fahri Yusuf",
-            jobTitle: "System Analyst & Full-Stack Developer",
-            url: "https://chups-portofolio.vercel.app",
-            email: "fahriysuf@gmail.com",
-            address: { "@type": "PostalAddress", addressLocality: "Jakarta", addressCountry: "ID" },
-            sameAs: ["https://github.com/ChupsCup", "https://www.linkedin.com/in/fahri-yusuf-73bb75217"]
+            "@graph": [
+              {
+                "@type": "Person",
+                "@id": "https://chups-portofolio.vercel.app/#person",
+                name: "Fahri Yusuf",
+                alternateName: "Fahri Yusuf Developer",
+                jobTitle: "System Analyst & Full-Stack Developer",
+                url: "https://chups-portofolio.vercel.app",
+                email: "fahriysuf@gmail.com",
+                telephone: "+6285121017198",
+                description: "System Analyst & Full-Stack Developer berbasis di Jakarta, Indonesia. Spesialis analisis sistem, business application (SQL, ERP, Accurate), dan pengembangan web dengan React, Next.js, TypeScript, dan Laravel.",
+                address: { "@type": "PostalAddress", addressLocality: "Jakarta", addressCountry: "ID" },
+                knowsAbout: [
+                  "System Analysis",
+                  "Business Analysis",
+                  "Full Stack Development",
+                  "React",
+                  "Next.js",
+                  "TypeScript",
+                  "Laravel",
+                  "SQL",
+                  "ERP Implementation",
+                  "Data Warehouse",
+                  "Business Intelligence"
+                ],
+                sameAs: [
+                  "https://github.com/ChupsCup",
+                  "https://www.linkedin.com/in/fahri-yusuf-73bb75217"
+                ]
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://chups-portofolio.vercel.app/#website",
+                url: "https://chups-portofolio.vercel.app",
+                name: "Fahri Yusuf Portfolio",
+                inLanguage: "id-ID",
+                publisher: { "@id": "https://chups-portofolio.vercel.app/#person" }
+              }
+            ]
           }) }} />
         </head>
         <body className={inter.className}>

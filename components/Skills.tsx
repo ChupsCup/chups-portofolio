@@ -1,6 +1,5 @@
 'use client'
 
-import type { NextPage } from 'next'
 import { useState, useEffect } from 'react'
 import ParallaxSection from './ParallaxSection'
 import ScrambleText from './ScrambleText'
@@ -23,12 +22,13 @@ type Category = {
   skills: Skill[]
 }
 
-const Skills: NextPage = () => {
-  const [systemPacks, setSystemPacks] = useState<Category[]>([])
-  const [softSkills, setSoftSkills] = useState<string[]>([])
-  const [loading, setLoading] = useState(true)
+const Skills = ({ initialCategories, initialSoftSkills }: { initialCategories?: Category[]; initialSoftSkills?: string[] }) => {
+  const [systemPacks, setSystemPacks] = useState<Category[]>(initialCategories ?? [])
+  const [softSkills, setSoftSkills] = useState<string[]>(initialSoftSkills ?? [])
+  const [loading, setLoading] = useState(initialCategories === undefined)
 
   useEffect(() => {
+    if (initialCategories !== undefined) return
     const fetchSkills = async () => {
       try {
         const response = await fetch('/api/skills')
@@ -45,7 +45,7 @@ const Skills: NextPage = () => {
     }
     
     fetchSkills()
-  }, [])
+  }, [initialCategories])
 
   const TiltCard = ({ children }: { children: React.ReactNode }) => {
     const [pos, setPos] = useState({ x: 0, y: 0 })
