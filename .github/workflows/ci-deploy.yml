@@ -18,10 +18,10 @@ jobs:
         run: npm run build
 
   vercel_deploy:
-    # Butuh secret VERCEL_TOKEN, VERCEL_ORG_ID, dan VERCEL_PROJECT_ID di
-    # Repo Settings > Secrets. Cek secret dilakukan di level step karena
-    # `secrets` tidak boleh dipakai di `if` level job.
-    if: ${{ github.ref == 'refs/heads/main' }}
+    # Butuh Repository Variable ENABLE_VERCEL_DEPLOY = "true" dan secret
+    # VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
+    # `secrets` tidak boleh dipakai di `if`, jadi gate-nya pakai `vars`.
+    if: ${{ github.ref == 'refs/heads/main' && vars.ENABLE_VERCEL_DEPLOY == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Deploy to Vercel
-        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
