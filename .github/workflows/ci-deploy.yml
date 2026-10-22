@@ -11,26 +11,33 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run build
 
   vercel_deploy:
-    # This job only runs if VERCEL_TOKEN and VERCEL_PROJECT_ID are set in Repo Secrets
-    if: ${{ secrets.VERCEL_TOKEN && secrets.VERCEL_PROJECT_ID }}
+    # Butuh secret VERCEL_TOKEN, VERCEL_ORG_ID, dan VERCEL_PROJECT_ID di
+    # Repo Settings > Secrets. Cek secret dilakukan di level step karena
+    # `secrets` tidak boleh dipakai di `if` level job.
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Install dependencies
         run: npm ci
       - name: Deploy to Vercel
+        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          npx vercel --prod --token $VERCEL_TOKEN --confirm --yes
+          npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          npx vercel build --prod --token "$VERCEL_TOKEN"
+          npx vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" --yes
